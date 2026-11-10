@@ -1,0 +1,214 @@
+<title>ScanBench</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: instrument-style workbench. Header strip, layers rail (left), 3D viewport (centre), tool rail (right). */
+:root {
+  --bg: #eef1f3; --panel: #f9fafb; --panel2: #e6eaee; --line: #cfd6dc; --fg: #17212b; --muted: #5a6875;
+  --accent: #0b7a8a; --accent-fg: #ffffff; --accent-soft: #d3ecef; --warn: #b4560b; --bad: #b42318; --good: #1c7c43;
+  --vp: #d9dee3; --kbd: #ffffff;
+  --sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0f1418; --panel: #151c22; --panel2: #1d262e; --line: #2b3640; --fg: #dbe3ea; --muted: #8b9aa7;
+  --accent: #3fb6c6; --accent-fg: #06191c; --accent-soft: #163a40; --warn: #e39545; --bad: #f0675b; --good: #4cc27c;
+  --vp: #0a0e11; --kbd: #1d262e; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0f1418; --panel: #151c22; --panel2: #1d262e; --line: #2b3640; --fg: #dbe3ea; --muted: #8b9aa7;
+  --accent: #3fb6c6; --accent-fg: #06191c; --accent-soft: #163a40; --warn: #e39545; --bad: #f0675b; --good: #4cc27c;
+  --vp: #0a0e11; --kbd: #1d262e; color-scheme: dark }
+html, body { height: 100%; }
+body { background: var(--bg); color: var(--fg); font-family: var(--sans); font-size: 13px; overflow: hidden; }
+* { box-sizing: border-box; }
+button, input, select { font: inherit; color: inherit; }
+.app { height: 100%; display: grid; grid-template-rows: auto 1fr auto; }
+header.top { display: flex; align-items: center; gap: 10px; padding-block: 6px; padding-left: max(12px, env(safe-area-inset-left, 0px)); padding-right: max(12px, env(safe-area-inset-right, 0px)); background: var(--panel); border-bottom: 1px solid var(--line); min-width: 0; }
+.brand { display: flex; align-items: center; gap: 8px; font-weight: 600; letter-spacing: .02em; white-space: nowrap; }
+.brand svg { width: 20px; height: 20px; color: var(--accent); }
+.brand small { font-weight: 400; color: var(--muted); font-family: var(--mono); font-size: 11px; }
+.grow { flex: 1; min-width: 0; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 30px; padding: 0 10px; border-radius: 6px; border: 1px solid var(--line); background: var(--panel2); cursor: pointer; white-space: nowrap; }
+.btn:hover { border-color: var(--accent); }
+.btn:focus-visible, .tab:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.btn.primary { background: var(--accent); color: var(--accent-fg); border-color: var(--accent); font-weight: 500; }
+.btn.on { background: var(--accent-soft); border-color: var(--accent); color: var(--fg); }
+.btn.small { height: 26px; padding: 0 8px; font-size: 12px; }
+.btn.icon { width: 30px; padding: 0; }
+.btn[disabled] { opacity: .45; cursor: not-allowed; }
+.btn.danger:hover { border-color: var(--bad); color: var(--bad); }
+.main { display: grid; grid-template-columns: 270px minmax(0, 1fr) 330px; min-height: 0; }
+aside { background: var(--panel); min-height: 0; overflow: auto; }
+aside.left { border-right: 1px solid var(--line); }
+aside.right { border-left: 1px solid var(--line); display: flex; flex-direction: column; }
+.sec { padding: 12px 12px 14px; border-bottom: 1px solid var(--line); display: grid; gap: 8px; }
+.sec h3 { margin: 0; font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 600; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.drop { border: 1px dashed var(--line); border-radius: 8px; padding: 10px; text-align: center; color: var(--muted); font-size: 12px; line-height: 1.45; }
+.drop.hot { border-color: var(--accent); background: var(--accent-soft); color: var(--fg); }
+.layers { display: grid; gap: 4px; }
+.layer { display: grid; grid-template-columns: 18px 10px minmax(0, 1fr) auto; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 6px; cursor: pointer; border: 1px solid transparent; }
+.layer:hover { background: var(--panel2); }
+.layer.sel { background: var(--accent-soft); border-color: var(--accent); }
+.layer .nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.layer .ct { font-family: var(--mono); font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.layer .sw { width: 10px; height: 10px; border-radius: 2px; }
+.layer .kind { font-size: 10px; color: var(--muted); font-family: var(--mono); }
+.empty { color: var(--muted); font-size: 12px; line-height: 1.5; }
+.row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.row > label { color: var(--muted); font-size: 12px; min-width: 84px; }
+.field { display: grid; grid-template-columns: 96px minmax(0, 1fr); align-items: center; gap: 8px; }
+.field > label { color: var(--muted); font-size: 12px; }
+input[type=number], input[type=text], select { height: 28px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); padding: 0 8px; min-width: 0; width: 100%; font-family: var(--mono); font-size: 12px; }
+select { font-family: var(--sans); }
+input[type=range] { width: 100%; accent-color: var(--accent); }
+input[type=checkbox] { accent-color: var(--accent); }
+.kv { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 3px 12px; font-size: 12px; }
+.kv dt { color: var(--muted); }
+.kv dd { margin: 0; font-family: var(--mono); font-variant-numeric: tabular-nums; text-align: right; overflow-wrap: anywhere; }
+.tabs { display: grid; grid-template-columns: repeat(5, 1fr); gap: 2px; padding: 8px; border-bottom: 1px solid var(--line); background: var(--panel); }
+.tab { border: 0; background: transparent; padding: 7px 4px; border-radius: 6px; cursor: pointer; color: var(--muted); font-size: 12px; font-weight: 500; }
+.tab.on { background: var(--accent-soft); color: var(--fg); }
+.pane { display: none; overflow: auto; flex: 1; }
+.pane.on { display: block; }
+.note { font-size: 12px; color: var(--muted); line-height: 1.5; }
+.note b { color: var(--fg); font-weight: 500; }
+.result { background: var(--panel2); border-radius: 8px; padding: 10px; display: grid; gap: 8px; }
+.mlist { display: grid; gap: 4px; }
+.mitem { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px; align-items: start; padding: 6px 8px; border-radius: 6px; background: var(--panel2); font-size: 12px; }
+.mitem .v { font-family: var(--mono); font-variant-numeric: tabular-nums; line-height: 1.5; overflow-wrap: anywhere; }
+.mitem .t { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .06em; }
+.viewport { position: relative; min-width: 0; min-height: 0; background: var(--vp); overflow: hidden; touch-action: none; }
+.viewport canvas.gl { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.viewport canvas.ov { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.vbar { position: absolute; top: 10px; left: 10px; right: 10px; display: flex; gap: 6px; flex-wrap: wrap; pointer-events: none; }
+.vbar > * { pointer-events: auto; }
+.vgroup { display: flex; gap: 2px; background: color-mix(in srgb, var(--panel) 88%, transparent); border: 1px solid var(--line); border-radius: 8px; padding: 2px; backdrop-filter: blur(6px); }
+.vgroup .btn { border: 0; background: transparent; height: 26px; font-size: 12px; padding: 0 8px; }
+.vgroup .btn.on { background: var(--accent-soft); }
+.labels { position: absolute; inset: 0; pointer-events: none; }
+.lbl { position: absolute; transform: translate(-50%, -120%); background: color-mix(in srgb, var(--panel) 92%, transparent); border: 1px solid var(--line); border-radius: 4px; padding: 2px 6px; font-family: var(--mono); font-size: 11px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.modechip { position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); background: var(--fg); color: var(--bg); padding: 7px 12px; border-radius: 999px; font-size: 12px; display: flex; gap: 10px; align-items: center; max-width: calc(100% - 24px); }
+.modechip button { background: transparent; border: 1px solid color-mix(in srgb, var(--bg) 40%, transparent); color: var(--bg); border-radius: 999px; padding: 2px 9px; cursor: pointer; font-size: 11px; }
+.axes { position: absolute; right: 10px; bottom: 10px; width: 64px; height: 64px; pointer-events: none; }
+.welcome { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; }
+.status { display: flex; gap: 16px; align-items: center; padding-block: 5px; padding-left: max(12px, env(safe-area-inset-left, 0px)); padding-right: max(12px, env(safe-area-inset-right, 0px)); border-top: 1px solid var(--line); background: var(--panel); font-family: var(--mono); font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; min-width: 0; overflow: hidden; white-space: nowrap; }
+.status b { color: var(--fg); font-weight: 500; }
+.progress { position: absolute; left: 50%; top: 56px; transform: translateX(-50%); width: min(360px, calc(100% - 32px)); background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; display: grid; gap: 6px; box-shadow: 0 6px 24px rgb(0 0 0 / .18); }
+.bar { height: 6px; border-radius: 3px; background: var(--panel2); overflow: hidden; }
+.bar > i { display: block; height: 100%; width: 0; background: var(--accent); transition: width .15s; }
+.toast { position: absolute; right: 12px; top: 52px; display: grid; gap: 6px; width: min(340px, calc(100% - 24px)); pointer-events: none; }
+.toast div { background: var(--panel); border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 6px; padding: 8px 10px; font-size: 12px; box-shadow: 0 4px 16px rgb(0 0 0 / .15); pointer-events: auto; line-height: 1.45; }
+.toast div.err { border-left-color: var(--bad); }
+canvas.hist, canvas.profile { width: 100%; height: 110px; display: block; background: var(--bg); border-radius: 6px; }
+canvas.profile { height: 160px; }
+.ramp { height: 10px; border-radius: 3px; }
+.legend { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.scrim { display: none; }
+.only-narrow { display: none; }
+.mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.hint { font-size: 11px; color: var(--muted); }
+kbd { font-family: var(--mono); font-size: 11px; background: var(--kbd); border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4px; padding: 0 4px; }
+.help { display: grid; grid-template-columns: auto 1fr; gap: 4px 10px; font-size: 12px; }
+@media (max-width: 1000px) {
+  .main { grid-template-columns: minmax(0, 1fr); }
+  aside.left, aside.right { position: absolute; top: 44px; bottom: 26px; width: min(330px, 88vw); z-index: 20; box-shadow: 0 8px 30px rgb(0 0 0 / .3); transform: translateX(-105%); transition: transform .2s; }
+  aside.left { left: 0; }
+  aside.right { right: 0; transform: translateX(105%); }
+  aside.open { transform: none !important; }
+  .only-narrow { display: inline-flex; }
+  .hide-narrow { display: none; }
+  .scrim.on { display: block; position: absolute; inset: 0; z-index: 15; background: rgb(0 0 0 / .25); }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="app" id="app">
+  <header class="top">
+    <button class="btn icon only-narrow" id="tglLeft" aria-label="Show layers">☰</button>
+    <div class="brand">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="2.2"/><path d="M12 1.5v5M12 17.5v5M1.5 12h5M17.5 12h5"/></svg>
+      ScanBench <small class="hide-narrow">point cloud workbench</small>
+    </div>
+    <div class="grow"></div>
+    <label class="btn primary" for="fileIn">Open files…</label>
+    <input type="file" id="fileIn" multiple hidden accept=".las,.laz,.e57,.ply,.xyz,.txt,.csv,.pts,.asc,.stl,.obj,.zip,.json,.bin">
+    <button class="btn icon only-narrow" id="tglRight" aria-label="Show tools">⚙</button>
+  </header>
+
+  <div class="main" style="position:relative">
+    <div class="scrim" id="scrim"></div>
+    <aside class="left" id="leftPane">
+      <div class="sec">
+        <h3>Load</h3>
+        <div class="drop" id="drop">Drop <b>E57, LAS, LAZ</b>, PLY, XYZ/PTS or STL/OBJ design meshes here.<br>Files stay on this device.</div>
+        <div class="field"><label for="budget">Point budget</label>
+          <select id="budget"><option value="2000000">2 M per file</option><option value="5000000">5 M per file</option><option value="10000000" selected>10 M per file</option><option value="20000000">20 M per file</option><option value="40000000">40 M per file</option></select></div>
+        <div class="field"><label for="meshUnits">Mesh units</label>
+          <select id="meshUnits"><option value="1">metres</option><option value="0.001">millimetres → m</option><option value="0.01">centimetres → m</option><option value="0.3048">feet → m</option></select></div>
+      </div>
+      <div class="sec">
+        <h3>Layers <span class="row" style="gap:4px"><button class="btn small" id="btnMerge" title="Merge all visible clouds into one layer">Merge visible</button></span></h3>
+        <div class="layers" id="layers"></div>
+      </div>
+      <div class="sec" id="layerProps"></div>
+    </aside>
+
+    <div class="viewport" id="vp">
+      <canvas class="gl" id="gl"></canvas>
+      <canvas class="ov" id="ov"></canvas>
+      <div class="labels" id="labels"></div>
+      <div class="vbar">
+        <div class="vgroup" role="group" aria-label="Views">
+          <button class="btn" data-view="top" title="Plan view (T)">Top</button>
+          <button class="btn" data-view="front" title="Front, looking north">Front</button>
+          <button class="btn" data-view="back">Back</button>
+          <button class="btn" data-view="left">Left</button>
+          <button class="btn" data-view="right">Right</button>
+          <button class="btn" data-view="iso" title="Isometric (I)">Iso</button>
+          <button class="btn" id="btnFit" title="Fit all (F)">Fit</button>
+        </div>
+        <div class="vgroup" role="group" aria-label="Display">
+          <button class="btn" id="btnOrtho" title="Orthographic projection (O)">Ortho</button>
+          <button class="btn on" id="btnEDL" title="Eye-dome lighting: shades depth edges so uncoloured scans read in 3D">EDL</button>
+          <button class="btn" id="btnClipVis" title="Toggle clipping box">Clip</button>
+          <button class="btn" id="btnGlobe" title="Fly out to see the data on the Earth, and back">Globe</button>
+          <button class="btn" id="btnShot" title="Save a PNG of the view">PNG</button>
+        </div>
+        <div class="vgroup" style="align-items:center;padding:0 8px;gap:6px">
+          <label for="ptSize" class="hint" style="white-space:nowrap">Point size</label>
+          <input type="range" id="ptSize" min="1" max="8" step="0.5" value="2" style="width:80px">
+        </div>
+      </div>
+      <svg class="axes" id="axes" viewBox="-32 -32 64 64" aria-hidden="true"></svg>
+      <div class="modechip" id="modechip" hidden><span id="modetext"></span><button id="modeDone" hidden>Finish</button><button id="modeEsc">Esc · cancel</button></div>
+      <div class="progress" id="prog" hidden><div class="row" style="justify-content:space-between"><span id="progText">Loading…</span><span class="mono" id="progPct">0%</span></div><div class="bar"><i id="progBar"></i></div></div>
+      <div class="toast" id="toast"></div>
+    </div>
+
+    <aside class="right" id="rightPane">
+      <div class="tabs" role="tablist">
+        <button class="tab on" data-tab="measure">Measure</button>
+        <button class="tab" data-tab="section">Section</button>
+        <button class="tab" data-tab="edit">Edit</button>
+        <button class="tab" data-tab="compare">Compare</button>
+        <button class="tab" data-tab="register">Register</button>
+        <button class="tab" data-tab="cad">Scan to CAD</button>
+        <button class="tab" data-tab="topo">Topo</button>
+        <button class="tab" data-tab="coords">Coords</button>
+        <button class="tab" data-tab="review">Review</button>
+      </div>
+      <div class="pane on" id="pane-measure"></div>
+      <div class="pane" id="pane-section"></div>
+      <div class="pane" id="pane-edit"></div>
+      <div class="pane" id="pane-compare"></div>
+      <div class="pane" id="pane-register"></div>
+      <div class="pane" id="pane-cad"></div>
+      <div class="pane" id="pane-topo"><div id="pane-terrain"></div></div>
+      <div class="pane" id="pane-coords"></div>
+      <div class="pane" id="pane-review"></div>
+    </aside>
+  </div>
+
+  <div class="status" id="status"><span>Pts <b id="stPts">0</b></span><span id="stPick">Click a point to read coordinates</span><span class="grow"></span><span class="hide-narrow" id="stCores"></span><span class="hide-narrow" id="stOrigin"></span></div>
+</div>

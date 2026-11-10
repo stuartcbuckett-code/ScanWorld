@@ -1,0 +1,16 @@
+{
+  "name": "scanworld",
+  "version": "0.3.0",
+  "private": true,
+  "description": "ScanBench: a point cloud workbench that runs in the browser (view, edit, Scan to CAD, topo, coordinates, datasets).",
+  "scripts": {
+    "build": "python3 build.py",
+    "serve": "python3 -m http.server 8080 --directory dist",
+    "test": "node test/t_algo.js && node test/t_icp.js && node test/t_cad.js && node test/t_topo.js && node test/t_samples.js"
+  },
+  "dependencies": {
+    "delaunator": "^5.0.1",
+    "laz-perf": "^0.0.7",
+    "three": "^0.155.0"
+  }
+}

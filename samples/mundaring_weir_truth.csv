@@ -1,0 +1,56 @@
+Type,Name,Detail,E,N,Z / RL,Note
+dam,crest south end,crest centreline,421637.30,6463586.49,161.50,
+dam,spillway south end,crest centreline,421646.03,6463627.57,161.50,
+dam,spillway north end,crest centreline,421675.97,6463768.43,161.50,
+dam,crest north end,crest centreline,421686.89,6463819.78,161.50,
+dam,downstream toe at river,,421626.04,6463705.43,118.60,wall height ~45 m above foundation
+dam,crest length,238 m,,,,"abutment crest RL 161.5, overflow crest RL 159.6"
+water,reservoir (Lake C.Y. O'Connor),water level on capture,,,156.20,water returns are sparse (class 9)
+road,Mundaring Weir Road (bitumen),"vertex 1, width 7.0 m",421263.64,6464089.16,170.34,bitumen
+road,Mundaring Weir Road (bitumen),"vertex 2, width 7.0 m",421321.72,6464025.70,166.95,bitumen
+road,Mundaring Weir Road (bitumen),"vertex 3, width 7.0 m",421382.91,6463976.91,159.82,bitumen
+road,Mundaring Weir Road (bitumen),"vertex 4, width 7.0 m",421420.38,6463912.72,152.63,bitumen
+road,Mundaring Weir Road (bitumen),"vertex 5, width 7.0 m",421439.33,6463857.57,148.12,bitumen
+road,Mundaring Weir Road (bitumen),"vertex 6, width 7.0 m",421467.33,6463820.95,141.63,bitumen
+road,Mundaring Weir Road (bitumen),"vertex 7, width 7.0 m",421519.47,6463801.69,134.00,bitumen
+road,Mundaring Weir Road (bitumen),"vertex 8, width 7.0 m",421587.83,6463810.68,136.55,bitumen
+road,Mundaring Weir Road (bitumen),"vertex 9, width 7.0 m",421648.49,6463831.52,155.87,bitumen
+road,Mundaring Weir Road (bitumen),"vertex 10, width 7.0 m",421684.36,6463846.39,163.31,bitumen
+road,Pump station access (bitumen),"vertex 1, width 6.0 m",421439.33,6463857.57,148.12,bitumen
+road,Pump station access (bitumen),"vertex 2, width 6.0 m",421419.28,6463820.94,147.05,bitumen
+road,Pump station access (bitumen),"vertex 3, width 6.0 m",421429.67,6463788.06,131.10,bitumen
+road,Museum access (gravel),"vertex 1, width 5.0 m",421467.33,6463820.95,141.63,gravel
+road,Museum access (gravel),"vertex 2, width 5.0 m",421473.69,6463778.71,136.17,gravel
+road,Museum access (gravel),"vertex 3, width 5.0 m",421483.79,6463754.07,121.96,gravel
+road,South side track (gravel),"vertex 1, width 4.5 m",421618.08,6463553.77,166.43,gravel
+road,South side track (gravel),"vertex 2, width 4.5 m",421565.93,6463539.30,169.71,gravel
+road,South side track (gravel),"vertex 3, width 4.5 m",421484.56,6463541.26,167.52,gravel
+road,South side track (gravel),"vertex 4, width 4.5 m",421387.17,6463515.96,171.12,gravel
+road,South side track (gravel),"vertex 5, width 4.5 m",421275.84,6463473.17,182.85,gravel
+road,South side track (gravel),"vertex 6, width 4.5 m",421182.61,6463467.42,184.10,gravel
+road,Hotel road (bitumen),"vertex 1, width 6.5 m",421684.36,6463846.39,163.31,bitumen
+road,Hotel road (bitumen),"vertex 2, width 6.5 m",421739.63,6463875.53,177.02,bitumen
+road,Hotel road (bitumen),"vertex 3, width 6.5 m",421815.38,6463895.21,182.44,bitumen
+road,Hotel road (bitumen),"vertex 4, width 6.5 m",421888.00,6463900.22,188.49,bitumen
+road,Hotel road (bitumen),"vertex 5, width 6.5 m",421950.23,6463904.38,189.48,bitumen
+road,Hotel road (bitumen),"vertex 6, width 6.5 m",422044.08,6463913.05,198.72,bitumen
+building,Former No. 1 Pump Station (museum),"46 x 16 m, eave 8.0 m, ridge +4.5 m",421477.52,6463739.04,121.10,ridge RL 133.60
+building,Boiler house annex,"20 x 9 m, eave 6.0 m, ridge +2.5 m",421480.85,6463754.69,121.97,ridge RL 130.47
+building,Pump station,"32 x 20 m, eave 7.5 m, ridge +0.6 m",421417.39,6463778.41,131.10,ridge RL 139.20
+building,Switch room,"12 x 8 m, eave 4.0 m, ridge +0.4 m",421434.90,6463750.15,128.66,ridge RL 133.06
+building,Mundaring Weir Hotel,"34 x 18 m, eave 7.0 m, ridge +3.5 m",421964.07,6463897.34,189.48,ridge RL 199.98
+building,Hotel verandah,"34 x 5 m, eave 3.0 m, ridge +0.3 m",421961.57,6463885.61,189.48,ridge RL 192.78
+building,Toilet block,"8 x 5 m, eave 3.0 m, ridge +1.0 m",421580.13,6463822.54,143.97,ridge RL 147.97
+pole,power pole 1,timber 10.5 m,421686.44,6463856.17,164.82,
+pole,power pole 2,timber 10.5 m,421741.71,6463885.31,178.67,
+pole,power pole 3,timber 10.5 m,421817.46,6463904.99,183.44,
+pole,power pole 4,timber 10.5 m,421890.08,6463910.00,190.05,
+pole,power pole 5,timber 10.5 m,421952.31,6463914.16,189.65,
+pole,power pole 6,timber 10.5 m,421999.23,6463918.50,196.66,
+pole,power pole 7,timber 10.5 m,422046.16,6463922.83,199.96,
+pipeline,Goldfields pipeline (above ground),"vertex 1, OD 760",421413.04,6463791.60,132.38,pipe crown
+pipeline,Goldfields pipeline (above ground),"vertex 2, OD 760",421380.03,6463819.06,140.01,pipe crown
+pipeline,Goldfields pipeline (above ground),"vertex 3, OD 760",421324.46,6463846.21,144.97,pipe crown
+pipeline,Goldfields pipeline (above ground),"vertex 4, OD 760",421269.93,6463878.25,149.82,pipe crown
+pipeline,Goldfields pipeline (above ground),"vertex 5, OD 760",421217.98,6463912.80,156.37,pipe crown
+trees,tree crowns generated,4159,,,,heights 9-27 m
