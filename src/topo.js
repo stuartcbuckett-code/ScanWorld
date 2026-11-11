@@ -131,6 +131,18 @@ function tinContours(tin, interval, base = 0) {
   for (const { L, segs } of byLevel.values()) for (const line of C.joinSegments(segs)) out.push({ level: L, pts: line.map(p => [p[0], p[1], L]) });
   return out.sort((a, b) => a.level - b.level);
 }
+function smoothTin(tin, iters = 2) { // contouring surface: each vertex moves halfway to the mean of its neighbours, so scan noise does not become contour specks
+  const { pts, tris } = tin, n = pts.length; let z = Float64Array.from(pts, p => p[2]);
+  for (let k = 0; k < iters; k++) { const s = new Float64Array(n), c = new Uint32Array(n);
+    for (let t = 0; t < tris.length; t += 3) { const a = tris[t], b = tris[t + 1], d = tris[t + 2]; s[a] += z[b] + z[d]; s[b] += z[a] + z[d]; s[d] += z[a] + z[b]; c[a] += 2; c[b] += 2; c[d] += 2; }
+    const q = new Float64Array(n); for (let i = 0; i < n; i++) q[i] = c[i] ? 0.5 * z[i] + 0.5 * s[i] / c[i] : z[i]; z = q; }
+  return { pts: pts.map((p, i) => [p[0], p[1], z[i]]), tris };
+}
+function niceInterval(relief, levels = 50) { const want = relief / levels; for (const v of [0.05, 0.1, 0.2, 0.25, 0.5, 1, 2, 5, 10, 20, 50]) if (v >= want) return v; return 100; }
+function lineZ(tin, grid, line) { // heights for a plan line on the surface; points that fall off the surface take the height of the nearest point along the line that is on it
+  const z = line.map(p => tinZ(tin, p[0], p[1], grid)), n = z.length, ok = i => Number.isFinite(z[i]); if (!z.some((v, i) => ok(i))) return line.map(p => [p[0], p[1], tin.pts[0][2]]);
+  return line.map((p, i) => { if (ok(i)) return [p[0], p[1], z[i]]; for (let d = 1; d < n; d++) { const a = (i + d) % n, b = (i - d + n * 2) % n; if (ok(a)) return [p[0], p[1], z[a]]; if (ok(b)) return [p[0], p[1], z[b]]; } return [p[0], p[1], 0]; });
+}
 function smoothLine(pts, iters = 2) { // Chaikin, keeps ends (or closure)
   let p = pts; const closed = p.length > 3 && Math.hypot(p[0][0] - p[p.length - 1][0], p[0][1] - p[p.length - 1][1]) < 1e-6;
   for (let k = 0; k < iters; k++) {
@@ -346,6 +358,77 @@ function landXML(tin, breaks, origin, name, units = 'meter') {
   return L.join('\n');
 }
 
-const SBT = { pmfGround, classify, tinPoints, buildTIN, tinContours, smoothLine, tinZ, tinIndex, breaklines, trees, structures, spotLevels, topoSurvey, landXML, bilinear, components2D };
+
+// ---------- vegetation analysis and bushfire hazard ----------
+function circleFit(xy) { // least-squares circle through plan points [[x,y]…]
+  const n = xy.length; let mx = 0, my = 0; for (const q of xy) { mx += q[0]; my += q[1]; } mx /= n; my /= n;
+  let suu = 0, suv = 0, svv = 0, suuu = 0, svvv = 0, suvv = 0, svuu = 0;
+  for (const q of xy) { const u = q[0] - mx, v = q[1] - my; suu += u * u; suv += u * v; svv += v * v; suuu += u * u * u; svvv += v * v * v; suvv += u * v * v; svuu += v * u * u; }
+  const det = suu * svv - suv * suv; if (Math.abs(det) < 1e-12) return null;
+  const a = 0.5 * (suuu + suvv), b = 0.5 * (svvv + svuu), uc = (a * svv - b * suv) / det, vc = (b * suu - a * suv) / det, r = Math.sqrt(uc * uc + vc * vc + (suu + svv) / n);
+  let ss = 0; const sect = new Uint8Array(12); for (const q of xy) { const dx = q[0] - mx - uc, dy = q[1] - my - vc; ss += (Math.hypot(dx, dy) - r) ** 2; sect[Math.min(11, Math.floor((Math.atan2(dy, dx) + Math.PI) / (Math.PI / 6)))] = 1; }
+  return { x: mx + uc, y: my + vc, r, rms: Math.sqrt(ss / n), arc: sect.reduce((p, q) => p + q, 0) * 30 };
+}
+const pct = (a, f) => a.length ? a[Math.min(a.length - 1, Math.floor(a.length * f))] : NaN;
+function vegetation(t, opts = {}) {
+  const { P, m, cls, hag } = t, cell = opts.cell || 1, trees = (t.trees || []).filter(T => T.height <= (opts.maxTreeHeight || 90) && !(T.height > 40 && T.spread < 0.12 * T.height));   // very tall and pencil-thin is a mast, wire or stray return, not a tree
+  const NS = opts.nearSurface || [0.1, 0.6], EL = opts.elevated || [0.6, 3];
+  // strata grid
+  const g = gridOf(P, m, cell), N = g.nx * g.ny; const seen = new Uint8Array(N), ns = new Uint8Array(N), elv = new Uint8Array(N), can = new Uint8Array(N), elTop = new Float32Array(N), canBase = new Float32Array(N).fill(Infinity), canTop = new Float32Array(N);
+  // trees: bucket grid for point → tree
+  const bc = 4, bk = new Map(); trees.forEach((T, i) => { const R = Math.max(1, T.spread * 0.6); for (let a = Math.floor((T.x - R) / bc); a <= Math.floor((T.x + R) / bc); a++) for (let b = Math.floor((T.y - R) / bc); b <= Math.floor((T.y + R) / bc); b++) { const k = a + ',' + b; let l = bk.get(k); if (!l) bk.set(k, l = []); l.push(i); } });
+  const crown = trees.map(() => []), stem = trees.map(() => []);
+  for (let i = 0; i < m; i++) {
+    const x = P[i * 3], y = P[i * 3 + 1], h = hag[i], c = cls[i], k = cellIndex(g, x, y); if (k < 0) continue; seen[k] = 1;
+    const veg = c === 3 || c === 4 || c === 5;
+    if (veg) { if (h >= NS[0] && h < NS[1]) ns[k] = 1; else if (h >= EL[0] && h < EL[1]) { elv[k] = 1; if (h > elTop[k]) elTop[k] = h; } else if (h >= EL[1]) { can[k] = 1; if (h < canBase[k]) canBase[k] = h; if (h > canTop[k]) canTop[k] = h; } }
+    if (!trees.length || c === 2 || c === 6) continue;
+    const l = bk.get(Math.floor(x / bc) + ',' + Math.floor(y / bc)); if (!l) continue; let best = -1, bd = Infinity;
+    for (const ti of l) { const T = trees[ti], d = Math.hypot(x - T.x, y - T.y); if (d <= Math.max(1, T.spread * 0.6) && d / Math.max(1, T.spread) < bd) { bd = d / Math.max(1, T.spread); best = ti; } }
+    if (best < 0) continue; if (c === 5) crown[best].push(h); if (h >= 1.0 && h <= 1.6) stem[best].push([x, y]);
+  }
+  const outT = trees.map((T, i) => {
+    const hs = Float32Array.from(crown[i]).sort(); const cbh = hs.length >= 8 ? Math.max(0.3, pct(hs, 0.05)) : NaN, area = Math.PI * (T.spread / 2) ** 2, depth = isFinite(cbh) ? Math.max(0, T.height - cbh) : NaN;
+    let dbh = null, tx = T.x, ty = T.y; const sp = stem[i];
+    if (sp.length >= 10) { // densest 0.25 m patch, then a circle through the points around it
+      const cnt = new Map(); for (const q of sp) { const k = Math.floor(q[0] / 0.25) + ',' + Math.floor(q[1] / 0.25); cnt.set(k, (cnt.get(k) || 0) + 1); }
+      let bk2 = null, bn = 0; for (const [k, v] of cnt) if (v > bn) { bn = v; bk2 = k; } const [ci, cj] = bk2.split(',').map(Number), cx = (ci + 0.5) * 0.25, cy = (cj + 0.5) * 0.25;
+      const near = sp.filter(q => Math.hypot(q[0] - cx, q[1] - cy) < 0.7); if (near.length >= 10) { const f = circleFit(near); if (f && f.r >= 0.04 && f.r <= 0.9 && f.rms < Math.max(0.015, 0.2 * f.r) && f.arc >= 150) { dbh = 2 * f.r; tx = f.x; ty = f.y; } }
+    }
+    return { id: i + 1, x: T.x, y: T.y, groundZ: T.groundZ, height: T.height, spread: T.spread, crownArea: area, crownBase: cbh, crownDepth: depth, crownVolume: isFinite(depth) ? 2 / 3 * area * depth : NaN, dbh, trunkX: tx, trunkY: ty, returns: hs.length };
+  });
+  let aS = 0, aC = 0, aE = 0, aN = 0; for (let k = 0; k < N; k++) if (seen[k]) { aS++; aC += can[k]; aE += elv[k]; aN += ns[k]; }
+  const hsort = outT.map(T => T.height).sort((a, b) => a - b), cb = outT.map(T => T.crownBase).filter(isFinite), dbhs = outT.filter(T => T.dbh).map(T => T.dbh), ha = aS * cell * cell / 1e4;
+  const stand = { areaHa: ha, trees: outT.length, stemsPerHa: ha ? outT.length / ha : 0, canopyCover: aS ? aC / aS : 0, elevatedCover: aS ? aE / aS : 0, nearSurfaceCover: aS ? aN / aS : 0, heightMean: hsort.length ? hsort.reduce((a, b) => a + b, 0) / hsort.length : 0, heightP95: pct(hsort, 0.95) || 0, heightMax: hsort.length ? hsort[hsort.length - 1] : 0, crownBaseMean: cb.length ? cb.reduce((a, b) => a + b, 0) / cb.length : NaN, trunksMeasured: dbhs.length, dbhMean: dbhs.length ? dbhs.reduce((a, b) => a + b, 0) / dbhs.length : NaN };
+  return { trees: outT, stand, grid: g, seen, ns, elv, can, elTop, canBase, canTop, NS, EL };
+}
+// Northern jarrah litter depth (mm) → litter weight (t/ha); beyond the table the last slope is carried on
+const LITTER_TABLE = [[0, 0], [5, 2.7], [10, 5.3], [15, 8], [20, 11], [25, 13], [30, 16], [35, 19], [40, 21], [45, 24], [50, 27]];
+function litterLoad(mm) { if (!(mm > 0)) return 0; const T = LITTER_TABLE; for (let i = 1; i < T.length; i++) if (mm <= T[i][0]) return T[i - 1][1] + (T[i][1] - T[i - 1][1]) * (mm - T[i - 1][0]) / (T[i][0] - T[i - 1][0]); return 27 + (mm - 50) * 0.54; }
+const FIRE_CLASSES = [{ name: 'No fuel', max: 0, color: 0x6f7780 }, { name: 'Low', max: 500, color: 0x4caf50 }, { name: 'Moderate', max: 2000, color: 0xffd54a }, { name: 'High', max: 4000, color: 0xff9800 }, { name: 'Very high', max: 10000, color: 0xe53935 }, { name: 'Extreme', max: Infinity, color: 0x8e24aa }];
+function inPolyXY(x, y, poly) { let c = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) { const a = poly[i], b = poly[j]; if ((a[1] > y) !== (b[1] > y) && x < (b[0] - a[0]) * (y - a[1]) / (b[1] - a[1]) + a[0]) c = !c; } return c; }
+function fireHazard(t, veg, opts = {}) {
+  const ffdi = opts.ffdi ?? 80, fmc = opts.fmc ?? 100, flam = opts.flammability ?? 2, perM = opts.scrubPerMetre ?? 4, dCan = opts.litterCanopy ?? 70, dOpen = opts.litterOpen ?? 0, zones = opts.zones || [];
+  const g = veg.grid, k0 = Math.max(1, Math.round((opts.cell || 5) / g.cell)), nx = Math.ceil(g.nx / k0), ny = Math.ceil(g.ny / k0), C = k0 * g.cell; const cells = [];
+  const zAt = (x, y) => tinZ(t.tin, x, y, t.idxGrid);
+  for (let J = 0; J < ny; J++) for (let I = 0; I < nx; I++) {
+    let n = 0, cc = 0, ce = 0, cn = 0, eh = 0; const cbs = [];
+    for (let j = J * k0; j < Math.min(g.ny, (J + 1) * k0); j++) for (let i = I * k0; i < Math.min(g.nx, (I + 1) * k0); i++) { const k = j * g.nx + i; if (!veg.seen[k]) continue; n++; if (veg.can[k]) { cc++; cbs.push(veg.canBase[k]); } if (veg.elv[k]) { ce++; eh += veg.elTop[k]; } cn += veg.ns[k]; }
+    if (n < k0 * k0 * 0.25) continue;
+    const x = g.x0 + (I + 0.5) * C, y = g.y0 + (J + 0.5) * C, z = zAt(x, y); if (!Number.isFinite(z)) continue;
+    const h = C / 2, zx0 = zAt(x - h, y), zx1 = zAt(x + h, y), zy0 = zAt(x, y - h), zy1 = zAt(x, y + h); const gx = Number.isFinite(zx0) && Number.isFinite(zx1) ? (zx1 - zx0) / C : 0, gy = Number.isFinite(zy0) && Number.isFinite(zy1) ? (zy1 - zy0) / C : 0;
+    const slope = Math.atan(Math.hypot(gx, gy)) * 180 / Math.PI, covC = cc / n, covE = ce / n, covN = cn / n, elH = ce ? eh / ce : 0; cbs.sort((a, b) => a - b); const cbh = cbs.length ? pct(cbs, 0.25) : NaN;
+    let depth = covC >= 0.2 ? dCan : dOpen, zone = null; for (const Z of zones) if (inPolyXY(x, y, Z.poly)) { depth = Z.depth; zone = Z.name || 'zone'; }
+    const wL = litterLoad(depth), wS = flam * (perM * elH * covE + perM * 0.35 * covN), Wall = wL + wS, W = Math.min(Wall, opts.maxFuel ?? 25);
+    const R = 0.0012 * ffdi * W * Math.exp(0.069 * Math.min(20, slope)), flame = W > 0 ? Math.max(0, 13 * R + 0.24 * W - 2) : 0, I0 = 18600 * (W / 10) * (R / 3.6);   // km/h, m, kW/m
+    const crit = Number.isFinite(cbh) ? Math.pow(0.010 * cbh * (460 + 25.9 * fmc), 1.5) : Infinity, crownFire = covC >= 0.3 && I0 >= crit, ladder = covC >= 0.2 && covE >= 0.2 && Number.isFinite(cbh) && cbh - elH < 1.5;
+    let rating = 0; if (W > 0) { rating = 1; while (rating < 5 && I0 >= FIRE_CLASSES[rating].max) rating++; }
+    cells.push({ x, y, z, slope, canopy: covC, elevated: covE, nearSurface: covN, elevatedHeight: elH, crownBase: cbh, litterDepth: depth, litterLoad: wL, scrubLoad: wS, fuelTotal: Wall, fuel: W, ros: R * 1000, flame, intensity: I0, crownFire, ladder, rating, zone });
+  }
+  const area = new Array(6).fill(0); let cf = 0, lf = 0, mi = 0, si = 0, sw = 0; for (const c of cells) { area[c.rating] += C * C; if (c.crownFire) cf++; if (c.ladder) lf++; mi = Math.max(mi, c.intensity); si += c.intensity; sw += c.fuel; }
+  const tot = cells.length * C * C;
+  return { cell: C, cells, classes: FIRE_CLASSES, inputs: { ffdi, fmc, flammability: flam, scrubPerMetre: perM, litterCanopy: dCan, litterOpen: dOpen, zones: zones.length }, summary: { areaHa: tot / 1e4, areaByClass: area.map(a => a / 1e4), crownFireShare: cells.length ? cf / cells.length : 0, ladderShare: cells.length ? lf / cells.length : 0, intensityMax: mi, intensityMean: cells.length ? si / cells.length : 0, fuelMean: cells.length ? sw / cells.length : 0 } };
+}
+const SBT = { vegetation, fireHazard, litterLoad, circleFit, FIRE_CLASSES, smoothTin, niceInterval, lineZ, pmfGround, classify, tinPoints, buildTIN, tinContours, smoothLine, tinZ, tinIndex, breaklines, trees, structures, spotLevels, topoSurvey, landXML, bilinear, components2D };
 if (typeof module !== 'undefined') module.exports = SBT; else G.SBT = SBT;
 })();

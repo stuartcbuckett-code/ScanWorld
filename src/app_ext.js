@@ -225,15 +225,18 @@ function drawTopo() {
     g.add(linesObj(t.buildings.map(B => B.loop.map(p => [p[0], p[1], B.groundZ + 0.05])), 0xe06060, true));
     g.add(linesObj(t.poles.map(P => [[P.x, P.y, P.groundZ], [P.x, P.y, P.groundZ + P.height]]), 0xffffff));
     g.add(linesObj(t.walls.map(Wl => [[Wl.a[0], Wl.a[1], Wl.groundZ + Wl.height], [Wl.b[0], Wl.b[1], Wl.groundZ + Wl.height]]), 0xd08cff));
-    if (t.extent) g.add(linesObj([t.extent.map(p => [p[0], p[1], T_.tinZ(t.tin, p[0], p[1], t.idxGrid) || t.tin.pts[0][2]])], 0x999999, true));
+    if (t.extent) g.add(linesObj([T_.lineZ(t.tin, t.idxGrid, t.extent)], 0x999999, true));
   }
   if (vis.spot) { const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.Float32BufferAttribute(t.spots.flat(), 3)); g.add(new THREE.Points(geo, new THREE.PointsMaterial({ color: 0xffffff, size: 5, sizeAttenuation: false }))); }
   S.topoObj = g; annot.add(g); S.dirty = true;
 }
 function makeContours2() {
-  const t = S.topo; if (!t) return; const iv = Math.max(0.01, S.tcInt || 0.25), maj = Math.max(1, S.tcMaj || 4) * iv;
-  let cs = T_.tinContours(t.tin, iv, -S.origin[2]);
-  cs = cs.filter(c => c.pts.length >= 3 || Math.hypot(c.pts[0][0] - c.pts[c.pts.length - 1][0], c.pts[0][1] - c.pts[c.pts.length - 1][1]) > iv);
+  const t = S.topo; if (!t) return;
+  if (!S.tcInt || S.tcAuto) { S.tcAuto = true; let z0 = Infinity, z1 = -Infinity; for (const p of t.tin.pts) { if (p[2] < z0) z0 = p[2]; if (p[2] > z1) z1 = p[2]; } S.tcInt = T_.niceInterval(z1 - z0); S.tcMaj = S.tcInt === 0.25 ? 4 : 5; }
+  const iv = Math.max(0.01, S.tcInt), maj = Math.max(1, S.tcMaj || 4) * iv, smooth = S.tcSmooth !== false;
+  let cs = T_.tinContours(smooth ? T_.smoothTin(t.tin, 3) : t.tin, iv, -S.origin[2]);
+  const minLen = smooth ? Math.max(2, 6 * (S.tTin || 0.5)) : iv, plen = c => { let s = 0; for (let i = 1; i < c.pts.length; i++) s += Math.hypot(c.pts[i][0] - c.pts[i - 1][0], c.pts[i][1] - c.pts[i - 1][1]); return s; };
+  cs = cs.filter(c => plen(c) >= minLen);
   for (const c of cs) { const wl = c.level + S.origin[2]; c.major = Math.abs(wl / maj - Math.round(wl / maj)) < 1e-6; if (S.tcSmooth !== false) c.pts = T_.smoothLine(c.pts, 2); }
   S.topoContours = cs; drawTopo();
 }
@@ -259,7 +262,7 @@ function buildTopo() {
     el('div', { class: 'row' }, vchk('tin', 'TIN'), vchk('brk', 'Breaklines'), vchk('cont', 'Contours'), vchk('feat', 'Features'), vchk('spot', 'Spot levels')));
   const iv = numIn('tcInt', S.tcInt || 0.25), mj = numIn('tcMaj', S.tcMaj || 4, '1'); const sm = el('input', { type: 'checkbox', id: 'tcSm' }); sm.checked = S.tcSmooth !== false;
   const s3 = el('div', { class: 'sec' }, el('h3', {}, 'Contours'), fieldRow('Interval (m)', iv), fieldRow('Major every', mj), el('div', { class: 'field' }, el('label', { for: 'tcSm' }, 'Smooth'), el('span', {}, sm)),
-    el('div', { class: 'row' }, el('button', { class: 'btn small primary', onclick: () => { Object.assign(S, { tcInt: +iv.value, tcMaj: +mj.value, tcSmooth: sm.checked }); makeContours2(); buildTopo(); } }, 'Generate')), S.topoContours ? el('div', { class: 'note' }, S.topoContours.length + ' contour lines from the TIN.') : null);
+    el('div', { class: 'row' }, el('button', { class: 'btn small primary', onclick: () => { Object.assign(S, { tcAuto: false, tcInt: +iv.value, tcMaj: +mj.value, tcSmooth: sm.checked }); makeContours2(); buildTopo(); } }, 'Generate')), S.topoContours ? el('div', { class: 'note' }, S.topoContours.length + ' contour lines from the TIN.') : null);
   const tinOn = el('input', { type: 'checkbox', id: 'tDxfTin' }); tinOn.checked = S.tDxfTin !== false; tinOn.addEventListener('change', () => { S.tDxfTin = tinOn.checked; });
   const s4 = el('div', { class: 'sec' }, el('h3', {}, 'Export'), el('div', { class: 'note' }, 'DXF layers: TOPO-CONT-MAJR/MINR (+ labels), TOPO-BRKL-TOP/TOE, TOPO-SPOT, TOPO-TREE, TOPO-BLDG, TOPO-POLE, TOPO-WALL, TOPO-EXTENT, TOPO-TIN. LandXML carries the TIN and breaklines for Civil 3D. Coordinates are written in ' + crsLabel() + '.'),
     el('div', { class: 'field' }, el('label', { for: 'tDxfTin' }, 'TIN faces in DXF'), el('span', {}, tinOn)),

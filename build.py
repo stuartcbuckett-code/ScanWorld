@@ -17,7 +17,7 @@ wasm = base64.b64encode(open(R('node_modules', 'laz-perf', 'lib', 'web', 'laz-pe
 dl = read('node_modules', 'delaunator', 'delaunator.min.js')
 io, al, cad, topo, crs = (read('src', f) for f in ['io.js', 'algo.js', 'cad.js', 'topo.js', 'crs.js'])
 app = read('src', 'app.js')
-ext = '\n'.join(read('src', f) for f in ['app_ext.js', 'app_cad.js', 'app_review.js', 'app_lod.js', 'app_more.js', 'app_stream.js', 'app_globe.js'])
+ext = '\n'.join(read('src', f) for f in ['app_ext.js', 'app_cad.js', 'app_review.js', 'app_lod.js', 'app_more.js', 'app_stream.js', 'app_globe.js', 'app_veg.js'])
 marker = '// ---------- boot ----------'
 assert marker in app
 app = app.replace(marker, ext + '\n' + marker)
