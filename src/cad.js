@@ -286,9 +286,10 @@ const STEEL = {
 const HOLLOW = [50, 65, 75, 89, 100, 125, 150, 200, 250, 300, 350, 400];
 function matchSteel(fam, dMM, bMM) {
   let best = null, be = Infinity;
-  for (const f of fam) for (const s of STEEL[f]) { const e = Math.hypot((s[1] - dMM) / s[1], (s[2] - bMM) / s[2]); if (e < be) { be = e; best = { name: s[0], d: s[1], bf: s[2], tf: s[3], tw: s[4], fam: f }; } }
-  if (be >= 0.12) return null;
-  const alts = []; for (const f of fam) for (const s of STEEL[f]) { const e = Math.hypot((s[1] - dMM) / s[1], (s[2] - bMM) / s[2]); if (s[0] !== best.name && e < be + 0.03) alts.push(s[0]); }
+  const err = s => { const ed = (dMM - s[1]) / s[1], eb = (bMM - s[2]) / s[2]; return Math.hypot(ed < 0 ? ed * 2.5 : ed, (eb < 0 ? eb * 2.5 : eb) * 0.7); };   // reading small is less likely than reading large
+  for (const f of fam) for (const s of STEEL[f]) { const e = err(s); if (e < be) { be = e; best = { name: s[0], d: s[1], bf: s[2], tf: s[3], tw: s[4], fam: f }; } }
+  if (be >= 0.14) return null;
+  const alts = []; for (const f of fam) for (const s of STEEL[f]) { const e = err(s); if (s[0] !== best.name && e < be + 0.035) alts.push(s[0]); }
   return Object.assign(best, { err: be, alts });
 }
 const nearestHollow = v => HOLLOW.reduce((a, b) => Math.abs(b - v) < Math.abs(a - v) ? b : a);
@@ -323,7 +324,27 @@ function classifySection(s, t, m) {
   const sc = scores[best];
   let shape = sc.prec > 0.85 ? (best[0] === 'I' ? 'I' : best === 'BOX' ? 'BOX' : best[0]) : 'PRISM';
   // I needs the web: if web band nearly empty it's really two plates (channel-like or box); keep I only with web coverage
-  return { shape, key: best, W, H, s0, s1, t0, t1, cs: (s0 + s1) / 2, ct: (t0 + t1) / 2, prec: sc.prec, cov: sc.cov };
+  // flange width from the free flange: a deck plate, grating or kick-plate welded to one flange must not widen the section
+  let W2 = W, H2 = H, S0 = s0, S1 = s1, T0 = t0, T1 = t1, plate = false;
+  if (shape === 'I' || shape === 'C') {
+    const along = best === 'I|' || best === 'C0' || best === 'C1';   // flanges run along s, depth along t
+    const ext = (sel, val) => { const v = []; for (let i = 0; i < m; i++) if (sel(i)) v.push(val(i)); if (v.length < 12) return null; v.sort((x, y) => x - y); return [v[Math.floor(v.length * 0.02)], v[Math.floor(v.length * 0.98)], v.length]; };
+    const A = along ? i => (t[i] - t0) / H : i => (s[i] - s0) / W, val = along ? i => s[i] : i => t[i];
+    const lo = ext(i => A(i) < 0.12, val), hi = ext(i => A(i) > 0.88, val);
+    if (lo && hi) { const wl = lo[1] - lo[0], wh = hi[1] - hi[0], nar = wl < wh ? lo : hi, wid = Math.max(wl, wh), nw = Math.min(wl, wh); if (wid > nw * 1.2 && nw > 0.03) { plate = true; if (along) { W2 = nw; S0 = nar[0]; S1 = nar[1]; } else { H2 = nw; T0 = nar[0]; T1 = nar[1]; } } }
+    // depth between the outer flange faces, less sensitive to stray points than the full extent
+    const dv = ext(i => { const q = along ? s[i] : t[i]; return q >= (along ? S0 : T0) && q <= (along ? S1 : T1); }, along ? i => t[i] : i => s[i]);
+    if (dv) {
+      // flange faces show as peaks along the depth; a kick-plate or stiffener standing past a flange does not
+      let d0 = dv[0], d1 = dv[1]; const bw = 0.004, nb = Math.max(4, Math.ceil((d1 - d0) / bw) + 1), hist = new Float32Array(nb); const inW = along ? i => s[i] >= S0 && s[i] <= S1 : i => t[i] >= T0 && t[i] <= T1, dc = along ? i => t[i] : i => s[i];
+      for (let i = 0; i < m; i++) if (inW(i)) { const k = Math.floor((dc(i) - d0) / bw); if (k >= 0 && k < nb) hist[k]++; }
+      const sm = new Float32Array(nb); for (let k = 0; k < nb; k++) sm[k] = (hist[k - 1] || 0) + hist[k] + (hist[k + 1] || 0); let mx = 0; for (const v of sm) if (v > mx) mx = v;
+      const peaks = []; for (let k = 0; k < nb; k++) if (sm[k] >= mx * 0.3 && sm[k] >= (sm[k - 1] || 0) && sm[k] >= (sm[k + 1] || 0)) peaks.push(k);
+      if (peaks.length >= 2) { const p0 = d0 + (peaks[0] + 0.5) * bw - bw, p1 = d0 + (peaks[peaks.length - 1] + 0.5) * bw + bw; if (p1 - p0 > (d1 - d0) * 0.55) { d0 = Math.max(d0, p0); d1 = Math.min(d1, p1); } }
+      if (along) { T0 = d0; T1 = d1; H2 = T1 - T0; } else { S0 = d0; S1 = d1; W2 = S1 - S0; }
+    }
+  }
+  return { shape, key: best, W: W2, H: H2, s0: S0, s1: S1, t0: T0, t1: T1, cs: (S0 + S1) / 2, ct: (T0 + T1) / 2, prec: sc.prec, cov: sc.cov, plate, Wfull: W, Hfull: H };
 }
 
 // ---------- member growth from a seed ----------
@@ -415,7 +436,7 @@ function describeSteel(M) {
     label = cat ? cat.name + (cat.alts.length ? ' (or ' + cat.alts.slice(0, 2).join(', ') + ')' : '') : 'I-section ' + Math.round(d) + '×' + Math.round(b); fam = cat ? cat.fam : 'I';
   } else if (sec.shape === 'C') {
     const webAlongT = sec.key === 'C0' || sec.key === 'C1'; const d = webAlongT ? H : W, b = webAlongT ? W : H;
-    const cat = matchSteel(['PFC'], d, b); dims = cat ? { d: cat.d, bf: cat.bf, tf: cat.tf, tw: cat.tw } : { d, bf: b, tf: Math.max(6, d * 0.05), tw: Math.max(5, d * 0.03) };
+    let cat = matchSteel(['PFC'], d, b); if (!cat) { const c2 = STEEL.PFC.map(q => [Math.abs(d - q[1]) / q[1], q]).sort((x, y) => x[0] - y[0])[0]; if (c2[0] < 0.05 && b > c2[1][2] * 0.6 && b < c2[1][2] * 2.3) cat = { name: c2[1][0], d: c2[1][1], bf: c2[1][2], tf: c2[1][3], tw: c2[1][4], fam: 'PFC', alts: [] }; } dims = cat ? { d: cat.d, bf: cat.bf, tf: cat.tf, tw: cat.tw } : { d, bf: b, tf: Math.max(6, d * 0.05), tw: Math.max(5, d * 0.03) };
     label = cat ? cat.name : 'Channel ' + Math.round(d) + '×' + Math.round(b); fam = 'PFC';
   } else if (sec.shape === 'L') { dims = { d: H, bf: W, t: Math.max(5, Math.min(W, H) * 0.08) }; label = 'Angle ' + Math.round(Math.max(W, H)) + '×' + Math.round(Math.min(W, H)); }
   else if (sec.shape === 'BOX') { const a = nearestHollow(Math.max(W, H)), b = nearestHollow(Math.min(W, H)); dims = { d: H, bf: W, t: Math.max(3, Math.min(W, H) * 0.05) }; label = (Math.abs(a - b) < 1 ? 'SHS ' : 'RHS ') + a + '×' + b + ' (approx)'; }
@@ -429,17 +450,22 @@ async function detectMembers(ctx, opts, onP = () => {}) {
   const r0 = opts.seedRadius || Math.max(0.15, Math.min(0.5, opts.maxR * 1.6));
   const order = []; for (let i = 0; i < n; i++) if (!used[i]) order.push(i);
   let seed = 9; for (let i = order.length - 1; i > 0; i--) { seed = (seed * 16807) % 2147483647; const j = seed % (i + 1); const t = order[i]; order[i] = order[j]; order[j] = t; }
-  let attempts = 0; const maxAttempts = opts.maxAttempts || 4000; const buf = [];
+  let attempts = 0; const maxAttempts = opts.maxAttempts || (opts.only === 'pipe' ? 12000 : 4000); const buf = [];
   for (let oi = 0; oi < order.length && attempts < maxAttempts; oi++) {
     const sI = order[oi]; if (used[sI] || tried[sI]) continue; attempts++;
-    buf.length = 0; kdRadius(K, P[sI * 3], P[sI * 3 + 1], P[sI * 3 + 2], r0, buf);
-    const local = buf.filter(i => !used[i]);
-    const markTried = () => { for (const i of local) { const dx = P[i * 3] - P[sI * 3], dy = P[i * 3 + 1] - P[sI * 3 + 1], dz = P[i * 3 + 2] - P[sI * 3 + 2]; if (dx * dx + dy * dy + dz * dz < r0 * r0 * 0.36) tried[i] = 1; } tried[sI] = 1; };
-    if (local.length < 30) { markTried(); continue; }
-    const NA = normalsAxis(nrm, local, local.length);
-    if (!(NA.l[1] > 0.06 * NA.l[2] && NA.l[0] < 0.35 * NA.l[1])) { markTried(); continue; }
-    const M = growMember(ctx, local, NA.axis, opts, r0);
-    if (!M || (opts.only && M.type !== opts.only)) { markTried(); continue; }
+    // pipes: try small neighbourhoods first, so a pipe on a crowded rack is seen on its own before its neighbours get in the way
+    const radii = opts.only === 'pipe' ? (opts.seedRadii || [0.07, 0.12, 0.2, 0.35]).filter(r => r < r0).concat([r0]) : [r0];
+    let M = null, local = null, rUsed = radii[0];
+    for (const rs of radii) {
+      buf.length = 0; kdRadius(K, P[sI * 3], P[sI * 3 + 1], P[sI * 3 + 2], rs, buf); local = buf.filter(i => !used[i]); rUsed = rs;
+      if (local.length < 30) continue;
+      const NA = normalsAxis(nrm, local, local.length);
+      if (!(NA.l[1] > 0.06 * NA.l[2] && NA.l[0] < 0.35 * NA.l[1])) continue;
+      const m = growMember(ctx, local, NA.axis, opts, rs);
+      if (m && (!opts.only || m.type === opts.only)) { M = m; break; }
+    }
+    const markTried = () => { const rt = radii[0]; buf.length = 0; kdRadius(K, P[sI * 3], P[sI * 3 + 1], P[sI * 3 + 2], rt * 0.6, buf); for (const i of buf) tried[i] = 1; tried[sI] = 1; };
+    if (!M) { markTried(); continue; }
     out.push(M); for (const i of M.idx) used[i] = 1;
     if (out.length % 3 === 0) { onP(oi / order.length); await tickC(); }
     if ((attempts & 63) === 0) { onP(oi / order.length); await tickC(); }
@@ -449,10 +475,11 @@ async function detectMembers(ctx, opts, onP = () => {}) {
 function growMember(ctx, local, axis, opts, r0) {
   const { P, nrm, K, used } = ctx;
   let first = fitMember(ctx, local, axis, opts);
+  if (!first || (opts.only === 'pipe' && first.type !== 'pipe')) return null;   // pipe pass: do not grow something that is not round
   // section half-size for corridor
   let rad;
   if (first.type === 'pipe') rad = first.r * 1.25 + 0.01;
-  else rad = Math.hypot(first.sec.W, first.sec.H) / 2 * 1.05 + 0.01;
+  else rad = Math.hypot(first.sec.Wfull || first.sec.W, first.sec.Hfull || first.sec.H) / 2 * 1.05 + 0.01;
   if (rad > Math.max(opts.maxR * 1.4, opts.maxSection || 0.7)) return null;
   const ax = first.axis; const cen = [(first.p0[0] + first.p1[0]) / 2, (first.p0[1] + first.p1[1]) / 2, (first.p0[2] + first.p1[2]) / 2];
   const step = Math.max(0.1, rad), maxGap = opts.maxGap || 0.5;
@@ -485,6 +512,7 @@ function growMember(ctx, local, axis, opts, r0) {
   if (M.length < Math.max(opts.minLen || 0.3, secSize * 1.5)) return null;
   if (M.type === 'steel' && ctx.curv && !opts.keepPrisms) { let flat = 0; for (const i of idx) if (ctx.curv[i] < 0.012) flat++; M.flat = flat / idx.length; if (M.flat < (opts.minFlat || 0)) return null; }
   if (M.type === 'steel' && !opts.keepPrisms && !sectionConsistent(ctx, idx, M)) return null;
+  if (M.type === 'steel' && !opts.keepOddSections) { const a_ = Math.max(M.sec.W, M.sec.H), b_ = Math.min(M.sec.W, M.sec.H), sh = M.sec.shape; if ((sh === 'C' && (b_ > 0.2 || b_ > a_ * 0.6)) || (sh === 'L' && a_ > 0.26) || (sh === 'I' && (b_ < a_ * 0.22 || a_ > 1.0))) return null; }
   if (M.type === 'steel') { if (M.sec.shape === 'PRISM' && !opts.keepPrisms) return null; if (Math.max(M.sec.W, M.sec.H) > (opts.maxSection || 0.7)) return null; describeSteel(M); }
   else {
     const ax2 = M.axis, base = M.p0, keepI = [];
@@ -505,7 +533,7 @@ function sectionConsistent(ctx, idx, M) {
     if (pt.length < 15) return false;
     const a = pt.map(x => x[0]).sort((x, y) => x - y), b = pt.map(x => x[1]).sort((x, y) => x - y);
     const w = q(a, 0.98) - q(a, 0.02), h = q(b, 0.98) - q(b, 0.02);
-    if (w > M.sec.W * 1.25 + 0.01 || h > M.sec.H * 1.25 + 0.01 || w < M.sec.W * 0.6 - 0.01 || h < M.sec.H * 0.6 - 0.01) return false;
+    const FW = M.sec.Wfull || M.sec.W, FH = M.sec.Hfull || M.sec.H; if (w > FW * 1.25 + 0.01 || h > FH * 1.25 + 0.01 || w < FW * 0.6 - 0.01 || h < FH * 0.6 - 0.01) return false;
   }
   return true;
 }
@@ -513,7 +541,7 @@ function sectionConsistent(ctx, idx, M) {
 function detectFlanges(ctx, pipe) {
   const { P, K } = ctx; const ax = pipe.axis, r = pipe.r, p0 = pipe.p0, L = pipe.length;
   const ext = Math.max(0.15, r * 2), Rmax = r * 2.4 + 0.04, bin = Math.max(0.005, r * 0.08);
-  const nb = Math.ceil((L + 2 * ext) / bin); const cnt = new Float32Array(nb), angs = Array.from({ length: nb }, () => new Uint8Array(12)), rmax = new Float32Array(nb), axv = [];
+  const nb = Math.ceil((L + 2 * ext) / bin); const cnt = new Float32Array(nb), angs = Array.from({ length: nb }, () => new Uint8Array(12)), rmax = new Float32Array(nb), axv = [], secR = [];
   const buf = []; const { u, v } = perpFrame(ax);
   for (let t = -ext; t <= L + ext; t += Rmax) {
     const c = add(p0, ax, t); buf.length = 0; kdRadius(K, c[0], c[1], c[2], Math.hypot(Rmax, Rmax), buf);
@@ -523,7 +551,7 @@ function detectFlanges(ctx, pipe) {
       const ru = dot(d, u), rv = dot(d, v), rr = Math.hypot(ru, rv);
       if (rr < r * 1.18 || rr > Rmax) continue;
       const b = Math.floor((ta + ext) / bin); if (b < 0 || b >= nb) continue;
-      cnt[b]++; (axv[b] || (axv[b] = [])).push(ta); angs[b][Math.min(11, Math.floor((Math.atan2(rv, ru) + Math.PI) / (2 * Math.PI) * 12))] = 1; if (rr > rmax[b]) rmax[b] = rr;
+      cnt[b]++; (axv[b] || (axv[b] = [])).push(ta); const sc = Math.min(11, Math.floor((Math.atan2(rv, ru) + Math.PI) / (2 * Math.PI) * 12)); angs[b][sc] = 1; if (rr > rmax[b]) rmax[b] = rr; const sr = secR[b] || (secR[b] = new Float32Array(12)); if (rr > sr[sc]) sr[sc] = rr;
     }
   }
   const good = new Uint8Array(nb); for (let b = 0; b < nb; b++) { let c = 0; for (const x of angs[b]) c += x; good[b] = cnt[b] >= 6 && c >= 4 ? 1 : 0; }
@@ -534,6 +562,10 @@ function detectFlanges(ctx, pipe) {
     const od = 2 * rs[Math.floor(rs.length * 0.9)] || 0; let tm = -ext + (b + e + 1) / 2 * bin;
     const av = []; for (let k = b; k <= e; k++) if (axv[k]) av.push(...axv[k]); av.sort((x, y) => x - y);
     if (av.length > 10) { const a5 = av[Math.floor(av.length * 0.04)], a95 = av[Math.floor(av.length * 0.96)]; tm = (a5 + a95) / 2; if (a95 - a5 > 0.004) len = Math.min(len, a95 - a5); }
+    // roundness: outer radius per 30° sector over the whole run; a flange or valve body is centred on the pipe, a neighbour or a support is not
+    const sm = new Float32Array(12); for (let k = b; k <= e; k++) if (secR[k]) for (let q = 0; q < 12; q++) if (secR[k][q] > sm[q]) sm[q] = secR[k][q];
+    const sv = Array.from(sm).filter(x => x > 0); const mean = sv.reduce((x, y) => x + y, 0) / (sv.length || 1), sd = Math.sqrt(sv.reduce((x, y) => x + (y - mean) * (y - mean), 0) / (sv.length || 1));
+    if (sv.length < 6 || sd / mean > 0.12 || od < r * 2 * 1.3) { b = e; continue; }
     if (len >= 0.008 && len <= Math.max(0.12, r * 1.2)) out.push({ type: 'flange', at: add(p0, ax, tm), axis: ax, od, thick: len, pipe });
     else if (len > Math.max(0.12, r * 1.2) && len < 1.5) out.push({ type: 'fitting', at: add(p0, ax, tm), axis: ax, od, thick: len, pipe });
     b = e;
@@ -680,7 +712,7 @@ async function scanToCad(pos, n, opts = {}, onP = () => {}) {
   const P = gather(pos, reps), m = reps.length;
   onP(0.02); await tickC();
   const N = opts.normalsFn ? await opts.normalsFn(P, m, opts.k || 14, stage(0.02, 0.35)) : await computeNormals(P, m, opts.k || 14, stage(0.02, 0.35));
-  const ctx = { P, n: m, nrm: N.nrm, curv: N.curv, K: N.K, used: new Uint8Array(m) };
+  const ctx = { P, n: m, nrm: N.nrm, curv: N.curv, K: N.K, used: new Uint8Array(m), floorZ: [] };
   let zRef = Infinity; { const zs = new Float32Array(m); for (let i = 0; i < m; i++) zs[i] = P[i * 3 + 2]; zs.sort(); zRef = zs[Math.floor(m * 0.02)]; }
   const result = { spacing, n: m, planes: [], pipes: [], steel: [], flanges: [], fittings: [], bends: [] };
   // big planes: walls/floors (not member plates)
@@ -689,6 +721,7 @@ async function scanToCad(pos, n, opts = {}, onP = () => {}) {
     const D = describePlane(P, pl, spacing, zRef);
     const big = D.area >= (opts.minPlaneArea || 2.0) && Math.min(D.ext[0], D.ext[1]) >= (opts.minPlaneWidth || 0.9);
     if (!big) continue;
+    if (Math.abs(pl.normal[2]) > 0.95) { let zs = 0; for (const i of pl.idx) zs += P[i * 3 + 2]; ctx.floorZ.push(zs / pl.idx.length); }
     const vert = Math.abs(pl.normal[2]) < 0.3, small = D.area < (opts.equipWallArea || 9) && Math.max(D.ext[0], D.ext[1]) < 4.2;
     for (const i of pl.idx) ctx.used[i] = vert && small ? 2 : 1;   // 2 = equipment may still claim it
     if (opts.planes !== false) result.planes.push(D);
@@ -707,6 +740,10 @@ async function scanToCad(pos, n, opts = {}, onP = () => {}) {
     for (const d of decks) { const near = kept.find(k => Math.abs(k.level - d.level) < 0.15); if (!near) kept.push(Object.assign({}, d)); else { near.x0 = Math.min(near.x0, d.x0); near.x1 = Math.max(near.x1, d.x1); near.y0 = Math.min(near.y0, d.y0); near.y1 = Math.max(near.y1, d.y1); if (d.level > near.level + 0.005) near.level = d.level; } }
     result.handrails = detectHandrails(ctx, kept, opts);
   }
+  // people standing in the scan are found first and kept out of the model
+  result.people = [];
+  if (opts.people !== false) { try { result.people = peopleIn(ctx.P, ctx.n, { nrm: ctx.nrm, curv: ctx.curv }, {}); } catch (e) { result.people = []; }
+    for (const f of result.people) for (let i = 0; i < ctx.n; i++) { const x = ctx.P[i * 3], y = ctx.P[i * 3 + 1], z = ctx.P[i * 3 + 2]; if (x >= f.lo[0] && x <= f.hi[0] && y >= f.lo[1] && y <= f.hi[1] && z >= f.lo[2] - 0.15 && z <= f.hi[2]) ctx.used[i] = 1; } }
   onP(0.55); await tickC();
   if (opts.pipes !== false || opts.steel !== false) {
     const mo = { minR: opts.minR || 0.01, maxR: opts.maxR || 0.4, maxSection: opts.maxSection || 0.7, minLen: opts.minLen || 0.3, maxGap: opts.maxGap || 0.5, maxAttempts: opts.maxAttempts || 6000 };
@@ -717,6 +754,7 @@ async function scanToCad(pos, n, opts = {}, onP = () => {}) {
     onP(0.75); await tickC();
     if (opts.steel !== false) result.steel = await detectMembers(ctx, Object.assign({ only: 'steel' }, mo), stage(0.75, 0.95));
   }
+  if (result.pipes.length) { mergeCollinear(result.pipes, (x, y) => Math.abs(x.r - y.r) < Math.max(0.004, x.r * 0.08), opts.joinGap || 0.35); result.pipes = result.pipes.filter(p => p.length >= Math.max(opts.minLen || 0.3, p.r * 4)); for (const p of result.pipes) { const od = p.r * 2000, mt = matchPipe(od); p.dn = mt ? mt.dn : null; } }
   if (opts.flanges !== false) for (const p of result.pipes) for (const f of detectFlanges(ctx, p)) (f.type === 'flange' ? result.flanges : result.fittings).push(f);
   result.bends = findBends(result.pipes);
   if (!result.vessels) { result.vessels = []; result.boxes = []; result.cylinders = []; if (opts.vessels !== false || opts.boxes !== false) { const EQ = detectEquipment(ctx, opts); result.vessels = EQ.vessels; result.boxes = EQ.boxes; result.cylinders = EQ.cylinders; } }
@@ -837,7 +875,9 @@ function smoothSegments(ctx, idx, angDeg, rad) {
   return segs.filter(g => g.length >= 300).sort((a, b) => b.length - a.length);
 }
 function detectEquipment(ctx, opts = {}) {
-  const left = []; for (let i = 0; i < ctx.n; i++) if (ctx.used[i] !== 1) left.push(i);
+  // leave out the few centimetres just above each floor: leftover deck points there would tie every cabinet, skid and rail post into one lump
+  const fz = ctx.floorZ || []; const nearFloor = z => { for (const f of fz) if (z > f - 0.04 && z < f + 0.07) return true; return false; };
+  const left = []; for (let i = 0; i < ctx.n; i++) if (ctx.used[i] !== 1 && !nearFloor(ctx.P[i * 3 + 2])) left.push(i);
   const vessels = [], boxes = [], cylinders = [];
   const keepV = (V, pts) => { if (V.heads[0] === 'not seen' && V.heads[1] === 'not seen') { V.type = 'cylinder'; V.label = 'Large tubular / pedestal OD≈' + (V.r * 2000).toFixed(0) + ' mm, L ' + (V.length * 1000).toFixed(0) + ' mm (no heads)'; cylinders.push(V); } else vessels.push(V); for (const i of pts) ctx.used[i] = 1; };
   const extentOf = cp => { let mn = [Infinity, Infinity, Infinity], mx = [-Infinity, -Infinity, -Infinity]; for (const i of cp) for (let k = 0; k < 3; k++) { mn[k] = Math.min(mn[k], ctx.P[i * 3 + k]); mx[k] = Math.max(mx[k], ctx.P[i * 3 + k]); } return mx.map((v, k) => v - mn[k]); };
@@ -856,7 +896,10 @@ function detectEquipment(ctx, opts = {}) {
   if (opts.boxes !== false) { const left2 = left.filter(i => ctx.used[i] !== 1);
     for (const cp of components3D(ctx.P, left2, opts.boxCell || 0.045)) {
       if (cp.length < 150) continue; const ext = extentOf(cp); if (Math.max(...ext) > 12 || Math.max(...ext) < 0.25) continue;
-      const B = fitBox(ctx, cp, opts); if (B) { boxes.push(B); for (const i of cp) ctx.used[i] = 1; }
+      const B = fitBox(ctx, cp, opts);
+      if (B && fz.length && !opts.keepAllBoxes) { const onFloor = fz.some(f => B.zmin - f > -0.06 && B.zmin - f < 0.25), under = fz.some(f => B.zmax <= f + 0.03 && B.zmax > f - 0.8), dm = [B.W, B.D, B.H].sort((x, y) => x - y), wallBox = dm[0] <= 0.2 && dm[2] >= 0.3 && dm[2] <= 0.8 && dm[1] >= 0.25;
+        if (under || !(onFloor || wallBox)) continue; if (/Junction/.test(B.kind) && !wallBox) continue; }
+      if (B) { for (const f of fz) if (B.zmin - f > -0.02 && B.zmin - f < 0.15) { B.zmin = f; B.H = B.zmax - B.zmin; B.centre[2] = (B.zmin + B.zmax) / 2; B.label = B.label.replace(/× \d+ mm$/, '× ' + (B.H * 1000).toFixed(0) + ' mm'); } boxes.push(B); for (const i of cp) ctx.used[i] = 1; }
     } }
   return { vessels, boxes, cylinders };
 }
@@ -974,9 +1017,25 @@ function steelRects(M) {
 }
 function memberFaces(M) { const F = []; for (const r of steelRects(M)) F.push(...boxFaces(M.p0, M.p1, M.u, M.v, r[0], r[1], r[2], r[3])); return F; }
 
+// join pieces of one straight member (same size, same line, small gap); the longer piece keeps its fit
+function mergeCollinear(list, same, gap = 0.35) {
+  let merged = true; while (merged) { merged = false;
+    outer: for (let i = 0; i < list.length; i++) for (let j = i + 1; j < list.length; j++) { let a = list[i], b = list[j]; if (!same(a, b)) continue; if (Math.abs(dot(a.axis, b.axis)) < 0.9986) continue; if (b.length > a.length) { list[i] = b; list[j] = a; const t = a; a = b; b = t; }
+      const off = q => { const d = [q[0] - a.p0[0], q[1] - a.p0[1], q[2] - a.p0[2]], t = dot(d, a.axis); return [t, Math.hypot(d[0] - a.axis[0] * t, d[1] - a.axis[1] * t, d[2] - a.axis[2] * t)]; };
+      const [t0, o0] = off(b.p0), [t1, o1] = off(b.p1); const tol = Math.max(0.025, (a.r || 0.05) * 0.5); if (o0 > tol || o1 > tol) continue;
+      const lo = Math.min(t0, t1), hi = Math.max(t0, t1); if (lo > a.length + gap || hi < -gap) continue;
+      const ends = [[0, a.p0], [a.length, a.p1], [t0, b.p0], [t1, b.p1]].sort((x, y) => x[0] - y[0]); const e0 = ends[0][1].slice(), e1 = ends[3][1].slice(); const L2 = Math.hypot(e1[0] - e0[0], e1[1] - e0[1], e1[2] - e0[2]);
+      a.p0 = e0; a.p1 = e1; a.length = L2; a.axis = [(e1[0] - e0[0]) / L2, (e1[1] - e0[1]) / L2, (e1[2] - e0[2]) / L2]; if (a.u && a.v) { const uu = a.u.map((q, k) => q - dot(a.u, a.axis) * a.axis[k]), nn = Math.hypot(uu[0], uu[1], uu[2]) || 1; a.u = uu.map(q => q / nn); const w = cross(a.axis, a.u); a.v = dot(w, a.v) < 0 ? w.map(q => -q) : w; }
+      if (a.idx && b.idx) { const m = new Uint32Array(a.idx.length + b.idx.length); m.set(a.idx); m.set(b.idx, a.idx.length); a.idx = m; }
+      list.splice(j, 1); merged = true; break outer; } }
+  return list;
+}
 // ---------- people standing on floors (temporary objects to remove before modelling) ----------
 async function detectPeople(pos, n, opts = {}, onP = () => {}) {
     const sp = 0.04; const vox = voxelAssign(pos, n, sp); const P = gather(pos, vox.reps), m = vox.reps.length; const N = await computeNormals(P, m, 12, f => onP(f * 0.6));
+    return peopleIn(P, m, N, opts, onP);
+}
+function peopleIn(P, m, N, opts = {}, onP = () => {}) {
     const floor = new Uint8Array(m); for (let i = 0; i < m; i++) if (Math.abs(N.nrm[i * 3 + 2]) > 0.93 && N.curv[i] < 0.02) floor[i] = 1;
     // floor heights on a 0.3 m grid (several levels per cell allowed)
     // real floors are big: a level counts only where ≥ 200 flat points (about 0.3 m²) sit around the cell (not a hat, a shoulder or a box lid)
@@ -1010,6 +1069,6 @@ async function detectPeople(pos, n, opts = {}, onP = () => {}) {
     cands.sort((a, b) => b.n - a.n); for (const c of cands) { if (found.some(f => Math.hypot(f.centre[0] - c.c[0], f.centre[1] - c.c[1]) < 0.6 && Math.abs(f.centre[2] - c.zf) < 0.5)) continue; found.push({ lo: [c.c[0] - 0.45, c.c[1] - 0.45, c.zf + 0.03], hi: [c.c[0] + 0.45, c.c[1] + 0.45, c.zf + c.H + 0.06], H: c.H, centre: [c.c[0], c.c[1], c.zf] }); }
     return found;
 }
-const SBC = { detectPeople, components3D, smoothSegments, detectEquipment, fitVessel, fitBox, vesselFaces, boxEquipFaces, fitBetween, joinRuns, describeSteel, detectHandrails, handrailFaces, kdKNN, kdRadius, eig3, voxelAssign, gather, computeNormals, growPlanes, describePlane, fitCircle, classifySection, fitMember, growMember, detectMembers, detectFlanges, findBends, scanToCad, fitAt, cylFaces, discFaces, boxFaces, memberFaces, steelRects, matchPipe, matchSteel, STEEL, PIPE_OD, outline2D, maskOutlines, joinSegments, douglasPeucker, simplifyClosed, polyArea, dilate, erode, perpFrame, normalsAxis, vec: { dot, cross, norm, add } };
+const SBC = { mergeCollinear, detectPeople, components3D, smoothSegments, detectEquipment, fitVessel, fitBox, vesselFaces, boxEquipFaces, fitBetween, joinRuns, describeSteel, detectHandrails, handrailFaces, kdKNN, kdRadius, eig3, voxelAssign, gather, computeNormals, growPlanes, describePlane, fitCircle, classifySection, fitMember, growMember, detectMembers, detectFlanges, findBends, scanToCad, fitAt, cylFaces, discFaces, boxFaces, memberFaces, steelRects, matchPipe, matchSteel, STEEL, PIPE_OD, outline2D, maskOutlines, joinSegments, douglasPeucker, simplifyClosed, polyArea, dilate, erode, perpFrame, normalsAxis, vec: { dot, cross, norm, add } };
 if (typeof module !== 'undefined') module.exports = SBC; else G.SBC = SBC;
 })();

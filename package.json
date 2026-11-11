@@ -6,7 +6,8 @@
   "scripts": {
     "build": "python3 build.py",
     "serve": "python3 -m http.server 8080 --directory dist",
-    "test": "node test/t_algo.js && node test/t_icp.js && node test/t_cad.js && node test/t_topo.js && node test/t_samples.js"
+    "test": "node test/t_algo.js && node test/t_icp.js && node test/t_cad.js && node test/t_topo.js && node test/t_samples.js",
+    "score": "node test/score_cad.js"
   },
   "dependencies": {
     "delaunator": "^5.0.1",

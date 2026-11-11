@@ -1,0 +1,273 @@
+{
+ "regions": {
+  "cellar": {
+   "pipes": {
+    "truth": 21,
+    "found": 12,
+    "sizeOK": 12,
+    "lengthRecall": 0.826,
+    "detected": 31,
+    "false": 3,
+    "falseSmall": 1,
+    "missed": [
+     "W-1 flowline DN100 OD 114.3 L0.7",
+     "W-1 flowline DN100 OD 114.3 L0.7",
+     "W-2 flowline DN100 OD 114.3 L0.7",
+     "W-2 flowline DN100 OD 114.3 L0.7",
+     "W-3 flowline DN100 OD 114.3 L0.7",
+     "W-3 flowline DN100 OD 114.3 L0.7",
+     "W-4 flowline DN100 OD 114.3 L0.7",
+     "W-4 flowline DN100 OD 114.3 L0.7",
+     "gas lift drop DN50 OD 60.3 L0.6"
+    ]
+   },
+   "steel": {
+    "truth": 35,
+    "found": 33,
+    "familyOK": 33,
+    "sectionOK": 25,
+    "detected": 32,
+    "false": 14,
+    "wrongSection": {
+     "610UB125 → I-section 528×281": 1,
+     "610UB125 → I-section 436×462": 1,
+     "610UB125 → I-section 604×339": 1,
+     "310UB40.4 → I-section 300×228": 4,
+     "380PFC → Channel 400×156": 1
+    },
+    "missed": 2,
+    "falseLabels": [
+     "SHS 50×50 (approx) L5.1",
+     "RHS 300×250 (approx) L1.6",
+     "SHS 400×400 (approx) L3.5",
+     "I-section 592×487 L4.5",
+     "SHS 400×400 (approx) L2.9",
+     "Angle 89×47 L1.9",
+     "SHS 400×400 (approx) L3.5",
+     "SHS 65×65 (approx) L2.7",
+     "SHS 65×65 (approx) L1.6",
+     "Channel 490×51 L2.0",
+     "I-section 616×539 L3.7",
+     "SHS 50×50 (approx) L0.7"
+    ]
+   },
+   "vessels": {
+    "truth": 0,
+    "found": 0,
+    "detected": 0,
+    "false": 0,
+    "detail": [],
+    "tubulars": 21
+   },
+   "cabinets": {
+    "truth": 1,
+    "found": 0,
+    "detected": 3,
+    "false": 3,
+    "falseLabels": [
+     "Module / building 960 × 2713 × 2799 mm @6.6,-3.1,15.2",
+     "Electrical cabinet 160 × 160 × 779 mm @1.6,-3.0,12.4",
+     "Electrical cabinet 160 × 160 × 773 mm @1.6,-1.0,12.4"
+    ]
+   },
+   "flanges": {
+    "truth": 18,
+    "found": 2,
+    "detected": 16,
+    "false": 14
+   },
+   "people": {
+    "truth": 1,
+    "found": 1,
+    "detected": 2
+   },
+   "handrails": {
+    "detected": 5,
+    "length": 52.7
+   },
+   "seconds": 154
+  },
+  "main": {
+   "pipes": {
+    "truth": 21,
+    "found": 14,
+    "sizeOK": 14,
+    "lengthRecall": 0.799,
+    "detected": 53,
+    "false": 5,
+    "falseSmall": 1,
+    "missed": [
+     "gas line + loop DN150 OD 168.3 L0.9",
+     "gas line + loop DN150 OD 168.3 L0.8",
+     "gas line + loop DN150 OD 168.3 L0.8",
+     "export riser DN200 OD 219.1 L1.5",
+     "firewater (rack) DN150 OD 168.3 L1.1",
+     "fuel gas (rack) DN100 OD 114.3 L0.9",
+     "fuel gas (rack) DN100 OD 114.3 L3.8"
+    ]
+   },
+   "steel": {
+    "truth": 47,
+    "found": 35,
+    "familyOK": 34,
+    "sectionOK": 32,
+    "detected": 35,
+    "false": 16,
+    "wrongSection": {
+     "610UB125 → I-section 176×69": 1,
+     "380PFC → Channel 352×119": 1,
+     "200PFC → 200UB22.3 (or 200UB25.4)": 1
+    },
+    "missed": 12,
+    "falseLabels": [
+     "SHS 200×200 (approx) L1.5",
+     "RHS 150×125 (approx) L0.5",
+     "RHS 200×150 (approx) L0.9",
+     "530UB92.4 (or 530UB82.0) L8.1",
+     "Angle 226×215 L1.5",
+     "SHS 50×50 (approx) L3.4",
+     "SHS 50×50 (approx) L3.4",
+     "RHS 65×50 (approx) L8.7",
+     "300PFC L2.9",
+     "Channel 48×20 L3.3",
+     "SHS 65×65 (approx) L5.6",
+     "RHS 65×50 (approx) L15.0"
+    ]
+   },
+   "vessels": {
+    "truth": 2,
+    "found": 2,
+    "detected": 2,
+    "false": 0,
+    "detail": [
+     "V-1010 production separator: ID 1998 (2000), T/T 5118 (5000)",
+     "V-1020 gas scrubber: ID 1100 (1100), T/T 4111 (3200)"
+    ],
+    "tubulars": 8
+   },
+   "cabinets": {
+    "truth": 4,
+    "found": 4,
+    "detected": 9,
+    "false": 6,
+    "falseLabels": [
+     "Module / building 920 × 4581 × 4600 mm @-6.6,-1.6,20.5",
+     "Electrical cabinet 160 × 673 × 1048 mm @-6.5,-6.6,18.5",
+     "Skid / enclosure 510 × 1745 × 1127 mm @-0.7,-6.0,18.6",
+     "Skid / enclosure 1790 × 1746 × 1112 mm @1.7,-6.0,18.6",
+     "Electrical cabinet 590 × 720 × 1611 mm @-6.5,1.0,18.8",
+     "Junction box 668 × 640 × 190 mm @6.7,-4.3,19.9"
+    ]
+   },
+   "flanges": {
+    "truth": 12,
+    "found": 8,
+    "detected": 33,
+    "false": 25
+   },
+   "people": {
+    "truth": 1,
+    "found": 1,
+    "detected": 1
+   },
+   "handrails": {
+    "detected": 6,
+    "length": 53
+   },
+   "seconds": 128
+  },
+  "upper": {
+   "pipes": {
+    "truth": 3,
+    "found": 2,
+    "sizeOK": 2,
+    "lengthRecall": 0.564,
+    "detected": 18,
+    "false": 10,
+    "falseSmall": 0,
+    "missed": [
+     "vent stack DN300 OD 323.8 L12.0"
+    ]
+   },
+   "steel": {
+    "truth": 24,
+    "found": 23,
+    "familyOK": 23,
+    "sectionOK": 22,
+    "detected": 17,
+    "false": 5,
+    "wrongSection": {
+     "380PFC → Channel 460×66": 1
+    },
+    "missed": 1,
+    "falseLabels": [
+     "Channel 500×37 L10.1",
+     "RHS 65×50 (approx) L3.1",
+     "SHS 50×50 (approx) L3.9",
+     "Channel 584×58 L4.8",
+     "SHS 50×50 (approx) L10.2"
+    ]
+   },
+   "vessels": {
+    "truth": 0,
+    "found": 0,
+    "detected": 1,
+    "false": 1,
+    "detail": [],
+    "tubulars": 4
+   },
+   "cabinets": {
+    "truth": 2,
+    "found": 2,
+    "detected": 2,
+    "false": 0,
+    "falseLabels": []
+   },
+   "flanges": {
+    "truth": 0,
+    "found": 0,
+    "detected": 2,
+    "false": 2
+   },
+   "people": {
+    "truth": 1,
+    "found": 1,
+    "detected": 1
+   },
+   "handrails": {
+    "detected": 4,
+    "length": 33.5
+   },
+   "seconds": 127
+  }
+ },
+ "total": {
+  "pipes.truth": 45,
+  "pipes.found": 28,
+  "pipes.detected": 102,
+  "pipes.false": 18,
+  "pipes.sizeOK": 28,
+  "steel.truth": 106,
+  "steel.found": 91,
+  "steel.detected": 84,
+  "steel.false": 35,
+  "steel.sectionOK": 79,
+  "steel.familyOK": 90,
+  "vessels.truth": 2,
+  "vessels.found": 2,
+  "vessels.detected": 3,
+  "vessels.false": 1,
+  "cabinets.truth": 7,
+  "cabinets.found": 6,
+  "cabinets.detected": 14,
+  "cabinets.false": 9,
+  "flanges.truth": 30,
+  "flanges.found": 10,
+  "flanges.detected": 51,
+  "flanges.false": 41,
+  "people.truth": 3,
+  "people.found": 3,
+  "people.detected": 4
+ },
+ "truthDropped": 2
+}
