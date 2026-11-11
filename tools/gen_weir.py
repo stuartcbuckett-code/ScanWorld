@@ -1,13 +1,16 @@
 """
-ScanBench sample: synthetic aerial LiDAR of a concrete gravity dam in a forested valley,
-styled on Mundaring Weir (Helena River, Perth Hills, Western Australia).
+ScanBench sample: synthetic drone LiDAR of a concrete gravity dam in a forested valley,
+styled on Mundaring Weir (Helena River, Perth Hills, Western Australia), and shaped like a
+DJI Zenmuse L3 capture flown at about 120 m: a small, dense block with tree trunks scanned,
+several returns through the canopy, low range noise, and a leaf-litter layer on the forest floor.
+The real unit collects far more points per square metre; this is thinned to keep the sample small.
 
 THIS IS SYNTHETIC TEST DATA. Shapes, levels and positions are approximations made for
 software testing, not survey data of the real dam.
 
 Output (folder given as argv[1], default out_weir):
-  mundaring_weir_sim.laz     LAS 1.4 point format 7, ASPRS classes, RGB, intensity, returns
-  mundaring_weir_truth.csv   design features (crest, spillway, roads, buildings, water levels)
+  weir_1..4.laz             LAS 1.4 point format 7, ASPRS classes, RGB, intensity, returns
+  mundaring_weir_truth.csv   design features, every tree (trunk diameter, height, crown) and the litter depth grid
   README.txt
 Coordinates: MGA2020 zone 50 (EPSG:7850), heights in metres AHD (approximate).
 """
@@ -27,7 +30,9 @@ CREST = 161.5      # crest walkway / abutment top (m AHD, approx.)
 SPILL = 159.6      # overflow crest
 WATER = 156.2      # reservoir level on "survey day"
 BED_TOE = 118.6    # river bed at the toe
-DENS = 5.0         # last-return ground density (pts/m²) in the open
+DENS = float(os.environ.get('DENS', 50))   # ground density (pts/m²) in the open
+WX0, WX1, WY0, WY1 = -230.0, 10.0, -10.0, 170.0   # capture block (local): north half of the wall, car park, weir road, forest
+KD = DENS / 5.0
 
 # ---------------- terrain ----------------
 G = 1.0
@@ -170,22 +175,22 @@ forest = np.where(chan, 0.1, forest)
 
 # trees (jarrah / marri): crowns as flattened ellipsoids
 trees = []
-area = (X1 - X0) * (Y1 - Y0); nt = int(area / 55)
-tx = rng.uniform(X0, X1, nt); ty = rng.uniform(Y0, Y1, nt)
+area = (WX1 - WX0) * (WY1 - WY0); nt = int(area / 55)
+tx = rng.uniform(WX0, WX1, nt); ty = rng.uniform(WY0, WY1, nt)
 fv = forest[np.clip(((ty - Y0) / G).astype(int), 0, len(gy) - 1), np.clip(((tx - X0) / G).astype(int), 0, len(gx) - 1)]
 keep = rng.random(nt) < fv; tx, ty = tx[keep], ty[keep]
 inwater = (ground_at(tx, ty) < WATER + 0.3) & (tx > DAM_UP); tx, ty = tx[~inwater], ty[~inwater]
 for x_, y_ in zip(tx, ty):
-    h = rng.uniform(9, 27); cr = h * rng.uniform(0.18, 0.3); trees.append((x_, y_, ground_at(np.array([x_]), np.array([y_]))[0], h, cr))
+    h = rng.uniform(9, 27); cr = h * rng.uniform(0.18, 0.3); trees.append((x_, y_, ground_at(np.array([x_]), np.array([y_]))[0], h, cr, 0.012 * h + rng.uniform(0.08, 0.3)))
 trees = np.array(trees)
 
 # ground points (last returns), thinned under canopy
 n_g = int(area * DENS)
-px = rng.uniform(X0, X1, n_g); py = rng.uniform(Y0, Y1, n_g)
+px = rng.uniform(WX0, WX1, n_g); py = rng.uniform(WY0, WY1, n_g)
 ix = np.clip(((px - X0) / G).astype(int), 0, len(gx) - 1); iy = np.clip(((py - Y0) / G).astype(int), 0, len(gy) - 1)
 pz = ground_at(px, py)
 fv = forest[iy, ix]
-keep = rng.random(n_g) > fv * 0.55
+keep = rng.random(n_g) > fv * 0.3
 _zt = np.linspace(BED_TOE - 2, CREST, 400); _xt = dam_down_x(_zt)          # face x falls as z drops: invert by interpolation
 def dam_surface_z(x, y):
     zf = np.interp(x, _xt, _zt, left=-1e9, right=CREST) - (CREST - crest_z(y))
@@ -207,9 +212,11 @@ def put(m, base, sd, it):
 nat = surf == 'natural'
 slope = np.hypot(dzdx, dzdy)
 rock = nat & ((slope > 0.75) | (fbm(GX.shape, 3, 30.0, 1.0, 5)[iy, ix] > 1.15))
-litter = nat & ~rock & (fv[keep] > 0.35 if False else forest[iy, ix] > 0.35)
+LITTER = np.where((surface == 'natural') & (forest > 0.35) & (fbm(GX.shape, 3, 30.0, 1.0, 5) <= 1.15) & (np.hypot(np.gradient(Z, axis=1), np.gradient(Z, axis=0)) <= 0.75), 0.07 + 0.02 * np.clip(fbm(GX.shape, 3, 25.0, 1.0, 33), -1, 1), 0.0)   # depth (m): 50-90 mm where there is litter
+LITTER = np.where(fbm(GX.shape, 2, 70.0, 1.0, 34) > 0.55, 0.0, LITTER)   # recently burnt or raked patches: none
+lit_d = LITTER[iy, ix]; litter = nat & ~rock & (lit_d > 0)
 grass = nat & ~rock & ~litter
-put(litter, (118, 98, 72), 12, 9000)
+put(litter, (112, 90, 64), 14, 7500)
 put(grass, (182, 162, 112), 14, 14000)
 put(rock, (152, 144, 134), 16, 21000)
 put(surf == 'bitumen', (72, 72, 74), 6, 4000)
@@ -222,18 +229,18 @@ m = (surf == 'bitumen') & (np.abs(road_d[iy, ix]) < 0.08); rgb[m] = (230, 230, 2
 # damp sand and laterite along the river bed
 m = chan[iy, ix] & (surf == 'natural'); put(m, (138, 120, 92), 12, 11000)
 rgb *= (hs * (1 + lit))[:, None]
-emit(np.c_[px, py, pz + rng.normal(0, 0.025, n)], rgb, inten, 2, rn=np.where(fv[keep] > 0.3, 2, 1) if False else 1, nr=1)
+emit(np.c_[px, py, pz + lit_d + rng.normal(0, 0.012, n) + np.where(lit_d > 0, rng.normal(0, 0.012, n), 0)], rgb, inten, 2, rn=np.where(fv[keep] > 0.3, 2, 1) if False else 1, nr=1)
 
 # water surfaces: sparse returns (specular), class 9
 def water(mask_fn, level, dens):
-    k = int(area * dens); wx = rng.uniform(X0, X1, k); wy = rng.uniform(Y0, Y1, k); wz = ground_at(wx, wy)
+    k = int(area * dens); wx = rng.uniform(WX0, WX1, k); wy = rng.uniform(WY0, WY1, k); wz = ground_at(wx, wy)
     m = mask_fn(wx, wy, wz); wx, wy = wx[m], wy[m]; k = len(wx)
     shade = 1 + 0.12 * np.sin(wx * 0.31 + wy * 0.17) * np.sin(wy * 0.23)
     emit(np.c_[wx, wy, level + rng.normal(0, 0.03, k)], jitter_rgb((44, 66, 64), k, 5) * shade[:, None], rng.normal(1500, 400, k), 9)
 water(lambda x, y, z: (z < WATER) & (x > DAM_UP + 0.3), WATER, 0.6)
 water(lambda x, y, z: (z < BED_TOE - 0.25 + 0.011 * np.minimum(x, 0) + 0.35) & (x < APRON[0]) & (np.abs(y - river_y(x)) < 14), None or 0, 0) if False else None
 # pools in the river below the apron
-k = int(area * 0.8); wx = rng.uniform(X0, APRON[0], k); wy = rng.uniform(Y0, Y1, k)
+k = int(area * 0.8); wx = rng.uniform(WX0, APRON[0], k); wy = rng.uniform(WY0, WY1, k)
 m = (np.abs(wy - river_y(wx)) < 9 + 3 * np.sin(wx / 23.0)) & (np.sin(wx / 37.0) > -0.2); wx, wy = wx[m], wy[m]
 wz = bed_z(wx) + 0.3
 emit(np.c_[wx, wy, wz + rng.normal(0, 0.02, len(wx))], jitter_rgb((52, 70, 58), len(wx), 5), rng.normal(1800, 400, len(wx)), 9)
@@ -243,7 +250,7 @@ def concrete(n, stain=None):
     base = jitter_rgb((186, 181, 170), n, 7)
     if stain is not None: base *= (1 - 0.28 * stain)[:, None]
     return base
-DD = 12.0
+DD = 12.0 * min(KD, 3)
 # downstream face (param y, z)
 dy_span = DAM_Y1 - DAM_Y0
 n_f = int(dy_span * (CREST - BED_TOE) * 1.3 * DD)
@@ -287,12 +294,12 @@ n_v = 400; vb = rng.uniform(DAM_UP, VT[0] - VT[2] / 2, n_v); emit(np.c_[vb, VT[1
 # buildings: walls (sparse, mostly roofs from the air), gable roofs
 for (name, cx, cy, Lb, Wb, rot, eave, rise, roof_rgb, wall_rgb) in BUILDINGS:
     c, s = math.cos(rot), math.sin(rot); gz0 = float(ground_at(np.array([cx]), np.array([cy]))[0])
-    n_r = int(Lb * Wb * 9); u = rng.uniform(-Lb / 2 - 0.5, Lb / 2 + 0.5, n_r); v = rng.uniform(-Wb / 2 - 0.5, Wb / 2 + 0.5, n_r)
+    n_r = int(Lb * Wb * 9 * min(KD, 4)); u = rng.uniform(-Lb / 2 - 0.5, Lb / 2 + 0.5, n_r); v = rng.uniform(-Wb / 2 - 0.5, Wb / 2 + 0.5, n_r)
     z = gz0 + eave + rise * (1 - np.abs(v) / (Wb / 2 + 0.5))
     corr = 1 + 0.05 * (np.mod(u, 0.76) < 0.1)  # corrugations / roof sheet laps
     sunny = np.where(v * (1 if rot >= 0 else -1) > 0, 1.08, 0.85) if rise > 1 else 1.0
     emit(np.c_[cx + u * c - v * s, cy + u * s + v * c, z], jitter_rgb(roof_rgb, n_r, 7) * (corr * sunny)[:, None] if np.ndim(sunny) else jitter_rgb(roof_rgb, n_r, 7) * corr[:, None], rng.normal(17000, 2500, n_r), 6)
-    per = 2 * (Lb + Wb); n_w = int(per * eave * 2.5); t = rng.uniform(0, per, n_w)
+    per = 2 * (Lb + Wb); n_w = int(per * eave * 2.5 * min(KD, 4)); t = rng.uniform(0, per, n_w)
     u = np.where(t < Lb, t - Lb / 2, np.where(t < Lb + Wb, Lb / 2, np.where(t < 2 * Lb + Wb, Lb / 2 - (t - Lb - Wb), -Lb / 2)))
     v = np.where(t < Lb, -Wb / 2, np.where(t < Lb + Wb, -Wb / 2 + (t - Lb), np.where(t < 2 * Lb + Wb, Wb / 2, Wb / 2 - (t - 2 * Lb - Wb))))
     zw = gz0 + rng.uniform(0, eave, n_w)
@@ -306,7 +313,7 @@ for sx in (-200, -176):
 PIPE = [(-262, 40), (-300, 60), (-360, 75), (-420, 95), (-478, 118)]
 pts = []
 for (ax, ay), (bx, by) in zip(PIPE[:-1], PIPE[1:]):
-    L = math.hypot(bx - ax, by - ay); k = int(L * 70); t = rng.random(k)
+    L = math.hypot(bx - ax, by - ay); k = int(L * 70 * min(KD, 4)); t = rng.random(k)
     x = ax + (bx - ax) * t; y = ay + (by - ay) * t; a = rng.uniform(-np.pi * 0.95, np.pi * 0.95, k)
     nx, ny = -(by - ay) / L, (bx - ax) / L; gz = ground_at(x, y); r = 0.38
     pts.append(np.c_[x + nx * r * np.sin(a), y + ny * r * np.sin(a), gz + 0.9 + r + r * np.cos(a)])
@@ -336,49 +343,56 @@ for (x0, y0, z0), (x1, y1, z1) in zip(ptop[:-1], ptop[1:]):
 
 # vegetation returns: crowns (first returns), understorey shrubs
 CROWN = [(58, 74, 44), (72, 86, 50), (64, 70, 46), (84, 92, 58), (95, 98, 66)]
-for (x0, y0, g0, h, cr) in trees:
+for (x0, y0, g0, h, cr, dbh) in trees:
     if dam_surface_z(np.array([x0]), np.array([y0]))[0] > -1e8 or (APRON[0] - 5 < x0 < DAM_UP + 2 and abs(y0) < 60): continue
-    k = int(math.pi * cr * cr * DENS * rng.uniform(1.4, 2.2)); dep = h * rng.uniform(0.3, 0.5)
+    k = int(math.pi * cr * cr * DENS * rng.uniform(0.7, 1.1)); dep = h * rng.uniform(0.3, 0.5)
     u = rng.normal(0, 1, (k, 3)); u /= np.linalg.norm(u, axis=1)[:, None]; rr = rng.random(k) ** 0.35
     pts_ = np.c_[x0 + u[:, 0] * cr * rr, y0 + u[:, 1] * cr * rr, g0 + h - dep / 2 + u[:, 2] * dep / 2 * rr]
     top = (pts_[:, 2] - (g0 + h - dep)) / dep
     keep = rng.random(k) < 0.25 + 0.75 * top; pts_ = pts_[keep]; top = top[keep]; k = len(pts_)
     base = np.array(CROWN[rng.integers(len(CROWN))], float); col = jitter_rgb(base, k, 9) * (0.75 + 0.4 * top)[:, None]
-    rn = np.where(top > 0.6, 1, np.where(top > 0.3, 2, 3)); emit(pts_, col, rng.normal(7000, 2000, k), 5, rn=rn, nr=np.full(k, 4))
-    m_ = int(h * 2); emit(np.c_[x0 + rng.normal(0, 0.12, m_), y0 + rng.normal(0, 0.12, m_), g0 + rng.uniform(0.3, h - dep, m_)], jitter_rgb((96, 82, 66), m_, 8), rng.normal(8000, 1500, m_), 4, rn=3, nr=4)
+    rn = np.where(top > 0.6, 1, np.where(top > 0.3, 2, 3)); emit(pts_, col, rng.normal(7000, 2000, k), 5, rn=rn, nr=np.full(k, 6))
+    ht = h - dep * 0.8; m_ = int(ht * 55); zt = rng.uniform(0.0, ht, m_); a0 = rng.uniform(0, 2 * np.pi); a = a0 + rng.uniform(-2.3, 2.3, m_)   # trunk: seen from two flight directions, about 260 degrees of the stem
+    rt = dbh / 2 * (1.25 - 0.25 * np.minimum(zt, 1.3) / 1.3) * (1 - 0.45 * np.maximum(zt - 1.3, 0) / max(ht, 2)) + rng.normal(0, 0.008, m_)
+    emit(np.c_[x0 + rt * np.cos(a), y0 + rt * np.sin(a), g0 + zt], jitter_rgb((96, 82, 66), m_, 8), rng.normal(8000, 1500, m_), 5, rn=np.full(m_, 3), nr=np.full(m_, 6))
+    for _b in range(3):   # main limbs under the crown
+        m_ = 60; t_ = rng.random(m_); ab = rng.uniform(0, 2 * np.pi); lb = cr * 0.7
+        emit(np.c_[x0 + np.cos(ab) * lb * t_ + rng.normal(0, 0.03, m_), y0 + np.sin(ab) * lb * t_ + rng.normal(0, 0.03, m_), g0 + ht + (h - dep * 0.6 - ht) * t_ + rng.normal(0, 0.03, m_)], jitter_rgb((96, 82, 66), m_, 8), rng.normal(8000, 1500, m_), 5, rn=np.full(m_, 2), nr=np.full(m_, 6))
 # shrubs (balga / blackboys, wattle): low veg 0.3-2 m
-ns = int(area * 0.01); sx = rng.uniform(X0, X1, ns); sy = rng.uniform(Y0, Y1, ns)
+ns = int(area * 0.01); sx = rng.uniform(WX0, WX1, ns); sy = rng.uniform(WY0, WY1, ns)
 sv = forest[np.clip(((sy - Y0) / G).astype(int), 0, len(gy) - 1), np.clip(((sx - X0) / G).astype(int), 0, len(gx) - 1)]
 m = (rng.random(ns) < sv) & ((ground_at(sx, sy) > WATER + 0.5) | (sx < DAM_UP)); sx, sy = sx[m], sy[m]
 for x0, y0 in zip(sx, sy):
-    g0 = float(ground_at(np.array([x0]), np.array([y0]))[0]); h = rng.uniform(0.4, 2.2); k = int(25 * h)
+    g0 = float(ground_at(np.array([x0]), np.array([y0]))[0]); h = rng.uniform(0.4, 2.2); k = int(25 * h * min(KD, 6))
     emit(np.c_[x0 + rng.normal(0, 0.5, k), y0 + rng.normal(0, 0.5, k), g0 + rng.uniform(0.15, h, k)], jitter_rgb((92, 104, 60), k, 10), rng.normal(9000, 2000, k), 3 if h < 1 else 4, rn=2, nr=3)
 
 # noise: birds / low points
-k = 80; emit(np.c_[rng.uniform(X0, X1, k), rng.uniform(Y0, Y1, k), rng.uniform(170, 260, k)], jitter_rgb((120, 120, 120), k, 20), rng.normal(3000, 800, k), 7)
-k = 40; xx = rng.uniform(X0, X1, k); yy = rng.uniform(Y0, Y1, k); emit(np.c_[xx, yy, ground_at(xx, yy) - rng.uniform(3, 15, k)], jitter_rgb((80, 80, 80), k, 10), rng.normal(2000, 500, k), 7)
+k = 80; emit(np.c_[rng.uniform(WX0, WX1, k), rng.uniform(WY0, WY1, k), rng.uniform(170, 260, k)], jitter_rgb((120, 120, 120), k, 20), rng.normal(3000, 800, k), 7)
+k = 40; xx = rng.uniform(WX0, WX1, k); yy = rng.uniform(WY0, WY1, k); emit(np.c_[xx, yy, ground_at(xx, yy) - rng.uniform(3, 15, k)], jitter_rgb((80, 80, 80), k, 10), rng.normal(2000, 500, k), 7)
 
 # ---------------- assemble, rotate into MGA, write ----------------
 xyz = np.vstack(P); rgb = np.vstack(C); inten = np.concatenate(I); cls = np.concatenate(CL); rn = np.concatenate(RN); nr = np.concatenate(NR)
 c, s = math.cos(ROT), math.sin(ROT)
 E = E0 + xyz[:, 0] * c - xyz[:, 1] * s; N = N0 + xyz[:, 0] * s + xyz[:, 1] * c
 # clip to a tidy rectangle in MGA
-xm, ym = (E0 - 400, N0 - 300), (E0 + 300, N0 + 300)
-m = (E >= xm[0]) & (E <= ym[0]) & (N >= xm[1]) & (N <= ym[1])
+m = (xyz[:, 0] >= WX0) & (xyz[:, 0] <= WX1) & (xyz[:, 1] >= WY0) & (xyz[:, 1] <= WY1)
 # flight-line order (north-south strips 60 m wide, alternating), so LAZ compresses like a real capture
-xs_, ys_ = xyz[m, 0], xyz[m, 1]; strip = np.floor((xs_ - X0) / 60).astype(int); along = np.where(strip % 2 == 0, ys_, -ys_)
+xs_, ys_ = xyz[m, 0], xyz[m, 1]; strip = np.floor((xs_ - X0) / 80).astype(int); along = np.where(strip % 2 == 0, ys_, -ys_)
 order = np.lexsort((np.round(along * 2) / 2 + rng.random(len(xs_)) * 0.5, strip))
-hdr = laspy.LasHeader(point_format=7, version='1.4'); hdr.offsets = [E0 - 400, N0 - 300, 0]; hdr.scales = [0.01, 0.01, 0.01]
-try:
-    from pyproj import CRS; hdr.add_crs(CRS.from_epsg(7850))
-except Exception: pass
-las = laspy.LasData(hdr)
-las.x = E[m][order]; las.y = N[m][order]; las.z = xyz[m, 2][order]
-las.red = rgb[m, 0][order]; las.green = rgb[m, 1][order]; las.blue = rgb[m, 2][order]
-las.intensity = inten[m][order]; las.classification = cls[m][order]
-rn_ = rn[m][order]; nr_ = np.maximum(nr[m][order], rn_); las.return_number = rn_; las.number_of_returns = nr_
-las.gps_time = np.linspace(0, 600, m.sum()); las.point_source_id = np.full(m.sum(), 1, np.uint16)
-las.write(os.path.join(OUT, 'mundaring_weir_sim.laz'))
+Em, Nm, Zm = E[m][order], N[m][order], xyz[m, 2][order]; rn_ = rn[m][order]; nr_ = np.maximum(nr[m][order], rn_); tot = int(m.sum()); PARTS = int(os.environ.get('PARTS', 4))
+for part in range(PARTS):
+    a_, b_ = tot * part // PARTS, tot * (part + 1) // PARTS; sl = slice(a_, b_)
+    hdr = laspy.LasHeader(point_format=7, version='1.4'); hdr.offsets = [E0 - 400, N0 - 300, 0]; hdr.scales = [0.001, 0.001, 0.001]
+    try:
+        from pyproj import CRS; hdr.add_crs(CRS.from_epsg(7850))
+    except Exception: pass
+    las = laspy.LasData(hdr)
+    las.x = Em[sl]; las.y = Nm[sl]; las.z = Zm[sl]
+    las.red = rgb[m, 0][order][sl]; las.green = rgb[m, 1][order][sl]; las.blue = rgb[m, 2][order][sl]
+    las.intensity = inten[m][order][sl]; las.classification = cls[m][order][sl]
+    las.return_number = rn_[sl]; las.number_of_returns = nr_[sl]
+    las.gps_time = np.linspace(0, 900, tot)[sl]; las.point_source_id = np.full(b_ - a_, 1, np.uint16)
+    las.write(os.path.join(OUT, 'weir_%d.laz' % (part + 1)))
 print('points', m.sum(), 'classes', {int(k): int(v) for k, v in zip(*np.unique(cls[m], return_counts=True))})
 
 # truth / design features in MGA
@@ -395,6 +409,13 @@ for (name, cx, cy, Lb, Wb, rot, eave, rise, *_r) in BUILDINGS:
     e, n_ = to_mga(cx, cy); g0 = float(ground_at(np.array([cx]), np.array([cy]))[0]); rows.append(['building', name, f'{Lb} x {Wb} m, eave {eave} m, ridge +{rise} m', f'{e:.2f}', f'{n_:.2f}', f'{g0:.2f}', f'ridge RL {g0 + eave + rise:.2f}'])
 for k, (x0, y0) in enumerate(POLES): e, n_ = to_mga(x0, y0); rows.append(['pole', f'power pole {k + 1}', 'timber 10.5 m', f'{e:.2f}', f'{n_:.2f}', f'{float(ground_at(np.array([x0]), np.array([y0]))[0]):.2f}', ''])
 for k, (x0, y0) in enumerate(PIPE): e, n_ = to_mga(x0, y0); rows.append(['pipeline', 'Goldfields pipeline (above ground)', f'vertex {k + 1}, OD 760', f'{e:.2f}', f'{n_:.2f}', f'{float(ground_at(np.array([x0]), np.array([y0]))[0]) + 1.28:.2f}', 'pipe crown'])
-rows.append(['trees', 'tree crowns generated', str(len(trees)), '', '', '', 'heights 9-27 m'])
+inw = lambda x, y: WX0 <= x <= WX1 and WY0 <= y <= WY1
+rows.append(['capture', 'simulated DJI Zenmuse L3 block', '%.0f x %.0f m, about %.0f points per m2 in the open' % (WX1 - WX0, WY1 - WY0, DENS), '', '', '', 'thinned: a real L3 flight is much denser'])
+for k, (x0, y0, g0, h, cr, dbh) in enumerate(trees):
+    if not inw(x0, y0) or dam_surface_z(np.array([x0]), np.array([y0]))[0] > -1e8 or (APRON[0] - 5 < x0 < DAM_UP + 2 and abs(y0) < 60): continue
+    e, n_ = to_mga(x0, y0); rows.append(['tree', 'tree %d' % (k + 1), 'trunk diameter at 1.3 m %.0f mm, height %.1f m, crown radius %.1f m' % (dbh * 1000, h, cr), f'{e:.2f}', f'{n_:.2f}', f'{g0:.2f}', 'ground RL is mineral soil, below any litter'])
+for yy_ in np.arange(WY0 + 1, WY1, 2.0):
+    for xx_ in np.arange(WX0 + 1, WX1, 2.0):
+        dpt = float(LITTER[int(round(yy_ - Y0)), int(round(xx_ - X0))]); e, n_ = to_mga(xx_, yy_); rows.append(['litter', 'litter depth', '%.0f mm' % (dpt * 1000), f'{e:.2f}', f'{n_:.2f}', f'{float(ground_at(np.array([xx_]), np.array([yy_]))[0]):.2f}', '2 m grid; RL is mineral soil'])
 with open(os.path.join(OUT, 'mundaring_weir_truth.csv'), 'w', newline='') as f: csv.writer(f).writerows(rows)
 print('truth rows', len(rows) - 1, 'dam', DAM_Y0, DAM_Y1, 'toe x', toe_x)

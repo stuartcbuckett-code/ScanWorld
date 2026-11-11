@@ -247,7 +247,7 @@ function components2D(P, n, sel, cell) { // grid connected components of selecte
   return comps;
 }
 function trees(P, n, cls, hag, opts = {}) {
-  const cell = opts.cell || 0.5, minH = opts.minH || 2.5; const sel = new Uint8Array(n); for (let i = 0; i < n; i++) sel[i] = cls[i] === 5 ? 1 : 0;
+  const cell = opts.cell || 0.5, minH = opts.minH || 2.5; const sel = new Uint8Array(n); for (let i = 0; i < n; i++) sel[i] = cls[i] === 5 && hag[i] <= (opts.maxH || 70) ? 1 : 0;   // stray high returns (birds, noise) are not tree tops
   let cnt = 0; for (const v of sel) cnt += v; if (cnt < 20) return [];
   const g = gridOf(P, n, cell, sel); const chm = new Float32Array(g.nx * g.ny).fill(NaN), top = new Float32Array(g.nx * g.ny).fill(NaN);
   for (let i = 0; i < n; i++) { if (!sel[i]) continue; const k = cellIndex(g, P[i * 3], P[i * 3 + 1]); if (!(hag[i] <= chm[k])) { chm[k] = hag[i]; top[k] = P[i * 3 + 2]; } }
@@ -371,32 +371,41 @@ function circleFit(xy) { // least-squares circle through plan points [[x,y]…]
 }
 const pct = (a, f) => a.length ? a[Math.min(a.length - 1, Math.floor(a.length * f))] : NaN;
 function vegetation(t, opts = {}) {
-  const { P, m, cls, hag } = t, cell = opts.cell || 1, trees = (t.trees || []).filter(T => T.height <= (opts.maxTreeHeight || 90) && !(T.height > 40 && T.spread < 0.12 * T.height));   // very tall and pencil-thin is a mast, wire or stray return, not a tree
+  const { P, m, cls, hag } = t, cell = opts.cell || 1, trees = (t.trees || []).filter(T => T.height <= (opts.maxTreeHeight || 70) && !(T.height > 40 && T.spread < 0.12 * T.height));   // very tall and pencil-thin is a mast, wire or stray return, not a tree
   const NS = opts.nearSurface || [0.1, 0.6], EL = opts.elevated || [0.6, 3];
   // strata grid
   const g = gridOf(P, m, cell), N = g.nx * g.ny; const seen = new Uint8Array(N), ns = new Uint8Array(N), elv = new Uint8Array(N), can = new Uint8Array(N), elTop = new Float32Array(N), canBase = new Float32Array(N).fill(Infinity), canTop = new Float32Array(N);
   // trees: bucket grid for point → tree
   const bc = 4, bk = new Map(); trees.forEach((T, i) => { const R = Math.max(1, T.spread * 0.6); for (let a = Math.floor((T.x - R) / bc); a <= Math.floor((T.x + R) / bc); a++) for (let b = Math.floor((T.y - R) / bc); b <= Math.floor((T.y + R) / bc); b++) { const k = a + ',' + b; let l = bk.get(k); if (!l) bk.set(k, l = []); l.push(i); } });
-  const crown = trees.map(() => []), stem = trees.map(() => []);
+  const crown = trees.map(() => []), bh = [];
   for (let i = 0; i < m; i++) {
     const x = P[i * 3], y = P[i * 3 + 1], h = hag[i], c = cls[i], k = cellIndex(g, x, y); if (k < 0) continue; seen[k] = 1;
     const veg = c === 3 || c === 4 || c === 5;
     if (veg) { if (h >= NS[0] && h < NS[1]) ns[k] = 1; else if (h >= EL[0] && h < EL[1]) { elv[k] = 1; if (h > elTop[k]) elTop[k] = h; } else if (h >= EL[1]) { can[k] = 1; if (h < canBase[k]) canBase[k] = h; if (h > canTop[k]) canTop[k] = h; } }
+    if (c !== 2 && h >= 1.0 && h <= 1.6) bh.push(i);
     if (!trees.length || c === 2 || c === 6) continue;
     const l = bk.get(Math.floor(x / bc) + ',' + Math.floor(y / bc)); if (!l) continue; let best = -1, bd = Infinity;
     for (const ti of l) { const T = trees[ti], d = Math.hypot(x - T.x, y - T.y); if (d <= Math.max(1, T.spread * 0.6) && d / Math.max(1, T.spread) < bd) { bd = d / Math.max(1, T.spread); best = ti; } }
-    if (best < 0) continue; if (c === 5) crown[best].push(h); if (h >= 1.0 && h <= 1.6) stem[best].push([x, y]);
+    if (best >= 0 && c === 5) crown[best].push(h);
   }
   const outT = trees.map((T, i) => {
     const hs = Float32Array.from(crown[i]).sort(); const cbh = hs.length >= 8 ? Math.max(0.3, pct(hs, 0.05)) : NaN, area = Math.PI * (T.spread / 2) ** 2, depth = isFinite(cbh) ? Math.max(0, T.height - cbh) : NaN;
-    let dbh = null, tx = T.x, ty = T.y; const sp = stem[i];
-    if (sp.length >= 10) { // densest 0.25 m patch, then a circle through the points around it
-      const cnt = new Map(); for (const q of sp) { const k = Math.floor(q[0] / 0.25) + ',' + Math.floor(q[1] / 0.25); cnt.set(k, (cnt.get(k) || 0) + 1); }
-      let bk2 = null, bn = 0; for (const [k, v] of cnt) if (v > bn) { bn = v; bk2 = k; } const [ci, cj] = bk2.split(',').map(Number), cx = (ci + 0.5) * 0.25, cy = (cj + 0.5) * 0.25;
-      const near = sp.filter(q => Math.hypot(q[0] - cx, q[1] - cy) < 0.7); if (near.length >= 10) { const f = circleFit(near); if (f && f.r >= 0.04 && f.r <= 0.9 && f.rms < Math.max(0.015, 0.2 * f.r) && f.arc >= 150) { dbh = 2 * f.r; tx = f.x; ty = f.y; } }
-    }
+    const dbh = null, tx = T.x, ty = T.y;
     return { id: i + 1, x: T.x, y: T.y, groundZ: T.groundZ, height: T.height, spread: T.spread, crownArea: area, crownBase: cbh, crownDepth: depth, crownVolume: isFinite(depth) ? 2 / 3 * area * depth : NaN, dbh, trunkX: tx, trunkY: ty, returns: hs.length };
   });
+  // stems: clusters of returns at breast height that fit a circle; each goes to the crown it stands under, or becomes a tree of its own
+  const sc = 0.2, cellsB = new Map(); for (const i of bh) { const k = Math.floor(P[i * 3] / sc) + ',' + Math.floor(P[i * 3 + 1] / sc); let l = cellsB.get(k); if (!l) cellsB.set(k, l = []); l.push(i); }
+  const done = new Set(), stems = [];
+  for (const k0 of cellsB.keys()) { if (done.has(k0)) continue; const comp = [], st = [k0]; done.add(k0);
+    while (st.length) { const k = st.pop(); comp.push(k); const [a, b] = k.split(',').map(Number); for (let da = -1; da <= 1; da++) for (let db = -1; db <= 1; db++) { const q = (a + da) + ',' + (b + db); if (cellsB.has(q) && !done.has(q)) { done.add(q); st.push(q); } } }
+    if (comp.length > 80) continue; const xy = []; for (const k of comp) for (const i of cellsB.get(k)) xy.push([P[i * 3], P[i * 3 + 1], P[i * 3 + 2] - hag[i]]); if (xy.length < 10) continue;
+    const f = circleFit(xy); if (!f || f.r < 0.04 || f.r > 0.6 || f.rms > Math.max(0.012, 0.1 * f.r) || f.arc < 150) continue;
+    stems.push({ x: f.x, y: f.y, dbh: 2 * f.r, gz: xy.reduce((p, q) => p + q[2], 0) / xy.length }); }
+  for (const S2 of stems.sort((a, b) => b.dbh - a.dbh)) { let best = null, bd = Infinity; for (const T of outT) { if (T.dbh) continue; const d = Math.hypot(T.x - S2.x, T.y - S2.y); if (d <= Math.max(1.5, (T.spread || 0) * 0.5) && d < bd) { bd = d; best = T; } }
+    if (best) { best.dbh = S2.dbh; best.trunkX = S2.x; best.trunkY = S2.y; continue; }
+    const ci = Math.floor((S2.x - g.x0) / cell), cj = Math.floor((S2.y - g.y0) / cell); let top = 0, base = Infinity; for (let dj = -2; dj <= 2; dj++) for (let di = -2; di <= 2; di++) { const a = ci + di, b = cj + dj; if (a < 0 || b < 0 || a >= g.nx || b >= g.ny) continue; const k = b * g.nx + a; if (canTop[k] > top) top = canTop[k]; if (canBase[k] < base) base = canBase[k]; }
+    if (top < 2.5 || top > Math.min(opts.maxTreeHeight || 70, 100 * S2.dbh)) continue;   // nothing overhead, or far too tall for the stem: a post or a wall edge, not a tree
+    outT.push({ id: outT.length + 1, x: S2.x, y: S2.y, groundZ: S2.gz, height: top, spread: NaN, crownArea: NaN, crownBase: Number.isFinite(base) ? base : NaN, crownDepth: Number.isFinite(base) ? top - base : NaN, crownVolume: NaN, dbh: S2.dbh, trunkX: S2.x, trunkY: S2.y, returns: 0, fromStem: true }); }
   let aS = 0, aC = 0, aE = 0, aN = 0; for (let k = 0; k < N; k++) if (seen[k]) { aS++; aC += can[k]; aE += elv[k]; aN += ns[k]; }
   const hsort = outT.map(T => T.height).sort((a, b) => a - b), cb = outT.map(T => T.crownBase).filter(isFinite), dbhs = outT.filter(T => T.dbh).map(T => T.dbh), ha = aS * cell * cell / 1e4;
   const stand = { areaHa: ha, trees: outT.length, stemsPerHa: ha ? outT.length / ha : 0, canopyCover: aS ? aC / aS : 0, elevatedCover: aS ? aE / aS : 0, nearSurfaceCover: aS ? aN / aS : 0, heightMean: hsort.length ? hsort.reduce((a, b) => a + b, 0) / hsort.length : 0, heightP95: pct(hsort, 0.95) || 0, heightMax: hsort.length ? hsort[hsort.length - 1] : 0, crownBaseMean: cb.length ? cb.reduce((a, b) => a + b, 0) / cb.length : NaN, trunksMeasured: dbhs.length, dbhMean: dbhs.length ? dbhs.reduce((a, b) => a + b, 0) / dbhs.length : NaN };

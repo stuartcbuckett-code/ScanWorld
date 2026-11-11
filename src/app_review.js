@@ -230,14 +230,14 @@ async function exportDEM(cell) {
 const WEIR_PARTS = ['samples/weir_1.laz.b64.txt', 'samples/weir_2.laz.b64.txt', 'samples/weir_3.laz.b64.txt', 'samples/weir_4.laz.b64.txt'];
 async function loadWeirSample() {
   if (location.protocol === 'file:') { toast('Open the published page to load the built-in samples (or open mundaring_weir_sim.laz).', true); return; }
-  await busy('Loading the Mundaring Weir sample (2.7 M points)…', async onP => {
+  await busy('Loading the Mundaring Weir sample (2.6 M points)…', async onP => {
     const parts = []; let k = 0;
     for (const u of WEIR_PARTS) { const b = await fetchSamplePart(u); onP(++k / WEIR_PARTS.length * 0.6);
       const src = { name: u, size: b.length, read: async (o, l) => b.buffer.slice(o, o + l) }; parts.push(await IO.readLAS(src, { budget: 5e6, lazPerf: getLaz })); }
     const n = parts.reduce((a, p) => a + p.n, 0), o0 = parts[0].origin; const pos = new Float32Array(n * 3), rgb = new Uint8Array(n * 3), it = new Float32Array(n), cls = new Uint8Array(n); let q = 0;
     for (const p of parts) { const d = [p.origin[0] - o0[0], p.origin[1] - o0[1], p.origin[2] - o0[2]]; for (let i = 0; i < p.n; i++, q++) { pos[q * 3] = p.pos[i * 3] + d[0]; pos[q * 3 + 1] = p.pos[i * 3 + 1] + d[1]; pos[q * 3 + 2] = p.pos[i * 3 + 2] + d[2]; } if (p.rgb) rgb.set(p.rgb, (q - p.n) * 3); if (p.intensity) it.set(p.intensity, q - p.n); if (p.cls) cls.set(p.cls, q - p.n); }
     dropSample(); for (const L0 of S.layers.filter(x => x.name.startsWith('Offshore platform (synthetic'))) removeLayer(L0);
-    const L = addCloud('Mundaring Weir (simulated aerial LiDAR)', { n, pos, rgb, intensity: it, cls, origin: o0, meta: { format: 'Synthetic sample · LAS 1.4 PF7 · MGA2020 zone 50', total: n, stride: 1 } }, { sample: true }); S.sample = true; refreshAllPanes();
+    const L = addCloud('Mundaring Weir (simulated DJI L3 drone LiDAR)', { n, pos, rgb, intensity: it, cls, origin: o0, meta: { format: 'Synthetic sample · LAS 1.4 PF7 · MGA2020 zone 50', total: n, stride: 1 } }, { sample: true }); S.sample = true; refreshAllPanes();
     if (!S.crs) { S.crs = 'MGA2020-50'; try { updateCrsStatus(); } catch (e) { } }
     fitAll(); setView('iso'); return L;
   });
@@ -300,7 +300,7 @@ function buildReview() {
   const ovl = el('div', { class: 'mlist' }); for (const ov of S.overlays) { const cb = el('input', { type: 'checkbox', 'aria-label': 'Show ' + ov.name }); cb.checked = ov.visible; cb.addEventListener('change', () => { ov.visible = cb.checked; ov.obj.visible = cb.checked; S.dirty = true; });
     ovl.append(el('div', { class: 'mitem', style: 'grid-template-columns:auto minmax(0,1fr) auto' }, cb, el('div', {}, el('div', { class: 't' }, ov.name), el('div', { class: 'v' }, ov.n.toLocaleString() + ' entities')), el('button', { class: 'btn small icon danger', 'aria-label': 'Remove overlay', onclick: () => { annot.remove(ov.obj); S.overlays = S.overlays.filter(x => x !== ov); S.dirty = true; buildReview(); } }, '×'))); }
   p.append(el('div', { class: 'sec' }, el('h3', {}, 'Design overlays', el('label', { class: 'btn small' }, 'Add DXF…', dxin)), el('div', { class: 'note' }, 'Show design linework (lines, polylines, circles, 3D faces, points) with the cloud to check as-built against design. The DXF must be in the same coordinates as the cloud.'), ovl));
-  p.append(el('div', { class: 'sec' }, el('h3', {}, 'Samples'), el('div', { class: 'row' }, el('button', { class: 'btn small', onclick: loadWeirSample }, 'Mundaring Weir (aerial)'), el('button', { class: 'btn small', onclick: () => loadPlatformSample() }, 'Offshore platform (scan)')),
+  p.append(el('div', { class: 'sec' }, el('h3', {}, 'Samples'), el('div', { class: 'row' }, el('button', { class: 'btn small', onclick: loadWeirSample }, 'Mundaring Weir (L3 drone)'), el('button', { class: 'btn small', onclick: () => loadPlatformSample() }, 'Offshore platform (scan)')),
     el('div', { class: 'hint' }, 'Synthetic test data. The weir is a simulation styled on the real dam, not survey data.')));
 }
 const _refreshAll2 = refreshAllPanes;
