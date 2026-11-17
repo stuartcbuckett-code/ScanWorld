@@ -22,9 +22,6 @@ jobs:
           - os: windows-latest
             bin: scanlod.exe
             asset: scanlod-windows-x64.exe
-          - os: ubuntu-latest
-            bin: scanlod
-            asset: scanlod-linux-x64
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
@@ -71,30 +68,4 @@ jobs:
         run: |
           gh release delete scanlod-latest --cleanup-tag -y || true
           gh release create scanlod-latest assets/* --title "scanlod (latest build)" --latest --target ${{ github.sha }} \
-            --notes "LOD converter for ScanBench, built from ${{ github.sha }}. Windows: open a terminal in the download folder and run  scanlod-windows-x64.exe convert D:\Scans\site.e57 -o D:\Projects\Site  then  scanlod-windows-x64.exe view D:\Projects\Site . See converter/README.md for options. The macOS build is added here when its runner finishes."
-
-  # macOS runners can queue for a long time, so the Mac build adds itself to the release when it finishes
-  macos:
-    needs: release
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-      - run: npm ci
-      - run: python3 build.py
-      - uses: dtolnay/rust-toolchain@stable
-      - uses: Swatinem/rust-cache@v2
-        with:
-          workspaces: converter
-      - run: cargo build --release --manifest-path converter/Cargo.toml
-      - name: Check and add to the release
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          B=converter/target/release/scanlod
-          $B convert samples/weir_1.laz -o out_weir --name "Weir test" && $B verify out_weir
-          cp $B scanlod-macos-arm64
-          gh release upload scanlod-latest scanlod-macos-arm64 --clobber
+            --notes "LOD converter for ScanBench, built from ${{ github.sha }}. Windows: open a terminal in the download folder and run  scanlod-windows-x64.exe convert D:\Scans\site.e57 -o D:\Projects\Site  then  scanlod-windows-x64.exe view D:\Projects\Site . See converter/README.md for options."

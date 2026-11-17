@@ -6,7 +6,7 @@ It is one program with no installer. It also carries the viewer inside, so `scan
 
 ## Download
 
-Builds for Windows, Linux and macOS are attached to the **scanlod-latest** release on GitHub (built automatically from `main`), or build it yourself (below).
+The Windows x64 build (`scanlod-windows-x64.exe`) is attached to the **scanlod-latest** release on GitHub, built automatically from `main`. Other systems can build it themselves (below).
 
 ## Quick start (Windows)
 
