@@ -70,7 +70,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh release delete scanlod-latest --cleanup-tag -y || true
-          gh release create scanlod-latest assets/* --title "scanlod (latest build)" --prerelease --target ${{ github.sha }} \
+          gh release create scanlod-latest assets/* --title "scanlod (latest build)" --latest --target ${{ github.sha }} \
             --notes "LOD converter for ScanBench, built from ${{ github.sha }}. Windows: open a terminal in the download folder and run  scanlod-windows-x64.exe convert D:\Scans\site.e57 -o D:\Projects\Site  then  scanlod-windows-x64.exe view D:\Projects\Site . See converter/README.md for options. The macOS build is added here when its runner finishes."
 
   # macOS runners can queue for a long time, so the Mac build adds itself to the release when it finishes
