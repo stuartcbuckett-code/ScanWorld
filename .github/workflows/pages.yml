@@ -28,6 +28,18 @@ jobs:
         run: npm test
       - name: Build static site
         run: python3 build.py --single
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: converter
+      - name: Build the LOD converter
+        run: cargo build --release --manifest-path converter/Cargo.toml
+      - name: Streaming demo (Mundaring Weir as a LOD project) and converter checks
+        run: |
+          ./converter/target/release/scanlod convert samples/weir_1.laz samples/weir_2.laz samples/weir_3.laz samples/weir_4.laz -o dist/lod/weir --name "Mundaring Weir"
+          ./converter/target/release/scanlod verify dist/lod/weir
+          ./converter/target/release/scanlod export dist/lod/weir -o /tmp/box.laz --box=421550,6463780,100,421590,6463820,300
+          rm -f dist/lod/weir/scanlod.log
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

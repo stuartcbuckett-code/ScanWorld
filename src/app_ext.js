@@ -348,6 +348,7 @@ async function loadPlatformSample() {
   return true;
 }
 async function loadStartSample() {
+  if (/[?&](project|open)=/.test(location.search)) return;   // opening a project: no sample
   const ok = await loadPlatformSample();
   if (!ok) { loadSample(); toast('Loaded a synthetic sample room so the tools have something to work on. Opening your own files replaces it.'); }
 }

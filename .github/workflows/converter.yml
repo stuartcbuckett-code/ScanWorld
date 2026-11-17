@@ -1,0 +1,73 @@
+name: Build scanlod (LOD converter)
+
+on:
+  push:
+    branches: [main]
+    paths: ['converter/**', 'src/**', 'build.py', '.github/workflows/converter.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            bin: scanlod.exe
+            asset: scanlod-windows-x64.exe
+          - os: ubuntu-latest
+            bin: scanlod
+            asset: scanlod-linux-x64
+          - os: macos-latest
+            bin: scanlod
+            asset: scanlod-macos-arm64
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Build the viewer that scanlod carries inside
+        run: python build.py
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: converter
+      - run: cargo build --release --manifest-path converter/Cargo.toml
+      - name: Convert, verify and export the sample
+        shell: bash
+        run: |
+          B=converter/target/release/${{ matrix.bin }}
+          $B convert samples/weir_1.laz samples/weir_2.laz -o out_weir --name "Weir test"
+          $B verify out_weir
+          $B export out_weir -o out_box.laz --box=421550,6463780,100,421590,6463820,300
+          $B info out_weir
+      - name: Name the binary
+        shell: bash
+        run: cp converter/target/release/${{ matrix.bin }} ${{ matrix.asset }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.asset }}
+          path: ${{ matrix.asset }}
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: assets
+          merge-multiple: true
+      - name: Publish the "scanlod-latest" release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete scanlod-latest --cleanup-tag -y || true
+          gh release create scanlod-latest assets/* --title "scanlod (latest build)" --prerelease --target ${{ github.sha }} \
+            --notes "LOD converter for ScanBench, built from ${{ github.sha }}. Download the file for your system; on Windows run it from a terminal: scanlod-windows-x64.exe convert scan.e57 -o MyProject, then scanlod-windows-x64.exe view MyProject. See converter/README.md."

@@ -17,14 +17,14 @@ wasm = base64.b64encode(open(R('node_modules', 'laz-perf', 'lib', 'web', 'laz-pe
 dl = read('node_modules', 'delaunator', 'delaunator.min.js')
 io, al, cad, topo, crs = (read('src', f) for f in ['io.js', 'algo.js', 'cad.js', 'topo.js', 'crs.js'])
 app = read('src', 'app.js')
-ext = '\n'.join(read('src', f) for f in ['app_ext.js', 'app_cad.js', 'app_review.js', 'app_lod.js', 'app_more.js', 'app_stream.js', 'app_globe.js', 'app_veg.js'])
+ext = '\n'.join(read('src', f) for f in ['app_ext.js', 'app_cad.js', 'app_review.js', 'app_lod.js', 'app_more.js', 'app_stream.js', 'app_globe.js', 'app_veg.js', 'app_tiles.js'])
 marker = '// ---------- boot ----------'
 assert marker in app
 app = app.replace(marker, ext + '\n' + marker)
 # handles used by the browser tests
 hook = "window.__sb = { S,"
 assert hook in app
-app = app.replace(hook, "poolReady(); window.__sb = { S, POOL, parC2C, buildCad, buildTopo, buildCoords, convertAll, fitAtPoint, cadSelect, cadTransform, cadDelete, cadUndo, fit2Pair, buildReview, buildLOD, LODS, addAnnotation, addBookmark, lineOfSight, viewshed, slopeAspect, stockpileVolume, planeDip, dsmChange, saveProject, loadProjectObj, loadWeirSample, wireClearance, exportSHP, parseDXF, addOverlay, importDataset, openDataset, exportDataset, extractToLayer, readBox, compareToCad, classifyByCad, classifyTerrain, findPeople, removePeople, playPath, batchScanToCad, addGroup, applyVisibility, extractTyped, goView, DS, STR, GLB, globeFly, globeGeo,")
+app = app.replace(hook, "poolReady(); window.__sb = { S, POOL, parC2C, buildCad, buildTopo, buildCoords, convertAll, fitAtPoint, cadSelect, cadTransform, cadDelete, cadUndo, fit2Pair, buildReview, buildLOD, LODS, addAnnotation, addBookmark, lineOfSight, viewshed, slopeAspect, stockpileVolume, planeDip, dsmChange, saveProject, loadProjectObj, loadWeirSample, wireClearance, exportSHP, parseDXF, addOverlay, importDataset, openDataset, updateCamera, curCam, setView, LP, lodOpenStore, lodOpenUrl, lodDatasets, lodExport, lodReadBox, lodSaveProject, lodProjectJSON, lodAddModel, lodPlaceModel, boxFromWorld, boxWorld, boxDrawMode, LHttpStore, LFileStore, buildLodPanel, lodClose, lodCloseProject, exportDataset, extractToLayer, readBox, compareToCad, classifyByCad, classifyTerrain, findPeople, removePeople, playPath, batchScanToCad, addGroup, applyVisibility, extractTyped, goView, DS, STR, GLB, globeFly, globeGeo,")
 for name, src in [('laz', laz), ('io', io), ('al', al), ('cad', cad), ('topo', topo), ('crs', crs), ('app', app), ('dl', dl)]:
     assert '</script' not in src.lower(), name
 
@@ -49,6 +49,20 @@ if os.path.isdir(R('samples')):
     shutil.rmtree(R('dist', 'samples'), ignore_errors=True); shutil.copytree(R('samples'), R('dist', 'samples'))
 open(R('dist', '.nojekyll'), 'w').write('')
 print('dist/index.html', os.path.getsize(R('dist', 'index.html')) // 1024, 'KB')
+# one self-contained file with three.js inside, for offline use and for the scanlod viewer server
+three = read('node_modules', 'three', 'build', 'three.min.js')
+assert '</script' not in three.lower()
+off = HEAD + page('', True).replace('<script src=""></script>', '<script>\n' + three + '\n</script>') + '</body></html>'
+open(R('dist', 'ScanBench-offline.html'), 'w', encoding='utf-8').write(off)
+print('dist/ScanBench-offline.html', len(off) // 1024, 'KB')
+# guard: every script block must parse (one stray quote silently breaks the whole app)
+import subprocess
+chk = "const fs=require('fs');const h=fs.readFileSync(process.argv[1],'utf8');let bad=0;for(const m of h.matchAll(/<script(?: data-lib)?>([\\s\\S]*?)<\\/script>/g)){try{new Function(m[1])}catch(e){bad++;console.error('script syntax error: '+e.message)}}process.exit(bad?1:0)"
+try:
+    r = subprocess.run(['node', '-e', chk, R('dist', 'ScanBench-offline.html')])
+    if r.returncode: sys.exit('build stopped: a script block does not parse')
+except FileNotFoundError:
+    print('(node not found: skipped the script syntax check)')
 if '--single' in sys.argv:
     open(R('dist', 'ScanBench.html'), 'w', encoding='utf-8').write(HEAD + page('https://cdn.jsdelivr.net/npm/three@0.155.0/build/three.min.js', False) + '</body></html>')
     print('dist/ScanBench.html written')

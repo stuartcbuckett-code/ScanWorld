@@ -229,8 +229,9 @@ async function loadNode(D, i) {
   } catch (e) { console.warn(e); D.failed = (D.failed || 0) + 1; } finally { D.inflight.delete(i); STR.key = ''; S.dirty = true; }
 }
 const STR = { key: '', shown: 0 };
+const oldStreams = () => (S.streams || []).filter(D => D.kind !== 'lod');
 function updateStreams() {
-  const Ds = S.streams.filter(D => D.visible); for (const D of S.streams) D.root.visible = D.visible; if (!Ds.length) { STR.shown = 0; return; }
+  const Ds = oldStreams().filter(D => D.visible); for (const D of oldStreams()) D.root.visible = D.visible; if (!Ds.length) { STR.shown = 0; return; }
   const cam = curCam(); cam.updateMatrixWorld(); const pm = new THREE.Matrix4().multiplyMatrices(cam.projectionMatrix, cam.matrixWorldInverse);
   const key = pm.elements.map(v => v.toFixed(4)).join(',') + Ds.map(D => D.loaded.size + ':' + D.inflight.size).join() + S.clip.on + LODS.budget + LODS.minPx; if (key === STR.key) return; STR.key = key;
   const fr = new THREE.Frustum().setFromProjectionMatrix(pm); const pxScale = cam.isOrthographicCamera ? H() / (cam.top - cam.bottom) : H() / (2 * Math.tan(cam.fov * Math.PI / 360));
@@ -242,10 +243,10 @@ function updateStreams() {
     if (N) { N.obj.visible = true; N.last = now; shown += h.count; if (it.w > LODS.minPx) for (const c of h.kidsI) push(it.D, c); } else want.push(it); }
   STR.shown = shown;
   // fetch the most important missing nodes; evict least-recently-used ones beyond the cache
-  for (const it of want.slice(0, 16)) { const busyN = S.streams.reduce((a, D) => a + D.inflight.size, 0); if (busyN >= DS.conc) break; if (!it.D.inflight.has(it.i)) loadNode(it.D, it.i); }
-  let cached = S.streams.reduce((a, D) => a + [...D.loaded.values()].reduce((s, N) => s + N.n, 0), 0); const cap = LODS.budget * 2.5;
-  if (cached > cap) { const all = []; for (const D of S.streams) for (const [i, N] of D.loaded) if (!N.obj.visible) all.push([D, i, N]); all.sort((a, b) => a[2].last - b[2].last); for (const [D, i, N] of all) { if (cached <= cap) break; D.root.remove(N.obj); N.obj.geometry.dispose(); D.loaded.delete(i); cached -= N.n; } }
-  const s = $('#stLOD'); if (s) s.textContent = 'Shown ' + fmtN(LODS.shown + STR.shown) + ' of ' + fmtN(S.layers.filter(L => L.visible && L.kind === 'cloud').reduce((a, L) => a + L.n, 0) + Ds.reduce((a, D) => a + D.meta.points, 0)) + (S.streams.some(D => D.inflight.size) ? ' · loading…' : '');
+  for (const it of want.slice(0, 16)) { const busyN = oldStreams().reduce((a, D) => a + D.inflight.size, 0); if (busyN >= DS.conc) break; if (!it.D.inflight.has(it.i)) loadNode(it.D, it.i); }
+  let cached = oldStreams().reduce((a, D) => a + [...D.loaded.values()].reduce((s, N) => s + N.n, 0), 0); const cap = LODS.budget * 2.5;
+  if (cached > cap) { const all = []; for (const D of oldStreams()) for (const [i, N] of D.loaded) if (!N.obj.visible) all.push([D, i, N]); all.sort((a, b) => a[2].last - b[2].last); for (const [D, i, N] of all) { if (cached <= cap) break; D.root.remove(N.obj); N.obj.geometry.dispose(); D.loaded.delete(i); cached -= N.n; } }
+  const s = $('#stLOD'); if (s) s.textContent = 'Shown ' + fmtN(LODS.shown + STR.shown) + ' of ' + fmtN(S.layers.filter(L => L.visible && L.kind === 'cloud').reduce((a, L) => a + L.n, 0) + Ds.reduce((a, D) => a + D.meta.points, 0)) + (oldStreams().some(D => D.inflight.size) ? ' · loading…' : '');
   if (want.length) setTimeout(() => { STR.key = ''; S.dirty = true; }, 120);
 }
 const _drawS = draw; draw = function () { try { updateStreams(); } catch (e) { console.warn(e); } _drawS(); };
@@ -328,10 +329,10 @@ exportCloud = async function (L, f) {
 // ----- datasets panel -----
 async function listLocalDatasets() { const out = []; try { const root = await dsRoot(); for await (const [nm, h] of root.entries()) { if (h.kind !== 'directory') continue; try { const st = new DirStore(h); const meta = JSON.parse(await st.text('metadata.json')); let size = 0; try { size = (await st.file('octree.bin')).size; } catch (e) { } out.push({ st, meta, size }); } catch (e) { out.push({ broken: nm }); } } } catch (e) { } return out; }
 async function buildDatasets() {
-  let host = $('#dsSec'); if (!host) { host = el('div', { class: 'sec', id: 'dsSec' }); const lay = $('#layers'); if (!lay) return; lay.closest('.sec').after(host); }
+  let host = $('#dsSec'); if (!host) { host = el('div', { class: 'sec', id: 'dsSec' }); const lay = $('#layers'); if (!lay) return; ($('#lodSec') || lay.closest('.sec')).after(host); }
   const fin = el('input', { type: 'file', multiple: true, hidden: true, accept: '.las,.laz,.e57,.ply,.xyz,.txt,.csv,.pts' }); fin.addEventListener('change', () => { const fs = [...fin.files]; fin.value = ''; if (fs.length) importDataset(fs); });
   const est = navigator.storage && navigator.storage.estimate ? await navigator.storage.estimate().catch(() => null) : null;
-  host.textContent = ''; host.append(el('h3', {}, 'Datasets'), el('div', { class: 'note' }, 'For clouds of any size. Files are converted once into an octree on this computer (browser storage), then streamed into view at the point budget. Every source header, VLR and point attribute is kept, so you can export them again. The same dataset folder can later be served from cloud storage.'),
+  host.textContent = ''; host.append(el('h3', {}, 'Browser datasets'), el('div', { class: 'note' }, 'Without the converter: files are converted once into an octree inside this browser’s storage, then streamed into view at the point budget. Every source header, VLR and point attribute is kept, so you can export them again. The same dataset folder can later be served from cloud storage.'),
     el('div', { class: 'row' }, el('label', { class: 'btn small primary' }, 'Import files as dataset…', fin), window.showDirectoryPicker ? el('button', { class: 'btn small', onclick: openFolderDataset }, 'Open dataset folder…') : null, el('button', { class: 'btn small', onclick: openUrlDataset }, 'Open from URL…')), el('input', { type: 'url', id: 'dsUrl', hidden: true, placeholder: 'https://…/dataset-folder/ then press Enter', 'aria-label': 'Dataset folder URL', onkeydown: e => { if (e.key === 'Enter') openUrlDataset(); } }),
     est ? el('div', { class: 'hint' }, 'Local storage: ' + (est.usage / 1e9).toFixed(2) + ' GB used of ' + (est.quota / 1e9).toFixed(0) + ' GB available to this page.') : null);
   if (DS.job) host.append(el('button', { class: 'btn small danger', onclick: () => { DS.job.stop = true; } }, 'Cancel import'));
@@ -348,7 +349,7 @@ async function buildDatasets() {
       el('details', {}, el('summary', { class: 'hint', style: 'cursor:pointer' }, 'Source metadata'), el('div', { class: 'mono hint', style: 'white-space:pre-wrap;font-size:10.5px;max-height:200px;overflow:auto' }, m.sources.map(s => s.name + '\n  ' + (s.kind || '') + ' ' + (s.version || '') + (s.compressed ? ' (LAZ)' : '') + ' · PF ' + (s.pointFormat ?? '-') + ' · ' + (s.points || 0).toLocaleString() + ' pts' + (s.scale ? '\n  scale ' + s.scale.join(' ') + ' · offset ' + s.offset.join(' ') : '') + ((s.vlrs || []).length ? '\n  VLRs: ' + s.vlrs.map(v => v.uid + ' ' + v.rid + (v.desc ? ' (' + v.desc + ')' : '')).join('; ') : '') + ((s.evlrs || []).length ? '\n  EVLRs: ' + s.evlrs.map(v => v.uid + ' ' + v.rid).join('; ') : '') + (s.crsWKT ? '\n  CRS: ' + s.crsWKT.slice(0, 120) + '…' : '')).join('\n'))),
       el('div', { class: 'row', style: 'margin-top:4px' }, el('button', { class: 'btn small danger', onclick: async () => { if (D) closeDataset(D); await (await dsRoot()).removeEntry(m.id, { recursive: true }); buildDatasets(); toast('Deleted dataset ' + m.name + '.'); } }, 'Delete')))));
   }
-  for (const D of S.streams.filter(D => !(D.store instanceof DirStore) || !items.some(i => i.meta.id === D.meta.id))) list.append(el('div', { class: 'mitem', style: 'grid-template-columns:minmax(0,1fr) auto' }, el('div', {}, el('div', { class: 't' }, D.meta.name), el('div', { class: 'v' }, fmtN(D.meta.points) + ' pts · ' + D.store.label)), el('span', { class: 'row', style: 'gap:4px' }, el('button', { class: 'btn small', onclick: () => extractToLayer(D, S.clip.on ? 'box' : 'sample') }, '→ layer'), el('button', { class: 'btn small', onclick: () => closeDataset(D) }, 'Close'))));
+  for (const D of oldStreams().filter(D => !(D.store instanceof DirStore) || !items.some(i => i.meta.id === D.meta.id))) list.append(el('div', { class: 'mitem', style: 'grid-template-columns:minmax(0,1fr) auto' }, el('div', {}, el('div', { class: 't' }, D.meta.name), el('div', { class: 'v' }, fmtN(D.meta.points) + ' pts · ' + D.store.label)), el('span', { class: 'row', style: 'gap:4px' }, el('button', { class: 'btn small', onclick: () => extractToLayer(D, S.clip.on ? 'box' : 'sample') }, '→ layer'), el('button', { class: 'btn small', onclick: () => closeDataset(D) }, 'Close'))));
   host.append(list);
 }
 async function openFolderDataset() { try { const h = await window.showDirectoryPicker({ mode: 'read' }); const st = new DirStore(h, h.name); await openDataset(st); } catch (e) { if (e.name !== 'AbortError') toast('Could not open that folder as a dataset: ' + e.message, true); } }

@@ -170,7 +170,7 @@ async function flythrough(record) {
 }
 
 // ---------- project file (annotations, views, measurements, CAD, coordinate system) ----------
-function saveProject() {
+function projectState() {
   const o = S.origin || [0, 0, 0]; const w = p => [p[0] + o[0], p[1] + o[1], p[2] + o[2]]; const wv = v => w([v.x, v.y, v.z]);
   const cadOut = S.cad ? JSON.parse(JSON.stringify(cadLists(), (k, v) => (k === 'pipe' || (k === 'a' || k === 'b') && v && v.type) ? undefined : (v instanceof Float32Array || v instanceof Uint32Array ? undefined : v))) : null;
   const proj = { format: 'ScanBench project', version: 1, saved: new Date().toISOString(), crs: S.crs || null, origin: o,
@@ -180,8 +180,9 @@ function saveProject() {
     measurements: S.measures.map(M => ({ name: M.name, type: M.type, values: M.lines, tags: M.tags, note: M.note, color: M.color, closed: !!M.closed, points: M.pts.map(wv) })),
     tags: S.tagLib, groups: S.groups, layerGroups: S.layers.map(L => [L.name, L.group]), flights: (S.paths || []).map(F => ({ name: F.name, speed: F.speed, look: F.look, closed: !!F.closed, tilt: F.tilt, target: F.target ? w(F.target) : null, waypoints: F.pts.map(w) })),
     cadOriginLocal: o, cad: cadOut };
-  saveFile('scanbench-project.json', JSON.stringify(proj, null, 1));
+  return proj;
 }
+function saveProject() { saveFile('scanbench-project.json', JSON.stringify(projectState(), null, 1)); }
 function loadProjectObj(proj) {
   if (!proj || proj.format !== 'ScanBench project') { toast('That is not a ScanBench project file.', true); return; }
   if (!S.origin) { toast('Load the point clouds first, then open the project file.', true); return; }
