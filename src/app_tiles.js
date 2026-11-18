@@ -510,24 +510,33 @@ const HOMEDB = { get: async k => { try { return await new Promise((res, rej) => 
   set: async (k, v) => { try { await new Promise((res, rej) => { const r = indexedDB.open('scanbench-home', 1); r.onupgradeneeded = () => r.result.createObjectStore('h'); r.onerror = () => rej(r.error); r.onsuccess = () => { const t = r.result.transaction('h', 'readwrite'); t.objectStore('h').put(v, k); t.oncomplete = res; t.onerror = () => rej(t.error); }; }); } catch (e) { } } };
 async function homeProject(home) {
   // served over http(s) (a web server, S3, scanlod view): the project sits beside this page, so open it straight away
-  if (/^https?:$/.test(location.protocol)) { lodOpenUrl('project.json'); return; }
+  if (/^https?:$/.test(location.protocol) && !window.SB_DISKTEST) { lodOpenUrl('project.json'); return; }
   // opened from disk: browsers only let a page read its folder after the user confirms it once
-  const key = location.pathname; const saved = await HOMEDB.get(key);
+  const key = location.pathname; let saved = await HOMEDB.get(key); if (!saved && home.id) saved = await HOMEDB.get('proj:' + home.id);   // remembered here, or by the converter that made this folder
+  const go = async h => { await HOMEDB.set(key, h); await lodOpenStore(new LDirStore(h)); };
+  // allowed before with "Allow on every visit": open straight away, no questions
+  if (saved) { try { const p = await saved.queryPermission({ mode: 'readwrite' }); if (p === 'granted') { await go(saved); return; } if ((await saved.queryPermission({ mode: 'read' })) === 'granted') { await go(saved); return; } } catch (e) { } }
   const msg = el('div', { class: 'note' }), btn = el('button', { class: 'btn primary', style: 'font-size:15px;padding:10px 18px' }, 'Open project');
   const card = el('div', { role: 'dialog', 'aria-label': 'Open project', style: 'position:fixed;inset:0;z-index:150;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.35);padding:16px' },
     el('div', { style: 'background:var(--panel,#fff);color:var(--ink,#111);border-radius:14px;padding:22px 24px;max-width:460px;width:100%;box-shadow:0 12px 40px rgba(0,0,0,.3);display:flex;flex-direction:column;gap:12px' },
       el('div', { style: 'font-size:19px;font-weight:600' }, home.name || 'LOD project'), el('div', { class: 'hint' }, (home.points ? fmtN(home.points) + ' points · ' : '') + 'converted ' + (home.created ? new Date(home.created * 1000).toLocaleDateString() : '')), msg, el('div', { class: 'row' }, btn, el('button', { class: 'btn', onclick: () => card.remove() }, 'Not now'))));
-  msg.textContent = saved ? 'Your browser asks you to allow this folder again each visit. Press Open project, then Allow.' : 'Press Open project and choose the folder this page is in (' + decodeURIComponent(location.pathname.split('/').slice(-2, -1)[0] || 'this folder') + '). Your browser asks once; after that it only asks to allow it.';
+  msg.textContent = saved ? 'Click anywhere (or press Open project), then choose "Allow on every visit": after that this project opens by itself.' : 'Press Open project and choose the folder this page is in (' + decodeURIComponent(location.pathname.split('/').slice(-2, -1)[0] || 'this folder') + '). Your browser asks once; after that it only asks to allow it.';
   if (!window.showDirectoryPicker) msg.textContent = 'This browser cannot open folders from a page on disk. Use Chrome or Edge, or run scanlod view on the folder.';
-  btn.addEventListener('click', async () => {
+  let busyOpen = false;
+  const act = async () => {
+    if (busyOpen) return; busyOpen = true;
     try {
-      let h = saved; if (h && (await h.requestPermission({ mode: 'readwrite' })) !== 'granted') h = null;
+      let h = saved; if (h) { let p = 'denied'; try { p = await h.requestPermission({ mode: 'readwrite' }); } catch (e) { } if (p !== 'granted') h = null; }
       if (!h) { h = await window.showDirectoryPicker({ mode: 'readwrite', id: 'sbhome' }); }
       let ok = false; try { await h.getFileHandle('dataset.json'); ok = true; } catch (e) { try { await h.getFileHandle('project.json'); ok = true; } catch (e2) { } }
       if (!ok) { msg.textContent = 'That folder has no project in it. Choose the folder this page (ScanBench.html) is in.'; return; }
-      await HOMEDB.set(key, h); card.remove(); await lodOpenStore(new LDirStore(h));
+      card.remove(); document.removeEventListener('pointerdown', any, true); document.removeEventListener('keydown', any, true); await go(h);
     } catch (e) { if (e.name !== 'AbortError') msg.textContent = 'Could not open it: ' + e.message; }
-  });
+    busyOpen = false;
+  };
+  btn.addEventListener('click', act);
+  // with a remembered folder, the first click or key anywhere is enough (browsers need that one gesture to ask)
+  const any = e => { if (saved && !card.contains(e.target)) act(); }; if (saved) { document.addEventListener('pointerdown', any, true); document.addEventListener('keydown', any, true); }
   document.body.append(card); btn.focus();
 }
 // changes that belong in project.json mark the project unsaved
