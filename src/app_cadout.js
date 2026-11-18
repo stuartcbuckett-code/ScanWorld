@@ -11,9 +11,22 @@ async function cadLoadTemplate(f) {
   if (/\.dwg$/i.test(f.name)) { if (!window.SBDWG) { toast('Browsers cannot read .dwg files directly. In AutoCAD, open the template and Save As → AutoCAD 2010 DXF (or later), then load that DXF here; it keeps every layer, linetype and block.', true); return; } txt = await busy('Reading ' + f.name + '…', async () => window.SBDWG.dwgToDxf(new Uint8Array(await f.arrayBuffer()))); if (!txt) return; }
   else txt = await f.text();
   const T = SBCAD.readTemplate(txt); if (!T.layers.length) { toast(f.name + ' has no layers.', true); return; }
-  CADO.tpl = T; CADO.tplName = f.name + ' (' + T.layers.length + ' layers)'; CADO.std = T.layers.some(L => L.code) ? 's551' : 'own'; CADO.map = SBCAD.matchLayers(T.layers, CADO.std);
+  cadTagS551(T); if (f.save !== false) { await STDDB.put(f.name.replace(/\.dxf$/i, ''), txt); CADO.stdName = f.name.replace(/\.dxf$/i, ''); }
+  CADO.tpl = T; CADO.tplName = f.name.replace(/\.dxf$/i, '') + ' (' + T.layers.length + ' layers)'; CADO.std = T.layers.filter(L => L.code).length >= 10 ? 's551' : 'own'; CADO.map = SBCAD.matchLayers(T.layers, CADO.std);
   const n = Object.keys(CADO.map).length; toast('Template ' + f.name + ': ' + T.layers.length + ' layers; ' + n + ' of ' + SBCAD.FEATURES.length + ' feature types matched by name and description. Check the list under CAD deliverable.'); buildTopo();
 }
+// layers of a template that carry S551 names get their S551 codes (so the S551 mapping and symbols apply to Water Corporation's own template files too)
+function cadTagS551(T) { const rows = cadStdRows(); const byName = new Map([...rows.values()].map(r => [r.layer.toLowerCase(), r])); for (const L of T.layers) { if (L.code) continue; const r = byName.get(L.name.toLowerCase()); if (r) { L.code = r.code; if (!L.description) L.description = r.description; } } }
+// standards kept in this browser: the built-in S551, plus any template you add (stored with ScanBench in this browser)
+const STDDB = { op(mode, fn) { return new Promise((res, rej) => { const r = indexedDB.open('scanbench-standards', 1); r.onupgradeneeded = () => r.result.createObjectStore('s'); r.onerror = () => rej(r.error); r.onsuccess = () => { const t = r.result.transaction('s', mode); const q = fn(t.objectStore('s')); t.oncomplete = () => res(q && q.result); t.onerror = () => rej(t.error); }; }); },
+  async list() { try { return (await this.op('readonly', s => s.getAllKeys())) || []; } catch (e) { return []; } }, async get(k) { try { return await this.op('readonly', s => s.get(k)); } catch (e) { return null; } },
+  async put(k, v) { try { await this.op('readwrite', s => s.put(v, k)); } catch (e) { } }, async del(k) { try { await this.op('readwrite', s => s.delete(k)); } catch (e) { } } };
+async function cadUseStandard(name) {
+  if (!name) { CADO.tpl = null; CADO.map = null; CADO.stdName = ''; buildTopo(); return; }
+  const txt = await STDDB.get(name); if (!txt) { toast('That standard is no longer stored here.', true); return; }
+  await cadLoadTemplate({ name: name + '.dxf', text: async () => txt, save: false }); CADO.stdName = name; buildTopo();
+}
+
 // the topo result as features
 function cadFeatures() {
   const t = S.topo; if (!t) return {}; const W = p => wpt(p); const zAt = (x, y, d) => { const z = T_.tinZ(t.tin, x, y, t.idxGrid); return isFinite(z) ? z : d; };
@@ -62,6 +75,9 @@ const _buildTopoC = buildTopo;
 buildTopo = function () {
   _buildTopoC(); const p = $('#topoMain'); if (!p) return; const T = cadTemplate(); if (!T) return;
   const pick = el('input', { type: 'file', hidden: true, accept: '.dxf,.dwg' }); pick.addEventListener('change', () => { const f = pick.files[0]; pick.value = ''; if (f) cadLoadTemplate(f); });
+  const stdSel = el('select', { 'aria-label': 'Layer standard', style: 'width:auto;max-width:100%' }, el('option', { value: '', selected: !CADO.stdName }, 'Water Corporation S551 (built in)'));
+  STDDB.list().then(ks => { for (const k of ks) stdSel.append(el('option', { value: k, selected: k === CADO.stdName }, k)); }); stdSel.addEventListener('change', () => cadUseStandard(stdSel.value));
+  const stdRow = el('div', { class: 'row' }, el('span', { class: 'hint' }, 'Standard'), stdSel);
   const F = S.topo ? cadFeatures() : {}; const layerNames = T.layers.map(L => L.name).filter(n => n !== '0' && !/^defpoints$/i.test(n)).sort();
   const rows = SBCAD.FEATURES.map(Fe => { const sel = el('select', { style: 'width:100%;max-width:230px;font-size:11px', 'aria-label': Fe.name + ' layer' }, el('option', { value: '' }, '(leave out)'), ...layerNames.map(n => el('option', { value: n, selected: (CADO.map || {})[Fe.k] === n }, n)));
     sel.addEventListener('change', () => { CADO.map[Fe.k] = sel.value || undefined; }); const n = (F[Fe.k] || []).length;
@@ -69,7 +85,7 @@ buildTopo = function () {
   const sf = S.topo && S.topo.surfaces;
   p.append(el('div', { class: 'sec' }, el('h3', {}, 'CAD deliverable (layer standard)'),
     el('div', { class: 'note' }, 'Writes the survey as 3D linework into a copy of the template, so every layer, colour, linetype, lineweight and symbol block comes from the standard. Template: ', el('b', {}, CADO.tplName), '. Features are matched to layers by the standard\'s codes, or by the words in each layer\'s name and description for your own template; change any of them below.'),
-    el('div', { class: 'row' }, el('button', { class: 'btn small', onclick: () => pick.click() }, 'Use my template (DXF)…'), CADO.std !== 's551' || !/^Water/.test(CADO.tplName) ? el('button', { class: 'btn small', onclick: () => { CADO.tpl = null; CADO.map = null; buildTopo(); } }, 'Back to S551') : null, pick),
+    stdRow, el('div', { class: 'row' }, el('button', { class: 'btn small', onclick: () => pick.click() }, 'Add a standard (DXF template)…'), CADO.stdName ? el('button', { class: 'btn small danger', onclick: async () => { if (!confirm('Remove the standard "' + CADO.stdName + '" from this browser?')) return; await STDDB.del(CADO.stdName); cadUseStandard(''); } }, 'Remove this standard') : null, pick),
     sf ? el('div', { class: 'hint' }, 'Found: ' + sf.roads.length + ' sealed road areas, ' + sf.kerbs.length + ' kerb runs, ' + sf.paths.length + ' paths, ' + sf.tracks.length + ' unsealed tracks, ' + sf.water.length + ' water areas.') : null,
     el('details', {}, el('summary', { class: 'hint', style: 'cursor:pointer' }, 'Layers used (' + Object.keys(CADO.map || {}).length + ' of ' + SBCAD.FEATURES.length + ' features mapped)'), el('table', { style: 'width:100%;border-collapse:collapse' }, ...rows)),
     el('div', { class: 'row' }, el('button', { class: 'btn small primary', disabled: !S.topo, onclick: () => cadExport('dxf') }, 'Export DXF'), el('button', { class: 'btn small', onclick: cadExportTemplate }, 'Empty template')),
