@@ -10,6 +10,8 @@ MyProject/
   octree.bin          the tiles
   models/pipe.stl     STL/OBJ models referenced by project.json
   ScanBench.html      the viewer, set to open this project (served: opens at once; from disk: one click to allow the folder)
+  edits.json          edits made in ScanBench (classes set, points deleted), per tile; optional
+  edits.bin           the edited tiles' patches, indexed by edits.json
   scanlod.log         the converter's log
 ```
 
@@ -96,3 +98,12 @@ Pages of 22-byte entries, as in Potree 2. A page lists a subtree `stepSize` leve
 | 14–21 | byte size (uint64) |
 
 For inner and leaf entries, offset and size locate the tile in octree.bin. A proxy entry sits on a page's last level and points (offset, size) at the page that starts with that node. The first page starts at 0 and is `hierarchy.firstChunkSize` bytes.
+
+## Edits (edits.json, edits.bin)
+
+ScanBench's Edit tools never change `octree.bin`. Their results are kept per tile as patches, next to `dataset.json`:
+
+* `edits.json`: `{ "format": "scanbench-edits", "version": 1, "tiles": N, "classes": true, "log": [ {op, when, summary} ], "nodes": { "r0172": [offset, length], … } }`
+* `edits.bin`: the patches, one gzip block per tile at the given offset and length. Unzipped: `uint32 n` (the tile's point count), `uint8 flags` (1 = classes, 2 = deletions), 3 spare bytes, then `n` class bytes (if flag 1), then a deletion bit mask of `ceil(n/8)` bytes (if flag 2; bit `i & 7` of byte `i >> 3` set = point `i` deleted).
+
+A reader applies a tile's patch after decoding it: classes replace the classification column (or add one), deleted points are dropped. The viewer and its LAS export do this; `scanlod export` and `verify` read the converted tiles only. A dataset moved in ScanBench keeps the shift in `project.json` (`datasets[].shift`, metres E, N, Z), added to `offset` when reading.

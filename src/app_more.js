@@ -154,18 +154,22 @@ function itemClass(kind, x) {
 async function classifyByCad(L, tol = 0.04) {
   if (!S.cad) { toast('Run Scan to CAD (or extract elements) first: classes come from the fitted elements.', true); return; }
   const items = cadItems().filter(([k, x]) => x.include !== false && itemClass(k, x)).sort((a, b) => (a[0] === 'flange' || a[0] === 'fitting') - (b[0] === 'flange' || b[0] === 'fitting'));   // fittings last so they win at joints
-  const res = await busy('Classifying points by element type…', async onP => {
+  const res = await busy('Classifying points by element type…', onP => cadClasses(L, items, tol, onP));
+  if (!res) return; L.colorMode = 'class'; colorize(L); refreshProps();
+  toast('Classified ' + Object.values(res.counts).reduce((a, b) => a + b, 0).toLocaleString() + ' points into ' + Object.keys(res.counts).map(k => CLASS_NAME[k]).join(', ') + '. Colour by Classification to see them; untick classes to hide them.');
+}
+function cadItemsForClass() { return cadItems().filter(([k, x]) => x.include !== false && itemClass(k, x)).sort((a, b) => (a[0] === 'flange' || a[0] === 'fitting') - (b[0] === 'flange' || b[0] === 'fitting')); }
+async function cadClasses(L, items, tol, onP) {   // sets L.cls for points on each fitted element; works on anything with pos, n, box, cls
+  {
     const I = binIndex(L, 1); if (!L.cls) L.cls = new Uint8Array(L.n).fill(1); let n = 0; const counts = {};
     for (let k = 0; k < items.length; k++) { const [kind, x] = items[k]; const c = itemClass(kind, x), bb = itemAABB(kind, x, tol);
       for (const i of I.inBox([bb.min.x, bb.min.y], [bb.max.x, bb.max.y])) { const z = L.pos[i * 3 + 2]; if (z < bb.min.z || z > bb.max.z) continue; const d = itemDistance(kind, x, [L.pos[i * 3], L.pos[i * 3 + 1], z]); if (d > tol || (d < -tol && kind !== 'box' && kind !== 'vessel')) continue; if (L.cls[i] !== c) n++; L.cls[i] = c; counts[c] = (counts[c] || 0) + 1; }
       if ((k & 15) === 0) { onP(k / items.length); await tick(); } }
     return { n, counts };
-  });
-  if (!res) return; L.colorMode = 'class'; colorize(L); refreshProps();
-  toast('Classified ' + Object.values(res.counts).reduce((a, b) => a + b, 0).toLocaleString() + ' points into ' + Object.keys(res.counts).map(k => CLASS_NAME[k]).join(', ') + '. Colour by Classification to see them; untick classes to hide them.');
+  }
 }
-async function classifyTerrain(L, opts = {}) {
-  const res = await busy('Classifying ground, vegetation, buildings and roads…', async onP => {
+async function terrainClasses(L, opts, onP) {   // the classifier itself, on anything with pos, n, rgb, intensity and box
+  {
     const sp = opts.spacing || 0.1; const vox = C_.voxelAssign(L.pos, L.n, sp); const reps = vox.reps; const P = C_.gather(L.pos, reps), m = reps.length;
     const T = await T_.classify(P, m, { spacing: sp, normalsFn: parNormalsFn(Math.max(0.5, sp * 8)) }, f => onP(f * 0.8));
     // spread the class of each voxel representative to every point in its voxel
@@ -184,7 +188,10 @@ async function classifyTerrain(L, opts = {}) {
       for (let i = 0; i < L.n; i++) { if (cls[i] !== 2) continue; const k = Math.floor((L.pos[i * 3 + 1] - b.min.y) / c) * nx + Math.floor((L.pos[i * 3] - b.min.x) / c); if (keep[k]) { const isG = L.rgb ? (Math.max(L.rgb[i * 3], L.rgb[i * 3 + 1], L.rgb[i * 3 + 2]) - Math.min(L.rgb[i * 3], L.rgb[i * 3 + 1], L.rgb[i * 3 + 2]) < 30) : true; if (isG) { cls[i] = 11; roads++; } } }
     }
     return { cls, roads };
-  });
+  }
+}
+async function classifyTerrain(L, opts = {}) {
+  const res = await busy('Classifying ground, vegetation, buildings and roads…', onP => terrainClasses(L, opts, onP));
   if (!res) return; if (opts.keepWater && L.cls) for (let i = 0; i < L.n; i++) { const c = L.cls[i]; if (c === 9 || (c >= 13 && c <= 17) || c >= 64) res.cls[i] = c; }   // keep water, wires, poles, bridge decks and plant classes already set
   L.cls = res.cls; L.colorMode = 'class'; applyClassHide(L); colorize(L); refreshProps();
   const cnt = {}; for (let i = 0; i < L.n; i++) cnt[L.cls[i]] = (cnt[L.cls[i]] || 0) + 1;

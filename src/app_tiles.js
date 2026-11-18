@@ -461,7 +461,7 @@ function buildLodPanel() {
   let lastP = null;
   for (const D of Ds) {
     if (D.P !== lastP) { lastP = D.P; if (D.P) host.append(projHead(D.P)); }
-    const m = D.meta, attrs = m.attributes.map(a => a.name);
+    const m = D.meta, attrs = m.attributes.map(a => a.name).concat(D.edCls ? ['classification'] : []);
     const col = el('select', { 'aria-label': 'Colour by', style: 'width:auto', onchange: e => { D.colorMode = e.target.value; lodRecolor(D); } }, ...[['rgb', 'RGB', 'rgb'], ['intensity', 'Intensity', 'intensity'], ['class', 'Class', 'classification'], ['elevation', 'Elevation', 'position'], ['returns', 'Returns', 'return_number'], ['source', 'Source', 'source']].filter(x => attrs.includes(x[2])).map(([v, t]) => el('option', { value: v, selected: D.colorMode === v }, t)));
     const srcSel = m.sources.length > 1 ? el('select', { 'aria-label': 'Source to export', style: 'width:auto' }, el('option', { value: '' }, 'All sources'), ...m.sources.map((s, i) => el('option', { value: i }, s.label))) : null;
     host.append(el('div', { class: 'mitem', style: 'grid-template-columns:minmax(0,1fr)' + (S.selStream === D ? ';outline:2px solid var(--accent)' : '') },
@@ -473,7 +473,7 @@ function buildLodPanel() {
         m.sources.map(s => s.label + '\n  ' + (s.kind || '').toUpperCase() + (s.metadata.version ? ' ' + s.metadata.version : '') + (s.metadata.pointFormat !== undefined ? ' · PF ' + s.metadata.pointFormat : '') + ' · ' + (s.points || 0).toLocaleString() + ' pts' + (s.metadata.systemIdentifier ? '\n  ' + s.metadata.systemIdentifier : '') + (s.metadata.generatingSoftware ? ' · ' + s.metadata.generatingSoftware : '') + (s.metadata.sensor && s.metadata.sensor.model ? '\n  ' + [s.metadata.sensor.vendor, s.metadata.sensor.model, s.metadata.sensor.serial].filter(Boolean).join(' ') : '') + ((s.metadata.vlrs || []).length ? '\n  VLRs: ' + s.metadata.vlrs.map(v => v.userId + ' ' + v.recordId + (v.description ? ' (' + v.description + ')' : '')).join('; ') : '')).join('\n\n')))));
   }
   // classes
-  const anyCls = Ds.some(D => D.lay.some(a => a.name === 'classification'));
+  const anyCls = Ds.some(D => D.lay.some(a => a.name === 'classification') || D.edCls);
   if (anyCls) { const row = el('div', { class: 'row', style: 'flex-wrap:wrap;gap:4px' }); for (const [k, t] of [[0, 'Never'], [1, 'Unclass.'], [2, 'Ground'], [3, 'Low veg'], [4, 'Med veg'], [5, 'High veg'], [6, 'Building'], [7, 'Noise'], [9, 'Water'], [17, 'Bridge']]) { const c = el('input', { type: 'checkbox' }); c.checked = !LP.hide[k]; c.addEventListener('change', () => { LP.hide[k] = c.checked ? 0 : 1; S.dirty = true; }); row.append(el('label', { class: 'hint row', style: 'gap:3px' }, c, t)); } host.append(el('details', {}, el('summary', { class: 'hint', style: 'cursor:pointer' }, 'Show classes'), row)); }
   // box
   const b = lodSelBox(), w = b ? boxWorld() : null; const ed = el('input', { type: 'checkbox' }); ed.checked = LP.box.edit; ed.addEventListener('change', () => { LP.box.edit = ed.checked; S.dirty = true; });

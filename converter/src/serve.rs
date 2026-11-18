@@ -1,5 +1,5 @@
 //! `scanlod view`: a small local web server for the ScanBench viewer and a project folder.
-//! GET/HEAD with byte ranges for the data, PUT (same-origin only) to save project.json and models.
+//! GET/HEAD with byte ranges for the data, PUT (same-origin only) to save project.json, models and edits (edits.bin, edits.json).
 use anyhow::{Context, Result};
 use std::fs::{self, File};
 use std::io::{BufRead, BufReader, Read, Seek, SeekFrom, Write};
@@ -112,13 +112,14 @@ fn handle(mut s: TcpStream, root: PathBuf, writable: bool) -> std::io::Result<()
         if method == "PUT" {
             let mut body = vec![0u8; clen.min(1 << 30) as usize];
             rd.read_exact(&mut body)?;
-            let ok_ext = path.ends_with(".json") || path.to_ascii_lowercase().ends_with(".stl") || path.to_ascii_lowercase().ends_with(".obj");
+            let lower = path.to_ascii_lowercase();
+            let ok_ext = lower.ends_with(".json") || lower.ends_with(".stl") || lower.ends_with(".obj") || lower.ends_with("/edits.bin") || lower == "/data/edits.bin";
             match (writable && marker && ok_ext, path.strip_prefix("/data/").and_then(|r| safe_join(&root, r))) {
                 (true, Some(p)) if !p.ends_with("dataset.json") => {
                     if let Some(dir) = p.parent() {
                         fs::create_dir_all(dir)?;
                     }
-                    let tmp = p.with_extension("saving");
+                    let tmp = p.with_file_name(format!("{}.saving", p.file_name().and_then(|n| n.to_str()).unwrap_or("file")));
                     fs::write(&tmp, &body)?;
                     fs::rename(&tmp, &p)?;
                     eprintln!("saved {}", p.display());
