@@ -1,6 +1,6 @@
 // ---------- EARTH GLOBE: data with a real coordinate system sits on the Earth; local grids stay in black space ----------
-const GLB = { on: true, R: 6371008, scene: null, cam: null, mesh: null, key: '', alpha: 0, tex: null };
-try { if (localStorage.getItem('sb-globe') === '0') GLB.on = false; } catch (e) { }
+const GLB = { on: true, mode: 'always', R: 6371008, scene: null, cam: null, mesh: null, key: '', alpha: 0, tex: null };
+try { const v = localStorage.getItem('sb-globe'); if (v === '0') GLB.on = false; if (v === 'zoom') GLB.mode = 'zoom'; } catch (e) { }   // the Earth: always in the background (default), only when zoomed out, or off
 function globeGeo() {   // where is the local origin on the Earth? null for local grids or no coordinate system
   if (!S.crs || !S.origin) return null; const C = X_.byId(S.crs); if (!C || C.type === 'local') return null;
   try { const o = S.origin; const g = C.type === 'geo' ? [o[0], o[1]] : X_.convertPoint(o[0], o[1], o[2], S.crs, C.datum); if (!isFinite(g[0]) || !isFinite(g[1]) || Math.abs(g[1]) > 90) return null; return { lon: g[0], lat: g[1] }; } catch (e) { return null; }
@@ -43,14 +43,14 @@ function buildGlobe(geo) {
 function globeRender(cam, bg) {
   if (!GLB.on || !cam.isPerspectiveCamera) return false; const geo = globeGeo(); if (!geo) { GLB.alpha = 0; globeBadge(null); return false; }
   const key = S.crs + '|' + S.origin.join(','); if (key !== GLB.key) { GLB.key = key; buildGlobe(geo); }
-  const d = S.cam.dist, d0 = Math.max(1500, sceneRadius() * 4), t = Math.max(0, Math.min(1, (d - d0) / (d0 * 3))), a = t * t * (3 - 2 * t); GLB.alpha = a; globeBadge(geo); if (a <= 0) return false;
+  const d = S.cam.dist, d0 = Math.max(1500, sceneRadius() * 4), t = Math.max(0, Math.min(1, (d - d0) / (d0 * 3))), a0 = t * t * (3 - 2 * t), a = GLB.mode === 'always' ? 1 : a0; GLB.alpha = a; GLB.zoomA = a0; globeBadge(geo); if (a <= 0) return false;
   const g = GLB.cam; g.fov = cam.fov; g.aspect = cam.aspect; g.position.copy(cam.position); g.quaternion.copy(cam.quaternion); g.near = Math.max(5, d * 0.02); g.far = 4e8; g.updateProjectionMatrix(); g.updateMatrixWorld();
-  GLB.mesh.material.uniforms.uAlpha.value = a; GLB.stars.material.opacity = 0.8 * a; GLB.scene.background = bg.clone().lerp(new THREE.Color(0x000000), a);
+  GLB.mesh.material.uniforms.uAlpha.value = a; GLB.stars.material.opacity = 0.8 * a0; GLB.scene.background = bg.clone().lerp(new THREE.Color(0x000000), a0);   // close up the sky keeps the usual background; space darkens as you pull away
   renderer.render(GLB.scene, g); return true;
 }
 function globeBadge(geo) {
   let b = $('#globeBadge'); if (!b) { b = el('div', { id: 'globeBadge', style: 'position:absolute;left:12px;bottom:44px;font:11px IBM Plex Mono,monospace;color:#cfe3f5;background:rgba(8,16,28,.6);padding:3px 8px;border-radius:6px;pointer-events:none;display:none' }); vp.append(b); }
-  if (!geo || GLB.alpha <= 0) { b.style.display = 'none'; if (GLB.pin) GLB.pin.pos.set(0, 0, 1e15); return; }
+  if (!geo || (GLB.zoomA || 0) <= 0) { b.style.display = 'none'; if (GLB.pin) GLB.pin.pos.set(0, 0, 1e15); return; }
   b.style.display = ''; const C = X_.byId(S.crs); b.textContent = 'On the globe at ' + Math.abs(geo.lat).toFixed(4) + '°' + (geo.lat < 0 ? 'S' : 'N') + ' ' + Math.abs(geo.lon).toFixed(4) + '°' + (geo.lon < 0 ? 'W' : 'E') + ' · ' + (C ? C.name : S.crs) + ' · eye ' + (S.cam.dist > 1000 ? (S.cam.dist / 1000).toFixed(S.cam.dist > 1e5 ? 0 : 1) + ' km' : S.cam.dist.toFixed(0) + ' m');
   if (!GLB.pin) GLB.pin = addLabel(new THREE.Vector3(0, 0, 0), '');
   const bx = sceneBox(); if (!bx.isEmpty()) bx.getCenter(GLB.pin.pos); const names = [...S.layers.map(L => L.name), ...(S.streams || []).map(D => D.meta.name)];
@@ -66,7 +66,7 @@ function globeFly() {
 $('#btnGlobe').addEventListener('click', globeFly);
 const _buildCoordsG = buildCoords;
 buildCoords = function () {
-  _buildCoordsG(); const p = pane('coords'); if (!p) return; const geo = globeGeo(); const cb = el('input', { type: 'checkbox', id: 'globeOn' }); cb.checked = GLB.on; cb.addEventListener('change', () => { GLB.on = cb.checked; try { localStorage.setItem('sb-globe', GLB.on ? '1' : '0'); } catch (e) { } S.dirty = true; });
-  p.append(el('div', { class: 'sec' }, el('h3', {}, 'Earth globe'), el('div', { class: 'note' }, geo ? 'This project sits on the Earth at ' + Math.abs(geo.lat).toFixed(5) + '°' + (geo.lat < 0 ? 'S' : 'N') + ', ' + Math.abs(geo.lon).toFixed(5) + '°' + (geo.lon < 0 ? 'W' : 'E') + '. Zoom well out from the data (or press Globe in the toolbar) and the Earth fades in under the data.' : S.crs ? 'The project uses a local grid, which has no position on the Earth, so the data stays in open space. Choose a map grid (MGA, PCG…) to place it on the globe.' : 'No coordinate system is set, so the data stays in open space. Set the project coordinate system above to place it on the globe.'),
-    el('label', { class: 'row', style: 'gap:6px;font-size:12px' }, cb, 'Show the Earth when zoomed out'), el('div', { class: 'row' }, el('button', { class: 'btn small', disabled: !geo, onclick: globeFly }, 'Fly out to the globe / back'))));
+  _buildCoordsG(); const p = pane('coords'); if (!p) return; const geo = globeGeo(); const cb = el('select', { id: 'globeOn', 'aria-label': 'Earth in the background', style: 'width:auto' }, ...[['always', 'Always'], ['zoom', 'When zoomed out'], ['off', 'Off']].map(([v, t]) => el('option', { value: v, selected: (GLB.on ? GLB.mode : 'off') === v }, t))); cb.addEventListener('change', () => { GLB.on = cb.value !== 'off'; if (GLB.on) GLB.mode = cb.value; try { localStorage.setItem('sb-globe', GLB.on ? (GLB.mode === 'zoom' ? 'zoom' : '1') : '0'); } catch (e) { } S.dirty = true; });
+  p.append(el('div', { class: 'sec' }, el('h3', {}, 'Earth globe'), el('div', { class: 'note' }, geo ? 'This project sits on the Earth at ' + Math.abs(geo.lat).toFixed(5) + '°' + (geo.lat < 0 ? 'S' : 'N') + ', ' + Math.abs(geo.lon).toFixed(5) + '°' + (geo.lon < 0 ? 'W' : 'E') + '. The Earth sits under the data; zoom well out (or press Globe in the toolbar) to see the whole planet.' : S.crs ? 'The project uses a local grid, which has no position on the Earth, so the data stays in open space. Choose a map grid (MGA, PCG…) to place it on the globe.' : 'No coordinate system is set, so the data stays in open space. Set the project coordinate system above to place it on the globe.'),
+    el('label', { class: 'row', style: 'gap:6px;font-size:12px' }, 'Earth in the background', cb), el('div', { class: 'row' }, el('button', { class: 'btn small', disabled: !geo, onclick: globeFly }, 'Fly out to the globe / back'))));
 };

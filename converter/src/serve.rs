@@ -6,7 +6,7 @@ use std::io::{BufRead, BufReader, Read, Seek, SeekFrom, Write};
 use std::net::{TcpListener, TcpStream};
 use std::path::{Component, Path, PathBuf};
 
-static VIEWER: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/viewer.html"));
+pub static VIEWER: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/viewer.html"));
 
 fn mime(p: &Path) -> &'static str {
     match p.extension().and_then(|e| e.to_str()).unwrap_or("").to_ascii_lowercase().as_str() {

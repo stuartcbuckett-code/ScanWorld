@@ -9,7 +9,13 @@ function convUI(host, opts = {}) {
   const name = E('input', { type: 'text', placeholder: 'Dataset name (optional)', 'aria-label': 'Dataset name' });
   const mem = E('select', { 'aria-label': 'Memory to use' }, ...[[1, '1 GB'], [2, '2 GB'], [4, '4 GB'], [8, '8 GB']].map(([v, t]) => E('option', { value: v, selected: v === Math.min(4, Math.max(1, Math.floor((navigator.deviceMemory || 8) / 4))) }, t)));
   const hc = navigator.hardwareConcurrency || 4; const wk = E('select', { 'aria-label': 'Workers' }, ...[1, 2, 4, 6, 8, 12, 16].filter(v => v <= Math.max(1, hc)).map(v => E('option', { value: v, selected: v === Math.max(1, Math.min(8, hc - 1)) || (hc <= 2 && v === 1) }, String(v))));
-  const crs = E('input', { type: 'text', placeholder: 'e.g. EPSG:7850 (only if the scans have none)', 'aria-label': 'Coordinate system' });
+  // coordinate systems: horizontal grid and height datum, written into dataset.json (and as WKT into LAS exports)
+  const crsSel = E('select', { 'aria-label': 'Coordinate system' }, E('option', { value: '' }, 'From the scans (if they have one)'),
+    ...[['GDA2020 / MGA', SBConv.CRS.filter(c => c.group === 'mga2020')], ['GDA94 / MGA', SBConv.CRS.filter(c => c.group === 'mga94')], ['Perth Coastal Grid', SBConv.CRS.filter(c => c.group === 'pcg')], ['WGS 84', SBConv.CRS.filter(c => c.group === 'wgs84')]].map(([g, l]) => E('optgroup', { label: g }, ...l.map(c => E('option', { value: c.id }, c.name)))),
+    E('option', { value: 'other' }, 'Other EPSG code…'));
+  const crsOther = E('input', { type: 'text', placeholder: 'EPSG code, e.g. 7850', 'aria-label': 'EPSG code', hidden: true }); crsSel.addEventListener('change', () => { crsOther.hidden = crsSel.value !== 'other'; });
+  const vSel = E('select', { 'aria-label': 'Heights' }, ...SBConv.VERT.map(v => E('option', { value: v.id }, v.name)));
+  const crs = E('div', { style: 'display:flex;flex-direction:column;gap:6px' }, crsSel, crsOther);
   const go = E('button', { class: 'btn primary', disabled: true }, 'Convert'), stopB = E('button', { class: 'btn', hidden: true }, 'Stop');
   const refresh = () => {
     list.textContent = ''; for (const f of st.files) list.append(E('div', {}, f.name + ' · ' + gb(f.size)));
@@ -36,11 +42,11 @@ function convUI(host, opts = {}) {
     try { if (navigator.storage && navigator.storage.estimate) { /* the output folder is outside browser storage; nothing to check here */ } } catch (e) { }
     const t0 = performance.now(); let sStage = '', sT = t0;
     try {
-      const ds = await SBConv.run({ files: st.files, out: st.out, name: name.value.trim() || null, memoryGB: +mem.value, threads: +wk.value, crs: crs.value.trim() || null, signal: st.job,
+      const ds = await SBConv.run({ files: st.files, out: st.out, viewer: opts.viewer, name: name.value.trim() || null, memoryGB: +mem.value, threads: +wk.value, crs: crsSel.value === 'other' ? (crsOther.value.trim() || null) : crsSel.value ? SBConv.CRS.find(c => c.id === crsSel.value) : null, vertical: SBConv.VERT.find(v => v.id === vSel.value) || null, signal: st.job,
         onLog: s => { log.textContent += s + '\n'; log.scrollTop = log.scrollHeight; },
         onProgress: (s, f, rate) => { if (s !== sStage) { sStage = s; sT = performance.now(); } const el = (performance.now() - sT) / 1000, eta = f > 0.02 ? el / f - el : 0; bar.style.width = (Math.max(0, Math.min(1, f)) * 100).toFixed(1) + '%'; stage.textContent = s + ' · ' + (f * 100).toFixed(0) + '%' + (rate ? ' · ' + rate : '') + (eta > 5 ? ' · about ' + SBConv.fmtT(eta) + ' left in this step' : ''); } });
       stage.textContent = 'Finished in ' + SBConv.fmtT((performance.now() - t0) / 1000) + ': ' + SBConv.fmtN(ds.points) + ' points, ' + (ds.octree.bytes / 1e9).toFixed(2) + ' GB.'; bar.style.width = '100%';
-      done.hidden = false; done.textContent = ''; done.append(E('div', {}, 'The project is in the folder "' + st.out.name + '" (project.json, dataset.json, hierarchy.bin, octree.bin).'));
+      done.hidden = false; done.textContent = ''; done.append(E('div', {}, 'The project is in the folder "' + st.out.name + '". Open ScanBench.html in that folder to view it (in Chrome or Edge).'));
       if (opts.onDone) done.append(E('button', { class: 'btn primary', onclick: () => opts.onDone(st.out, ds) }, 'Open it now'));
       else done.append(E('div', {}, 'To view it: open ScanBench, then LOD projects → Open project folder…, and choose "' + st.out.name + '".'), opts.viewerUrl ? E('a', { class: 'btn primary', href: opts.viewerUrl, target: '_blank', rel: 'noopener' }, 'Open ScanBench') : null);
     } catch (e) { stage.textContent = 'Stopped: ' + e.message; log.textContent += 'Stopped: ' + (e.stack || e.message) + '\n'; }
@@ -50,7 +56,7 @@ function convUI(host, opts = {}) {
   host.append(
     E('div', { class: 'conv-step' }, E('b', {}, '1. Scans'), E('div', { class: 'conv-row' }, E('button', { class: 'btn', onclick: pickFiles }, 'Choose files…'), E('button', { class: 'btn', onclick: pickFolderIn }, 'Choose a folder of tiles…'), E('button', { class: 'btn', onclick: () => { st.files = []; refresh(); } }, 'Clear')), list),
     E('div', { class: 'conv-step' }, E('b', {}, '2. Where to put the project'), E('div', { class: 'conv-row' }, E('button', { class: 'btn', onclick: pickOut }, 'Choose output folder…')), outL, E('div', { class: 'conv-note' }, 'Use an empty folder on a drive with room. While converting it needs about 40 bytes per point (about 4× the size of LAZ files, about 2× E57); the finished project is about 17 bytes per point.')),
-    E('div', { class: 'conv-step' }, E('b', {}, '3. Options'), E('div', { class: 'conv-grid' }, E('label', {}, 'Name', name), E('label', {}, 'Memory', mem), E('label', {}, 'Workers', wk), E('label', {}, 'Coordinate system', crs))),
+    E('div', { class: 'conv-step' }, E('b', {}, '3. Options'), E('div', { class: 'conv-grid' }, E('label', {}, 'Name', name), E('label', {}, 'Memory', mem), E('label', {}, 'Workers', wk), E('label', {}, 'Coordinate system', crs), E('label', {}, 'Heights', vSel))),
     E('div', { class: 'conv-row' }, go, stopB), E('div', { class: 'conv-bar' }, bar), stage, done, log);
   refresh();
 }

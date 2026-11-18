@@ -9,6 +9,7 @@ MyProject/
   hierarchy.bin       the tile index, in pages
   octree.bin          the tiles
   models/pipe.stl     STL/OBJ models referenced by project.json
+  ScanBench.html      the viewer, set to open this project (served: opens at once; from disk: one click to allow the folder)
   scanlod.log         the converter's log
 ```
 
@@ -52,7 +53,7 @@ Written once by the converter; the viewer treats it as read-only.
 | `bounds` | tight world bounds of the points |
 | `cube` | the octree cube: `min` (world), `size` (metres), `units` (integer units, a power of two) |
 | `spacing` | point spacing of the root tile, in metres |
-| `crs` | `{ "epsg": 7850, "wkt": "…" }` from the sources, or null for local coordinates |
+| `crs` | `{ "id": "MGA2020-50", "epsg": 7850, "wkt": "…", "vertical": { "datum": "AHD", "geoid": "AUSGeoid2020", "epsg": 5711 } }`, from the sources or chosen when converting; null for local coordinates. `vertical.datum` is `ellipsoid` or `AHD` |
 | `attributes` | the columns stored for every point, in order (see below) |
 | `encoding` | `"gzip"` or `"none"` (per tile) |
 | `octree`, `hierarchy` | file names, sizes, `firstChunkSize`, `stepSize` (levels per index page) |

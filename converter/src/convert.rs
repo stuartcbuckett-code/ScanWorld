@@ -1034,6 +1034,14 @@ fn finish(o: &Opts, plan: &Plan, srcs: &[Source], files_meta: &[(String, Value)]
     let dp = out.join("dataset.json.tmp");
     fs::write(&dp, serde_json::to_vec_pretty(&ds)?)?;
     fs::rename(&dp, out.join("dataset.json"))?;
+    // a viewer in the folder, set to open this project (double-click it; Chrome or Edge)
+    {
+        let v = String::from_utf8_lossy(crate::serve::VIEWER);
+        if v.contains("window.SB_HOME=/*SB_HOME*/null;") {
+            let home = format!("window.SB_HOME={};", serde_json::to_string(&json!({"name": name, "points": plan.total, "created": now}))?.replace('<', "\\u003c"));
+            fs::write(out.join("ScanBench.html"), v.replacen("window.SB_HOME=/*SB_HOME*/null;", &home, 1))?;
+        }
+    }
     let pp = out.join("project.json");
     if !pp.exists() {
         let proj = json!({

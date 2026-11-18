@@ -8,6 +8,8 @@ It is one program with no installer. It also carries the viewer inside, so `scan
 
 `ScanLOD-Converter.html` does the same conversion in Chrome or Edge, with nothing to install, which suits work computers that block programs. Download it from the release (or open it on the test site), choose the scans, then choose an output folder, and press **Convert**. It writes the same project format, every point and attribute kept, and ScanBench opens it with *LOD projects → Open project folder…*. The same converter is in ScanBench itself as **Convert scans…**.
 
+When it finishes, the folder also holds **ScanBench.html**, set to open that project: double-click it (Chrome or Edge) and allow the folder once, or host the folder on a web server and it opens straight away. You can choose the coordinate system (GDA2020 or GDA94 / MGA zones 49–52, PCG2020, PCG94, WGS 84 and UTM 49–52 S, or any EPSG code) and how heights are referenced (ellipsoidal, or AHD from AUSGeoid2020 or AUSGeoid09). Both are recorded in the project and written into LAS exports.
+
 It uses all but one of your processor cores. In testing it ran at roughly a third of the speed of the .exe on the same machine. The tab must stay open while it runs, and there is no resume yet: if it stops, run it again.
 
 ## Download

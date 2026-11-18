@@ -26,13 +26,14 @@ app = app.replace(marker, ext + '\n' + marker)
 # handles used by the browser tests
 hook = "window.__sb = { S,"
 assert hook in app
-app = app.replace(hook, "poolReady(); window.__sb = { S, POOL, parC2C, buildCad, buildTopo, buildCoords, convertAll, fitAtPoint, cadSelect, cadTransform, cadDelete, cadUndo, fit2Pair, buildReview, buildLOD, LODS, addAnnotation, addBookmark, lineOfSight, viewshed, slopeAspect, stockpileVolume, planeDip, dsmChange, saveProject, loadProjectObj, loadWeirSample, wireClearance, exportSHP, parseDXF, addOverlay, importDataset, openDataset, updateCamera, curCam, setView, LP, lodOpenStore, lodOpenUrl, lodDatasets, lodExport, lodReadBox, lodSaveProject, lodProjectJSON, lodAddModel, lodPlaceModel, boxFromWorld, boxWorld, boxDrawMode, LHttpStore, LFileStore, LDirStore, openConverter, buildLodPanel, lodClose, lodCloseProject, exportDataset, extractToLayer, readBox, compareToCad, classifyByCad, classifyTerrain, findPeople, removePeople, playPath, batchScanToCad, addGroup, applyVisibility, extractTyped, goView, DS, STR, GLB, globeFly, globeGeo,")
+app = app.replace(hook, "poolReady(); window.__sb = { S, POOL, parC2C, buildCad, buildTopo, buildCoords, convertAll, fitAtPoint, cadSelect, cadTransform, cadDelete, cadUndo, fit2Pair, buildReview, buildLOD, LODS, addAnnotation, addBookmark, lineOfSight, viewshed, slopeAspect, stockpileVolume, planeDip, dsmChange, saveProject, loadProjectObj, loadWeirSample, wireClearance, exportSHP, parseDXF, addOverlay, importDataset, openDataset, updateCamera, curCam, setView, LP, lodOpenStore, lodOpenUrl, lodDatasets, lodExport, lodReadBox, lodSaveProject, lodProjectJSON, lodAddModel, lodPlaceModel, boxFromWorld, boxWorld, boxDrawMode, LHttpStore, LFileStore, LDirStore, openConverter, buildLodPanel, lodClose, lodCloseProject, lodSaveAll, setActive, exportDataset, extractToLayer, readBox, compareToCad, classifyByCad, classifyTerrain, findPeople, removePeople, playPath, batchScanToCad, addGroup, applyVisibility, extractTyped, goView, DS, STR, GLB, globeFly, globeGeo,")
 for name, src in [('ffl', ffl), ('conv', conv), ('laz', laz), ('io', io), ('al', al), ('cad', cad), ('topo', topo), ('crs', crs), ('app', app), ('dl', dl)]:
     assert '</script' not in src.lower(), name
 
 def page(three_src, binary_samples):
     out = shell + '\n<script src="' + three_src + '"></script>\n'
     if binary_samples: out += '<script>window.SB_BINARY_SAMPLES = true;</script>\n'
+    out += '<script>window.SB_HOME=/*SB_HOME*/null;</script>\n'
     out += '<script id="src-laz">\n' + laz + '\nwindow.createLazPerf = createLazPerf;\n</script>\n'
     out += '<script>window.LAZ_WASM_B64="' + wasm + '";</script>\n'
     out += '<script>window.WORLD_TOPO=' + read('src', 'land-50m.json') + ';</script>\n'
@@ -61,6 +62,8 @@ open(R('dist', 'ScanBench-offline.html'), 'w', encoding='utf-8').write(off)
 print('dist/ScanBench-offline.html', len(off) // 1024, 'KB')
 # stand-alone converter: one HTML file, works offline in Chrome or Edge
 CONV_CSS = open(R('src', 'conv_page.css'), encoding='utf-8').read()
+import gzip as _gz
+VIEWER_GZ = base64.b64encode(_gz.compress(off.encode('utf-8'), 9)).decode()
 cpage = ('<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'
          '<title>ScanLOD Converter</title><meta name="description" content="Convert E57, LAS and LAZ scans of any size into a streaming ScanBench LOD project.">'
          '<style>' + CONV_CSS + '</style></head><body><main><h1>ScanLOD Converter</h1>'
@@ -69,7 +72,7 @@ cpage = ('<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name=
          '<div id="app"></div><p class="foot">Open the result in <a href="https://stuartcbuckett-code.github.io/ScanWorld/" target="_blank" rel="noopener">ScanBench</a> (LOD projects → Open project folder…). '
          'The format is documented at <a href="https://github.com/stuartcbuckett-code/ScanWorld/blob/main/docs/lod-format.md" target="_blank" rel="noopener">docs/lod-format.md</a>.</p></main>'
          '<script id="src-laz">\n' + laz + '\nwindow.createLazPerf = createLazPerf;\n</script>\n<script>window.LAZ_WASM_B64="' + wasm + '";</script>\n'
-         '<script id="src-io">\n' + io + '\n</script>\n<script id="src-fflate">\n' + ffl + '\n</script>\n<script>\n' + conv + '\nconvUI(document.getElementById("app"), { viewerUrl: "https://stuartcbuckett-code.github.io/ScanWorld/" });\n</script></body></html>')
+         '<script id="src-io">\n' + io + '\n</script>\n<script id="src-fflate">\n' + ffl + '\n</script>\n<script>window.SB_VIEWER_GZ="' + VIEWER_GZ + '";</script>\n<script>\n' + conv + '\nconvUI(document.getElementById("app"), { viewerUrl: "https://stuartcbuckett-code.github.io/ScanWorld/", viewer: async () => { const b = Uint8Array.from(atob(window.SB_VIEWER_GZ), c => c.charCodeAt(0)); return await new Response(new Blob([b]).stream().pipeThrough(new DecompressionStream("gzip"))).text(); } });\n</script></body></html>')
 open(R('dist', 'ScanLOD-Converter.html'), 'w', encoding='utf-8').write(cpage)
 print('dist/ScanLOD-Converter.html', len(cpage) // 1024, 'KB')
 # guard: every script block must parse (one stray quote silently breaks the whole app)

@@ -11,6 +11,19 @@ const SBConv = (() => {
   const b64 = u8 => { let s = ''; for (let i = 0; i < u8.length; i += 0x8000) s += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000)); return btoa(s); };
   const cstr = u8 => { const e = u8.indexOf(0); return new TextDecoder().decode(e < 0 ? u8 : u8.subarray(0, e)).trim(); };
   const pow2 = v => { let p = 1; while (p < v) p *= 2; return p; };
+  // common Australian systems (plus WGS 84): id matches ScanBench's coordinate list
+  const tmWkt = (name, gcs, datum, sph, lon0, k0, fe, fn, epsg) => 'PROJCS["' + name + '",GEOGCS["' + gcs + '",DATUM["' + datum + '",SPHEROID[' + sph + ']],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",0],PARAMETER["central_meridian",' + lon0 + '],PARAMETER["scale_factor",' + k0 + '],PARAMETER["false_easting",' + fe + '],PARAMETER["false_northing",' + fn + '],UNIT["metre",1]' + (epsg ? ',AUTHORITY["EPSG","' + epsg + '"]' : '') + ']';
+  const GRS = '"GRS 1980",6378137,298.257222101', WGS = '"WGS 84",6378137,298.257223563', G20 = ['GDA2020', 'Geocentric_Datum_of_Australia_2020'], G94 = ['GDA94', 'Geocentric_Datum_of_Australia_1994'];
+  const CRS = [];
+  for (let z = 49; z <= 52; z++) CRS.push({ group: 'mga2020', id: 'MGA2020-' + z, name: 'GDA2020 / MGA zone ' + z, epsg: 7800 + z, wkt: tmWkt('GDA2020 / MGA zone ' + z, ...G20, GRS, 6 * z - 183, 0.9996, 500000, 10000000, 7800 + z) });
+  for (let z = 49; z <= 52; z++) CRS.push({ group: 'mga94', id: 'MGA94-' + z, name: 'GDA94 / MGA zone ' + z, epsg: 28300 + z, wkt: tmWkt('GDA94 / MGA zone ' + z, ...G94, GRS, 6 * z - 183, 0.9996, 500000, 10000000, 28300 + z) });
+  const pcgLon = 115 + 49 / 60;
+  CRS.push({ group: 'pcg', id: 'PCG2020', name: 'PCG2020 (Perth Coastal Grid, GDA2020)', epsg: 8031, wkt: tmWkt('GDA2020 / PCG2020', ...G20, GRS, pcgLon, 0.99999906, 50000, 3900000, 8031) });
+  CRS.push({ group: 'pcg', id: 'PCG94', name: 'PCG94 (Perth Coastal Grid, GDA94)', epsg: 10464, wkt: tmWkt('GDA94 / PCG94', ...G94, GRS, pcgLon, 0.99999906, 50000, 3800000, 10464) });
+  for (let z = 49; z <= 52; z++) CRS.push({ group: 'wgs84', id: 'UTM' + z + 'S', name: 'WGS 84 / UTM zone ' + z + 'S', epsg: 32700 + z, wkt: tmWkt('WGS 84 / UTM zone ' + z + 'S', 'WGS 84', 'WGS_1984', WGS, 6 * z - 183, 0.9996, 500000, 10000000, 32700 + z) });
+  CRS.push({ group: 'wgs84', id: 'WGS84', name: 'WGS 84 (latitude, longitude)', epsg: 4326, wkt: 'GEOGCS["WGS 84",DATUM["WGS_1984",SPHEROID[' + WGS + ']],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433],AUTHORITY["EPSG","4326"]]' });
+  const VERT = [{ id: '', name: 'As in the scans / not stated' }, { id: 'ellipsoid', name: 'Ellipsoidal heights', datum: 'ellipsoid' },
+    { id: 'AHD-2020', name: 'AHD, from AUSGeoid2020', datum: 'AHD', geoid: 'AUSGeoid2020', epsg: 5711 }, { id: 'AHD-09', name: 'AHD, from AUSGeoid09', datum: 'AHD', geoid: 'AUSGeoid09', epsg: 5711 }, { id: 'AHD', name: 'AHD (geoid not known)', datum: 'AHD', epsg: 5711 }];
   const supported = () => !!(window.showDirectoryPicker && window.Worker && window.CompressionStream);
 
   // ---------------- the worker (runs with laz-perf and the I/O library loaded) ----------------
@@ -278,7 +291,9 @@ const SBConv = (() => {
         const stored = [...nodes.values()].reduce((a, n) => a + n.count, 0); if (stored !== total) throw new Error('internal check failed: ' + stored + ' points stored, ' + total + ' read');
         for (const k of nodes.keys()) if (k.length > 1 && !nodes.has(k.slice(0, -1))) throw new Error('internal check failed: node ' + k + ' has no parent');
         const [hb, first, depth] = hierarchy(nodes, o.step || 4); await writeFile(out, 'hierarchy.bin', hb);
-        const crs = o.crs ? (/^\s*(EPSG:)?\d+\s*$/i.test(o.crs) ? { epsg: +o.crs.replace(/\D/g, ''), source: 'chosen' } : { wkt: o.crs, source: 'chosen' }) : (srcs.find(s => s.crs) || {}).crs || null;
+        let crs = o.crs ? (typeof o.crs === 'object' ? { id: o.crs.id, name: o.crs.name, epsg: o.crs.epsg || undefined, wkt: o.crs.wkt, source: 'chosen' } : /^\s*(EPSG:)?\d+\s*$/i.test(o.crs) ? { epsg: +o.crs.replace(/\D/g, ''), source: 'chosen' } : { wkt: o.crs, source: 'chosen' }) : (srcs.find(s => s.crs) || {}).crs || null;
+        if (o.vertical && o.vertical.id) { crs = Object.assign({}, crs || {}, { vertical: { datum: o.vertical.datum, geoid: o.vertical.geoid || null, epsg: o.vertical.epsg || null, name: o.vertical.name } });
+          if (crs.wkt && o.vertical.datum === 'AHD' && /^PROJCS/.test(crs.wkt)) crs.wkt = 'COMPD_CS["' + (crs.name || 'projected') + ' + AHD height",' + crs.wkt + ',VERT_CS["AHD height",VERT_DATUM["Australian Height Datum",2005,AUTHORITY["EPSG","5111"]],UNIT["metre",1],AXIS["Up",UP],AUTHORITY["EPSG","5711"]]]'; }
         const name = o.name || (files.length === 1 ? files[0].name.replace(/\.[^.]+$/, '') : out.name);
         const LIST = [['intensity', 'uint16', 1], ['rgb', 'uint16', 3], ['classification', 'uint8', 1], ['return_number', 'uint8', 1], ['number_of_returns', 'uint8', 1], ['flags', 'uint8', 1], ['scanner_channel', 'uint8', 1], ['user_data', 'uint8', 1], ['scan_angle', 'int16', 1], ['point_source_id', 'uint16', 1], ['gps_time', 'float64', 1], ['source', 'uint16', 1]];
         const attributes = [{ name: 'position', type: 'uint32', components: 3, note: 'integer offset from the node\'s minimum corner; world = offset + (nodeMin + value) * scale' }, ...LIST.filter(a => attrs[a[0]]).map(([n, t, c]) => ({ name: n, type: t, components: c }))];
@@ -291,11 +306,13 @@ const SBConv = (() => {
         await writeFile(out, 'dataset.json', JSON.stringify(ds, null, 1));
         let hasProj = false; try { await out.getFileHandle('project.json'); hasProj = true; } catch (e) { }
         if (!hasProj) await writeFile(out, 'project.json', JSON.stringify({ format: 'scanbench-project', version: 1, name, created: ds.created, datasets: [{ id: 'd1', name, path: 'dataset.json', visible: true }], annotations: [], measurements: [], models: [], views: [], boxes: [] }, null, 1));
+        // a viewer in the folder, set to open this project
+        if (o.viewer) { try { const v = await o.viewer(); if (v) { const home = 'window.SB_HOME=' + JSON.stringify({ name, points: total, created: ds.created }).replace(/</g, '\\u003c') + ';'; const mark = 'window.SB_HOME=/*SB_' + 'HOME*/null;'; const html = v.replace(mark, home); if (html !== v) { await writeFile(out, 'ScanBench.html', html); say('Wrote ScanBench.html: open it to view this project.'); } } } catch (e) { say('Could not add ScanBench.html (' + e.message + '); open the folder from ScanBench instead.'); } }
         try { await out.removeEntry('.scanlod-tmp', { recursive: true }); } catch (e) { }
         const el = (performance.now() - t0) / 1000; say('Done: ' + fmtN(total) + ' points in ' + nodes.size + ' tiles, ' + (depth + 1) + ' levels, ' + (opos / 1e9).toFixed(2) + ' GB (' + (opos / total).toFixed(1) + ' bytes per point), ' + fmtT(el) + ' at ' + fmtN(total / el) + ' points/s');
         prog('Done', 1); return ds;
       }
     } finally { if (pool) pool.close(); }
   }
-  return { run, supported, fmtN, fmtT };
+  return { run, supported, fmtN, fmtT, CRS, VERT };
 })();

@@ -2,7 +2,7 @@
 // A project folder holds project.json (datasets, annotations, measurements, views, boxes, STL models)
 // and one or more datasets (dataset.json + hierarchy.bin + octree.bin). Only the tiles in view are
 // fetched, at the detail their size on screen needs, inside a fixed point budget.
-const LP = { project: null, store: null, workers: [], wseq: 0, waits: new Map(), conc: 6, detail: 90, adaptive: true, freshCap: 1200000, cacheX: 2.5, dirtyProject: false, box: { shown: false, edit: true }, key: '', force: true, hide: new Array(32).fill(0) };
+const LP = { projects: [], project: null, store: null, active: null, workers: [], wseq: 0, waits: new Map(), conc: 6, detail: 90, adaptive: true, freshCap: 1200000, cacheX: 2.5, dirtyProject: false, box: { shown: false, edit: true }, key: '', force: true, hide: new Array(32).fill(0) };
 
 // ---------- stores: a local folder, a list of files, or a web address ----------
 class LDirStore {
@@ -190,15 +190,15 @@ function lodUpdateInner() {
 const _drawLOD = draw; draw = function () { try { lodUpdate(); } catch (e) { console.warn(e); } try { boxHelpersSync(); } catch (e) { } _drawLOD(); };
 
 // ---------- opening and closing ----------
-function crsIdFromMeta(c) { if (!c) return null; const code = c.epsg; if (code) { const s = X_.SYSTEMS.find(x => x.epsg === code); if (s) return s.id; } return null; }
-async function lodOpenDataset(store, entry) {
+function crsIdFromMeta(c) { if (!c) return null; if (c.id && X_.byId(c.id)) return c.id; const code = c.epsg; if (code) { const s = X_.SYSTEMS.find(x => x.epsg === code); if (s) return s.id; } return null; }
+async function lodOpenDataset(store, entry, P) {
   const meta = JSON.parse(await store.text(entry.path)); if (meta.format !== 'scanbench-lod') throw new Error(entry.path + ' is not a scanlod dataset');
   const dir = entry.path.includes('/') ? entry.path.slice(0, entry.path.lastIndexOf('/') + 1) : '';
   if (!S.origin) { S.origin = meta.bounds.min.map(v => Math.floor(v)); const so = $('#stOrigin'); if (so) so.textContent = 'Local origin E ' + S.origin[0] + ' N ' + S.origin[1] + ' Z ' + S.origin[2]; }
   const o = S.origin; if (Math.hypot(meta.bounds.min[0] - o[0], meta.bounds.min[1] - o[1]) > 20000) toast(meta.name + ' is ' + (Math.hypot(meta.bounds.min[0] - o[0], meta.bounds.min[1] - o[1]) / 1000).toFixed(0) + ' km from the data already open, so it will draw coarsely. Open it on its own for full precision.', true);
   const cid = crsIdFromMeta(meta.crs); if (cid && !S.crs) { S.crs = cid; try { updateCrsStatus(); } catch (e) { } }
   const name = entry.name || meta.name;
-  const D = { kind: 'lod', id: entry.id || 'd' + Date.now(), entry, store, dir, meta: Object.assign({}, meta, { name }), octPath: dir + meta.octree.file, hierPath: dir + meta.hierarchy.file,
+  const D = { kind: 'lod', P, id: (P ? P.id + ':' : '') + (entry.id || 'd' + Date.now()), entry, store, dir, meta: Object.assign({}, meta, { name }), octPath: dir + meta.octree.file, hierPath: dir + meta.hierarchy.file,
     nodes: new Map(), loaded: new Map(), inflight: new Set(), cachedPts: 0, root: new THREE.Group(), visible: entry.visible !== false, selfVisible: entry.visible !== false, group: entry.group,
     sc: meta.scale, offW: [meta.offset[0] - o[0], meta.offset[1] - o[1], meta.offset[2] - o[2]], gz: meta.encoding === 'gzip', lay: meta.attributes, rgbShift: null,
     colorMode: entry.color || (meta.attributes.some(a => a.name === 'rgb') ? 'rgb' : meta.attributes.some(a => a.name === 'intensity') ? 'intensity' : 'elevation') };
@@ -208,11 +208,20 @@ async function lodOpenDataset(store, entry) {
 }
 function lodClose(D) { D.closed = true; for (const nm of [...D.loaded.keys()]) lodDrop(D, nm); scene.remove(D.root); S.streams = S.streams.filter(x => x !== D); if (S.selStream === D) S.selStream = null; refreshLayers(); LP.force = true; S.dirty = true; }
 const _closeDatasetT = closeDataset; closeDataset = function (D) { if (D.kind === 'lod') { lodClose(D); buildLodPanel(); return; } return _closeDatasetT(D); };
-async function lodCloseProject() {
-  for (const D of lodDatasets()) lodClose(D);
-  for (const L of S.layers.filter(L => L.model)) removeLayerSafe(L);
-  if (LP.store && LP.store.ctl) LP.store.ctl.abort();
-  LP.project = null; LP.store = null; buildLodPanel();
+function markDirty(P) { if (P) P.dirty = true; LP.dirtyProject = true; }
+function claimNew(P) { if (P) for (const x of [...S.annots, ...S.measures, ...S.bookmarks, ...S.layers.filter(L => L.model)]) if (!x._p) x._p = P.id; }
+function setActive(P) { if (LP.active && LP.active !== P) claimNew(LP.active); LP.active = P || null; LP.project = P ? P.proj : null; LP.store = P ? P.store : null; LP.boxes = P ? P.boxes : []; }
+function ownedBy(x, P) { return x._p === P.id || (!x._p && LP.active === P); }
+async function lodCloseProject(P) {
+  if (!P) { for (const Q of LP.projects.slice()) await lodCloseProject(Q); return; }
+  for (const D of lodDatasets().filter(D => D.P === P)) lodClose(D);
+  for (const L of S.layers.filter(L => L.model && L._p === P.id)) removeLayerSafe(L);
+  for (const a of S.annots.filter(a => a._p === P.id)) removeAnnotation(a);
+  for (const M of S.measures.filter(M => M._p === P.id)) removeMeasure(M);
+  S.bookmarks = S.bookmarks.filter(b => b._p !== P.id);
+  if (P.store.ctl) P.store.ctl.abort();
+  LP.projects = LP.projects.filter(Q => Q !== P); if (LP.active === P) setActive(LP.projects[0]);
+  try { buildReview(); buildMeasure(); } catch (e) { } buildLodPanel();
 }
 function removeLayerSafe(L) { try { if (typeof removeLayer === 'function') { removeLayer(L); return; } } catch (e) { } scene.remove(L.obj); if (L.edges) scene.remove(L.edges); S.layers = S.layers.filter(x => x !== L); refreshLayers(); }
 function blankProject(name, ds) { return { format: 'scanbench-project', version: 1, name, datasets: ds ? [{ id: 'd1', name, path: 'dataset.json', visible: true }] : [], annotations: [], measurements: [], views: [], boxes: [], models: [] }; }
@@ -221,13 +230,18 @@ async function lodOpenStore(store) {
   for (const f of tries) { try { proj = JSON.parse(await store.text(f)); store.projectFile = f; break; } catch (e) { } }
   if (!proj || proj.format === 'scanbench-lod') { let ds = proj && proj.format === 'scanbench-lod' ? proj : null; if (!ds) { try { ds = JSON.parse(await store.text('dataset.json')); } catch (e) { throw new Error('there is no project.json or dataset.json in ' + store.label); } } proj = blankProject(ds.name, true); if (store.projectFile && store.projectFile !== 'project.json') proj.datasets[0].path = store.projectFile; store.projectFile = 'project.json'; }
   if (proj.format !== 'scanbench-project') throw new Error('not a ScanBench project');
-  if (LP.project) await lodCloseProject();
-  LP.project = proj; LP.store = store; LP.dirtyProject = false;
-  const got = await busy('Opening ' + (proj.name || store.label) + '…', async onP => { let k = 0; for (const e of proj.datasets || []) { try { await lodOpenDataset(store, e); } catch (err) { toast('Could not open ' + (e.name || e.path) + ': ' + err.message, true); } onP(++k / Math.max(1, proj.datasets.length)); } return true; });
-  if (!got) return;
-  LP.applying = true; try { await lodApplyState(proj); } finally { LP.applying = false; LP.dirtyProject = false; }
+  const same = LP.projects.find(Q => Q.store.label === store.label && (Q.store.projectFile || 'project.json') === (store.projectFile || 'project.json') && Q.store.kind === store.kind);
+  if (same) { toast((proj.name || store.label) + ' is already open.'); return; }
+  const P = { id: 'p' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5), proj, store, name: proj.name || store.label, dirty: false, boxes: [] };
+  LP.projects.push(P); setActive(P); LP.dirtyProject = false;
+  const got = await busy('Opening ' + P.name + '…', async onP => { let k = 0; for (const e of proj.datasets || []) { try { await lodOpenDataset(store, e, P); } catch (err) { toast('Could not open ' + (e.name || e.path) + ': ' + err.message, true); } onP(++k / Math.max(1, proj.datasets.length)); } return true; });
+  if (!got) { await lodCloseProject(P); return; }
+  // everything the project brings in is tagged with it, so saving writes each item back to its own project
+  const n0 = [S.annots.length, S.measures.length, S.bookmarks.length];
+  LP.applying = true; try { await lodApplyState(proj, P); } finally { LP.applying = false; }
+  S.annots.slice(n0[0]).forEach(a => { a._p = P.id; }); S.measures.slice(n0[1]).forEach(M => { M._p = P.id; }); S.bookmarks.slice(n0[2]).forEach(b => { b._p = P.id; }); P.dirty = false; LP.dirtyProject = false;
   const b = new THREE.Box3(); for (const D of lodDatasets()) b.union(D.box); if (!b.isEmpty()) fitBox(b);
-  buildLodPanel(); toast('Opened ' + (proj.name || store.label) + ': ' + lodDatasets().length + ' dataset(s), ' + fmtN(lodDatasets().reduce((a, D) => a + D.meta.points, 0)) + ' points. Tiles load as you move.');
+  buildLodPanel(); toast('Opened ' + P.name + ': ' + lodDatasets().filter(D => D.P === P).length + ' dataset(s), ' + fmtN(lodDatasets().filter(D => D.P === P).reduce((a, D) => a + D.meta.points, 0)) + ' points' + (LP.projects.length > 1 ? ' (' + LP.projects.length + ' projects open)' : '') + '. Tiles load as you move.');
 }
 async function lodOpenFolder() {
   if (window.showDirectoryPicker) { try { const h = await window.showDirectoryPicker({ mode: 'readwrite' }); await lodOpenStore(new LDirStore(h)); } catch (e) { if (e.name !== 'AbortError') toast('Could not open that folder: ' + e.message, true); } return; }
@@ -240,35 +254,39 @@ async function lodOpenUrl(u) {
 }
 
 // ---------- project state: annotations, measurements, views, boxes, models ----------
-async function lodApplyState(p) {
+async function lodApplyState(p, P) {
   if (!S.origin) return;
   const st = { format: 'ScanBench project', crs: p.crs || null, annotations: p.annotations || [], bookmarks: p.views || [], measurements: p.measurements || [], tags: p.tags || [], groups: p.groups, layerGroups: p.layerGroups || [], flights: p.flights || [], cad: p.cad || null, cadOriginLocal: p.cadOriginLocal || S.origin };
+  if (LP.projects.length > 1) { st.groups = undefined; st.cad = null; }   // groups and Scan to CAD results come from the first project only
   if (st.annotations.length || st.bookmarks.length || st.measurements.length || st.flights.length || st.cad || (st.groups && st.groups.length)) { try { loadProjectObj(st); } catch (e) { console.warn(e); } }
-  LP.boxes = (p.boxes || []).map(b => ({ name: b.name, min: b.min, max: b.max, note: b.note || '' }));
-  for (const m of p.models || []) await lodLoadModel(m).catch(e => toast('Model ' + (m.name || m.path) + ': ' + e.message, true));
+  const boxes = (p.boxes || []).map(b => ({ name: b.name, min: b.min, max: b.max, note: b.note || '', _p: P && P.id })); if (P) { P.boxes = boxes; LP.boxes = boxes; } else LP.boxes = boxes;
+  for (const m of p.models || []) await lodLoadModel(m, null, P).catch(e => toast('Model ' + (m.name || m.path) + ': ' + e.message, true));
 }
-function lodProjectJSON() {
-  const p = LP.project || blankProject('Untitled'); const st = projectState(); const o = S.origin || [0, 0, 0];
+function lodProjectJSON(P) {
+  P = P || LP.active; const p = (P && P.proj) || blankProject('Untitled'); const st = projectState(); const o = S.origin || [0, 0, 0];
+  const pick = (arr, src) => arr.filter((_, i) => !P || ownedBy(src[i], P)); const main = !P || LP.active === P;
   const out = { format: 'scanbench-project', version: 1, name: p.name, created: p.created, saved: new Date().toISOString(), crs: S.crs || p.crs || null,
-    datasets: lodDatasets().map(D => ({ id: D.id, name: D.meta.name, path: D.entry.path, visible: D.selfVisible !== false, group: D.group, color: D.colorMode })),
-    annotations: st.annotations, measurements: st.measurements, views: st.bookmarks, tags: st.tags, groups: st.groups, flights: st.flights, cad: st.cad, cadOriginLocal: st.cadOriginLocal,
-    boxes: (LP.boxes || []).map(b => ({ name: b.name, min: b.min, max: b.max, note: b.note })),
-    models: S.layers.filter(L => L.model).map(L => Object.assign({}, L.model, { visible: L.visible, color: L.solid, opacity: L.opacity })) };
+    datasets: lodDatasets().filter(D => !P || D.P === P).map(D => ({ id: D.entry.id || D.id, name: D.meta.name, path: D.entry.path, visible: D.selfVisible !== false, group: D.group, color: D.colorMode })),
+    annotations: pick(st.annotations, S.annots), measurements: pick(st.measurements, S.measures), views: pick(st.bookmarks, S.bookmarks),
+    tags: main ? st.tags : p.tags, groups: main ? st.groups : p.groups, flights: main ? st.flights : p.flights, cad: main ? st.cad : p.cad, cadOriginLocal: main ? st.cadOriginLocal : p.cadOriginLocal,
+    boxes: ((P ? P.boxes : LP.boxes) || []).map(b => ({ name: b.name, min: b.min, max: b.max, note: b.note })),
+    models: S.layers.filter(L => L.model && (!P || ownedBy(L, P))).map(L => Object.assign({}, L.model, { visible: L.visible, color: L.solid, opacity: L.opacity })) };
   void o; return out;
 }
-async function lodSaveProject() {
-  const txt = JSON.stringify(lodProjectJSON(), null, 1);
-  if (LP.store && LP.store.write && await LP.store.canWrite()) { try { await LP.store.write(LP.store.projectFile || 'project.json', txt); LP.dirtyProject = false; toast('Saved ' + (LP.store.projectFile || 'project.json') + ' in ' + LP.store.label + '.'); return; } catch (e) { toast('Could not save into the project (' + e.message + '); downloading project.json instead.', true); } }
-  await saveFile('project.json', txt); LP.dirtyProject = false; toast('Downloaded project.json. Put it in the project folder (next to dataset.json) to keep these changes.');
+async function lodSaveProject(P) {
+  P = P || LP.active; if (!P) return; const txt = JSON.stringify(lodProjectJSON(P), null, 1), st = P.store; const claim = () => { if (LP.active === P) claimNew(P); P.dirty = false; LP.dirtyProject = LP.projects.some(Q => Q.dirty); };
+  if (st && st.write && await st.canWrite()) { try { await st.write(st.projectFile || 'project.json', txt); claim(); toast('Saved ' + (st.projectFile || 'project.json') + ' in ' + st.label + '.'); buildLodPanel(); return; } catch (e) { toast('Could not save into ' + P.name + ' (' + e.message + '); downloading project.json instead.', true); } }
+  await saveFile('project.json', txt); claim(); toast('Downloaded project.json for ' + P.name + '. Put it in that project folder (next to dataset.json) to keep these changes.'); buildLodPanel();
 }
+async function lodSaveAll() { for (const P of LP.projects) await lodSaveProject(P); }
 // STL models: placed with an offset (E, N, Z), a rotation about Z and a scale (e.g. 0.001 for millimetres)
-async function lodLoadModel(m, bytes) {
-  if (!bytes) bytes = await LP.store.bytes(m.path);
+async function lodLoadModel(m, bytes, P) {
+  P = P || LP.active; if (!bytes) bytes = await (P ? P.store : LP.store).bytes(m.path);
   const ab = bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength); const r = /\.obj$/i.test(m.path) ? await readOBJ({ read: async (o, l) => ab.slice(o, o + l), size: ab.byteLength }) : await readSTL({ read: async (o, l) => ab.slice(o, o + l), size: ab.byteLength });
   const t = r.tris, s = m.scale || 1, a = (m.rotation || 0) * Math.PI / 180, c = Math.cos(a), sn = Math.sin(a), off = m.offset || [0, 0, 0];
   const w = new Float64Array(t.length); for (let i = 0; i < t.length; i += 3) { const x = t[i] * s, y = t[i + 1] * s, z = t[i + 2] * s; w[i] = x * c - y * sn + off[0]; w[i + 1] = x * sn + y * c + off[1]; w[i + 2] = z + off[2]; }
   const L = addMesh(m.name || m.path.split('/').pop(), w, Object.assign({}, r.meta, { format: (r.meta.format || 'STL') + ' · project model ' + m.path }));
-  L.model = { id: m.id || 'm' + Date.now(), name: L.name, path: m.path, offset: off, rotation: m.rotation || 0, scale: s }; L.modelBytes = bytes;
+  L.model = { id: m.id || 'm' + Date.now(), name: L.name, path: m.path, offset: off, rotation: m.rotation || 0, scale: s }; L.modelBytes = bytes; if (P) L._p = P.id;
   if (m.color) { L.solid = m.color; L.mat.color.set(m.color); } if (m.opacity !== undefined) { L.opacity = m.opacity; L.mat.opacity = m.opacity; }
   if (m.visible === false) { L.visible = false; L.obj.visible = false; if (L.edges) L.edges.visible = false; }
   S.dirty = true; return L;
@@ -276,12 +294,12 @@ async function lodLoadModel(m, bytes) {
 async function lodAddModel(file) {
   const bytes = new Uint8Array(await file.arrayBuffer()); const path = 'models/' + file.name.replace(/[^\w.-]+/g, '_');
   let saved = false; if (LP.store && LP.store.write && await LP.store.canWrite()) { try { await LP.store.write(path, bytes); saved = true; } catch (e) { } }
-  const L = await lodLoadModel({ path, name: file.name.replace(/\.[^.]+$/, ''), offset: [0, 0, 0], rotation: 0, scale: 1 }, bytes); LP.dirtyProject = true; buildLodPanel();
+  const L = await lodLoadModel({ path, name: file.name.replace(/\.[^.]+$/, ''), offset: [0, 0, 0], rotation: 0, scale: 1 }, bytes, LP.active); markDirty(LP.active); buildLodPanel();
   toast(saved ? 'Copied ' + file.name + ' into ' + path + '. Save the project to keep it.' : 'Loaded ' + file.name + '. This project is read-only here, so put the file at ' + path + ' in the project folder.');
   return L;
 }
 async function lodPlaceModel(L, upd) {
-  const m = Object.assign({}, L.model, upd); const bytes = L.modelBytes; removeLayerSafe(L); const N = await lodLoadModel(m, bytes); selectLayer(N); LP.dirtyProject = true; buildLodPanel();
+  const m = Object.assign({}, L.model, upd); const bytes = L.modelBytes; const P = LP.projects.find(Q => Q.id === L._p) || LP.active; removeLayerSafe(L); const N = await lodLoadModel(m, bytes, P); selectLayer(N); markDirty(P); buildLodPanel();
 }
 
 // ---------- the 3D box: draw over the view, drag its faces, save, export ----------
@@ -424,7 +442,7 @@ function lodSelBox() { return LP.box.shown || S.clip.on ? S.clip.box : null; }
 function buildLodPanel() {
   let host = $('#lodSec'); if (!host) { host = el('div', { class: 'sec', id: 'lodSec' }); const lay = $('#layers'); if (!lay) return; lay.closest('.sec').after(host); }
   const ds = $('#dsSec'); if (ds && host.nextSibling !== ds) ds.before(host);
-  host.textContent = ''; const p = LP.project, Ds = lodDatasets();
+  host.textContent = ''; const p = LP.projects.length ? LP.project || LP.projects[0].proj : null, Ds = lodDatasets().slice().sort((a, b) => LP.projects.indexOf(a.P) - LP.projects.indexOf(b.P));
   host.append(el('h3', {}, 'LOD projects'), el('div', { class: 'note' }, 'Open a folder made by the scanlod converter (project.json or dataset.json). Scans of any size stream in: only what is in view loads, at the detail it needs.'),
     el('div', { class: 'row' }, el('button', { class: 'btn small primary', onclick: lodOpenFolder }, 'Open project folder…'), el('button', { class: 'btn small', onclick: () => { const i = $('#lodUrl'); i.hidden = !i.hidden; if (!i.hidden) i.focus(); } }, 'Open from web address…'), el('button', { class: 'btn small', title: 'Make a LOD project from E57, LAS or LAZ files of any size, on this computer', onclick: openConverter }, 'Convert scans…')),
     el('input', { type: 'url', id: 'lodUrl', hidden: true, placeholder: 'https://…/project.json, then Enter', 'aria-label': 'Project web address', onkeydown: e => { if (e.key === 'Enter') lodOpenUrl(e.target.value); } }));
@@ -432,10 +450,17 @@ function buildLodPanel() {
   const budgetSel = el('select', { 'aria-label': 'Points on screen', style: 'width:auto', onchange: e => { LODS.budget = +e.target.value; LP.force = true; S.dirty = true; } }, ...[[1e6, '1 M'], [2e6, '2 M'], [3e6, '3 M'], [5e6, '5 M'], [8e6, '8 M'], [12e6, '12 M'], [20e6, '20 M']].map(([v, t]) => el('option', { value: v, selected: Math.abs(LODS.budget - v) < 1 }, t)));
   const detailSel = el('select', { 'aria-label': 'Detail', style: 'width:auto', onchange: e => { LP.detail = +e.target.value; LP.force = true; S.dirty = true; } }, ...[[200, 'Low'], [130, 'Medium'], [90, 'High'], [55, 'Very high']].map(([v, t]) => el('option', { value: v, selected: LP.detail === v }, t)));
   const ad = el('input', { type: 'checkbox' }); ad.checked = LP.adaptive; ad.addEventListener('change', () => { LP.adaptive = ad.checked; S.dirty = true; });
-  host.append(el('div', { class: 'mitem', style: 'grid-template-columns:minmax(0,1fr)' }, el('div', { class: 't' }, (p.name || 'Project') + (LP.dirtyProject ? ' · unsaved changes' : '')), el('div', { class: 'v' }, LP.store.label + ' · ' + (LP.store.kind === 'files' ? 'read only' : LP.store.kind)),
-    el('div', { class: 'row', style: 'margin-top:4px' }, el('button', { class: 'btn small primary', onclick: lodSaveProject }, 'Save project'), el('button', { class: 'btn small', onclick: lodCloseProject }, 'Close')),
-    el('div', { class: 'row', style: 'margin-top:4px;gap:8px' }, el('label', { class: 'hint' }, 'Points ', budgetSel), el('label', { class: 'hint' }, 'Detail ', detailSel), el('label', { class: 'hint row', style: 'gap:4px' }, ad, 'Fill gaps'))));
+  host.append(el('div', { class: 'row', style: 'margin:6px 0;gap:8px;flex-wrap:wrap' }, el('label', { class: 'hint' }, 'Points ', budgetSel), el('label', { class: 'hint' }, 'Detail ', detailSel), el('label', { class: 'hint row', style: 'gap:4px' }, ad, 'Fill gaps'),
+    LP.projects.length > 1 ? el('button', { class: 'btn small', onclick: lodSaveAll }, 'Save all') : null));
+  const projHead = P => { const act = LP.active === P, many = LP.projects.length > 1;
+    return el('div', { class: 'mitem', style: 'grid-template-columns:minmax(0,1fr);border-left:3px solid ' + (act ? 'var(--accent)' : 'transparent') },
+      el('div', { class: 't' }, P.name + (P.dirty ? ' · unsaved changes' : '')), el('div', { class: 'v' }, P.store.label + ' · ' + (P.store.kind === 'files' ? 'read only' : P.store.kind) + (many ? (act ? ' · active: new notes and measurements go here' : '') : '')),
+      el('div', { class: 'row', style: 'margin-top:4px' }, el('button', { class: 'btn small primary', onclick: () => lodSaveProject(P) }, 'Save'), many && !act ? el('button', { class: 'btn small', title: 'New annotations, measurements, views, boxes and models go into this project', onclick: () => { setActive(P); buildLodPanel(); } }, 'Make active') : null,
+        el('button', { class: 'btn small', onclick: () => { if (P.dirty && !confirm(P.name + ' has unsaved changes. Close it anyway?')) return; lodCloseProject(P); } }, 'Close'))); };
+  for (const P of LP.projects) if (!Ds.some(D => D.P === P)) host.append(projHead(P));
+  let lastP = null;
   for (const D of Ds) {
+    if (D.P !== lastP) { lastP = D.P; if (D.P) host.append(projHead(D.P)); }
     const m = D.meta, attrs = m.attributes.map(a => a.name);
     const col = el('select', { 'aria-label': 'Colour by', style: 'width:auto', onchange: e => { D.colorMode = e.target.value; lodRecolor(D); } }, ...[['rgb', 'RGB', 'rgb'], ['intensity', 'Intensity', 'intensity'], ['class', 'Class', 'classification'], ['elevation', 'Elevation', 'position'], ['returns', 'Returns', 'return_number'], ['source', 'Source', 'source']].filter(x => attrs.includes(x[2])).map(([v, t]) => el('option', { value: v, selected: D.colorMode === v }, t)));
     const srcSel = m.sources.length > 1 ? el('select', { 'aria-label': 'Source to export', style: 'width:auto' }, el('option', { value: '' }, 'All sources'), ...m.sources.map((s, i) => el('option', { value: i }, s.label))) : null;
@@ -455,9 +480,9 @@ function buildLodPanel() {
   const hideOut = el('input', { type: 'checkbox' }); hideOut.checked = S.clip.on; hideOut.addEventListener('change', () => { S.clip.on = hideOut.checked; if (S.clip.on) LP.box.shown = true; syncClipUI(); buildLodPanel(); });
   const boxSec = el('div', { class: 'mitem', style: 'grid-template-columns:minmax(0,1fr)' }, el('div', { class: 't' }, '3D box'), el('div', { class: 'v' }, b ? 'E ' + w.min[0].toFixed(2) + ' … ' + w.max[0].toFixed(2) + ' · N ' + w.min[1].toFixed(2) + ' … ' + w.max[1].toFixed(2) + ' · Z ' + w.min[2].toFixed(2) + ' … ' + w.max[2].toFixed(2) : 'Drag a rectangle over the part you want (any view); the box wraps the points under it.'),
     el('div', { class: 'row', style: 'margin-top:4px' }, el('button', { class: 'btn small primary', onclick: boxDrawMode }, b ? 'Redraw box' : 'Draw box'), b ? el('button', { class: 'btn small', onclick: () => { LP.box.shown = false; S.clip.on = false; syncClipUI(); buildLodPanel(); } }, 'Clear') : null,
-      b ? el('button', { class: 'btn small', onclick: () => { const nm = prompt('Name for this box', 'Box ' + ((LP.boxes || []).length + 1)); if (!nm) return; (LP.boxes = LP.boxes || []).push(Object.assign({ name: nm, note: '' }, boxWorld())); LP.dirtyProject = true; buildLodPanel(); } }, 'Save box') : null),
+      b ? el('button', { class: 'btn small', onclick: () => { const nm = prompt('Name for this box', 'Box ' + ((LP.boxes || []).length + 1)); if (!nm) return; (LP.boxes = LP.boxes || []).push(Object.assign({ name: nm, note: '' }, boxWorld())); markDirty(LP.active); buildLodPanel(); } }, 'Save box') : null),
     b ? el('div', { class: 'row', style: 'margin-top:4px;gap:10px' }, el('label', { class: 'hint row', style: 'gap:4px' }, ed, 'Drag handles'), el('label', { class: 'hint row', style: 'gap:4px' }, hideOut, 'Hide outside')) : null);
-  for (const [i, sb] of (LP.boxes || []).entries()) boxSec.append(el('div', { class: 'row', style: 'margin-top:4px;justify-content:space-between' }, el('span', { class: 'hint' }, sb.name), el('span', { class: 'row', style: 'gap:4px' }, el('button', { class: 'btn small', onclick: () => { boxFromWorld(sb); const bb = S.clip.box.clone(); fitBox(bb.expandByScalar(bb.getSize(new THREE.Vector3()).length() * 0.2)); buildLodPanel(); } }, 'Use'), el('button', { class: 'btn small icon danger', 'aria-label': 'Delete box', onclick: () => { LP.boxes.splice(i, 1); LP.dirtyProject = true; buildLodPanel(); } }, '×'))));
+  for (const [i, sb] of (LP.boxes || []).entries()) boxSec.append(el('div', { class: 'row', style: 'margin-top:4px;justify-content:space-between' }, el('span', { class: 'hint' }, sb.name), el('span', { class: 'row', style: 'gap:4px' }, el('button', { class: 'btn small', onclick: () => { boxFromWorld(sb); const bb = S.clip.box.clone(); fitBox(bb.expandByScalar(bb.getSize(new THREE.Vector3()).length() * 0.2)); buildLodPanel(); } }, 'Use'), el('button', { class: 'btn small icon danger', 'aria-label': 'Delete box', onclick: () => { LP.boxes.splice(i, 1); markDirty(LP.active); buildLodPanel(); } }, '×'))));
   host.append(boxSec);
   // models
   const mf = el('input', { type: 'file', hidden: true, accept: '.stl,.obj' }); mf.addEventListener('change', () => { const f = mf.files[0]; mf.value = ''; if (f) lodAddModel(f).catch(e => toast('Could not read ' + f.name + ': ' + e.message, true)); });
@@ -468,20 +493,46 @@ function buildLodPanel() {
     ms.append(el('details', { style: 'margin-top:4px' }, el('summary', { class: 'hint', style: 'cursor:pointer' }, L.name + ' · ' + m.path), el('div', { class: 'row', style: 'flex-wrap:wrap;gap:4px;margin-top:4px' }, e1, n1, z1, r1, s1,
       el('button', { class: 'btn small', onclick: () => lodPlaceModel(L, { offset: [+e1.value, +n1.value, +z1.value], rotation: +r1.value, scale: +s1.value }) }, 'Place'),
       el('button', { class: 'btn small', title: 'Move the model so its centre sits at the box centre (or the view centre)', onclick: () => { const c = (lodSelBox() || new THREE.Box3().setFromCenterAndSize(S.cam.target, new THREE.Vector3(1, 1, 1))).getCenter(new THREE.Vector3()); const mc = L.box.getCenter(new THREE.Vector3()); const o = S.origin; lodPlaceModel(L, { offset: [m.offset[0] + c.x - mc.x, m.offset[1] + c.y - mc.y, m.offset[2] + c.z - mc.z] }); void o; } }, 'Centre here'),
-      el('button', { class: 'btn small icon danger', 'aria-label': 'Remove model', onclick: () => { removeLayerSafe(L); LP.dirtyProject = true; buildLodPanel(); } }, '×'))));
+      el('button', { class: 'btn small icon danger', 'aria-label': 'Remove model', onclick: () => { removeLayerSafe(L); markDirty(LP.projects.find(Q => Q.id === L._p) || LP.active); buildLodPanel(); } }, '×'))));
   }
   host.append(ms, el('div', { class: 'hint' }, 'Annotations, measurements and saved views (Review and Measure tabs) are stored in project.json when you save.'));
 }
 const _refreshLayersT = refreshLayers; refreshLayers = function () { _refreshLayersT.apply(this, arguments); if (LP.project) { clearTimeout(LP.rp); LP.rp = setTimeout(buildLodPanel, 50); } };
 window.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key === 's' && LP.project) { e.preventDefault(); lodSaveProject(); } });
-window.addEventListener('beforeunload', e => { if (LP.project && LP.dirtyProject) { e.preventDefault(); e.returnValue = ''; } });
+window.addEventListener('beforeunload', e => { if (LP.projects.some(P => P.dirty)) { e.preventDefault(); e.returnValue = ''; } });
 setTimeout(() => {
   buildLodPanel();
-  const q = new URLSearchParams(location.search); const u = q.get('project') || q.get('open'); if (u) lodOpenUrl(u);
+  const q = new URLSearchParams(location.search); const u = q.get('project') || q.get('open'); if (u) { lodOpenUrl(u); return; }
+  if (window.SB_HOME) homeProject(window.SB_HOME);
 }, 60);
+// ---------- ScanBench.html written into a project folder by the converter: opens that project ----------
+const HOMEDB = { get: async k => { try { return await new Promise((res, rej) => { const r = indexedDB.open('scanbench-home', 1); r.onupgradeneeded = () => r.result.createObjectStore('h'); r.onerror = () => rej(r.error); r.onsuccess = () => { const t = r.result.transaction('h').objectStore('h').get(k); t.onsuccess = () => res(t.result); t.onerror = () => rej(t.error); }; }); } catch (e) { return null; } },
+  set: async (k, v) => { try { await new Promise((res, rej) => { const r = indexedDB.open('scanbench-home', 1); r.onupgradeneeded = () => r.result.createObjectStore('h'); r.onerror = () => rej(r.error); r.onsuccess = () => { const t = r.result.transaction('h', 'readwrite'); t.objectStore('h').put(v, k); t.oncomplete = res; t.onerror = () => rej(t.error); }; }); } catch (e) { } } };
+async function homeProject(home) {
+  // served over http(s) (a web server, S3, scanlod view): the project sits beside this page, so open it straight away
+  if (/^https?:$/.test(location.protocol)) { lodOpenUrl('project.json'); return; }
+  // opened from disk: browsers only let a page read its folder after the user confirms it once
+  const key = location.pathname; const saved = await HOMEDB.get(key);
+  const msg = el('div', { class: 'note' }), btn = el('button', { class: 'btn primary', style: 'font-size:15px;padding:10px 18px' }, 'Open project');
+  const card = el('div', { role: 'dialog', 'aria-label': 'Open project', style: 'position:fixed;inset:0;z-index:150;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.35);padding:16px' },
+    el('div', { style: 'background:var(--panel,#fff);color:var(--ink,#111);border-radius:14px;padding:22px 24px;max-width:460px;width:100%;box-shadow:0 12px 40px rgba(0,0,0,.3);display:flex;flex-direction:column;gap:12px' },
+      el('div', { style: 'font-size:19px;font-weight:600' }, home.name || 'LOD project'), el('div', { class: 'hint' }, (home.points ? fmtN(home.points) + ' points · ' : '') + 'converted ' + (home.created ? new Date(home.created * 1000).toLocaleDateString() : '')), msg, el('div', { class: 'row' }, btn, el('button', { class: 'btn', onclick: () => card.remove() }, 'Not now'))));
+  msg.textContent = saved ? 'Your browser asks you to allow this folder again each visit. Press Open project, then Allow.' : 'Press Open project and choose the folder this page is in (' + decodeURIComponent(location.pathname.split('/').slice(-2, -1)[0] || 'this folder') + '). Your browser asks once; after that it only asks to allow it.';
+  if (!window.showDirectoryPicker) msg.textContent = 'This browser cannot open folders from a page on disk. Use Chrome or Edge, or run scanlod view on the folder.';
+  btn.addEventListener('click', async () => {
+    try {
+      let h = saved; if (h && (await h.requestPermission({ mode: 'readwrite' })) !== 'granted') h = null;
+      if (!h) { h = await window.showDirectoryPicker({ mode: 'readwrite', id: 'sbhome' }); }
+      let ok = false; try { await h.getFileHandle('dataset.json'); ok = true; } catch (e) { try { await h.getFileHandle('project.json'); ok = true; } catch (e2) { } }
+      if (!ok) { msg.textContent = 'That folder has no project in it. Choose the folder this page (ScanBench.html) is in.'; return; }
+      await HOMEDB.set(key, h); card.remove(); await lodOpenStore(new LDirStore(h));
+    } catch (e) { if (e.name !== 'AbortError') msg.textContent = 'Could not open it: ' + e.message; }
+  });
+  document.body.append(card); btn.focus();
+}
 // changes that belong in project.json mark the project unsaved
 for (const [get, set] of [[() => addAnnotation, f => { addAnnotation = f; }], [() => pushMeasure, f => { pushMeasure = f; }], [() => addBookmark, f => { addBookmark = f; }], [() => removeAnnotation, f => { removeAnnotation = f; }]]) {
-  const orig = get(); set(function () { const r = orig.apply(this, arguments); if (LP.project && !LP.applying) { LP.dirtyProject = true; clearTimeout(LP.rp); LP.rp = setTimeout(buildLodPanel, 80); } return r; });
+  const orig = get(); set(function () { const r = orig.apply(this, arguments); if (LP.project && !LP.applying) { markDirty(LP.active); clearTimeout(LP.rp); LP.rp = setTimeout(buildLodPanel, 80); } return r; });
 }
 
 // ---------- the converter, in a dialog ----------
@@ -497,5 +548,6 @@ function openConverter() {
     el('div', { class: 'row', style: 'justify-content:space-between' }, el('h2', {}, 'Convert scans to a LOD project'), el('button', { class: 'btn small icon', 'aria-label': 'Close', onclick: () => { if (host.querySelector('.conv-stage') && /%/.test(host.querySelector('.conv-stage').textContent) && !confirm('A conversion is running. Close anyway? It will stop.')) return; ov.remove(); } }, '×')),
     el('div', { class: 'note' }, 'Runs on this computer in Chrome or Edge; nothing is uploaded. Every point and attribute is kept, with all source metadata.'), host));
   document.body.append(ov);
-  convUI(host, { onDone: async h => { ov.remove(); try { await lodOpenStore(new LDirStore(h)); } catch (e) { toast('Could not open the new project: ' + e.message, true); } } });
+  const viewer = async () => { for (const u of ['ScanBench-offline.html', 'https://stuartcbuckett-code.github.io/ScanWorld/ScanBench-offline.html']) { try { const r = await fetch(u); if (r.ok) return await r.text(); } catch (e) { } } return null; };
+  convUI(host, { viewer, onDone: async h => { ov.remove(); try { await lodOpenStore(new LDirStore(h)); } catch (e) { toast('Could not open the new project: ' + e.message, true); } } });
 }
