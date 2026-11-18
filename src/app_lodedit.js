@@ -269,3 +269,21 @@ function colourAllSync() { const sel = $('#colAll'); if (!sel || document.active
 { const sel = $('#colAll'); if (sel) sel.addEventListener('change', () => { if (sel.value) colourAll(sel.value); }); }
 { const _rp = refreshProps; refreshProps = function () { const r = _rp.apply(this, arguments); try { colourAllSync(); } catch (e) { } return r; }; }
 { const _bl = buildLodPanel; buildLodPanel = function () { const r = _bl.apply(this, arguments); try { colourAllSync(); } catch (e) { } return r; }; }
+
+// ----- Topo on a streamed dataset: the points it needs are read into a working layer first (inside the box, or an even sample of the whole dataset) -----
+async function topoFromLod(D) {
+  const box = edRegion(); const sp = Math.max(0.02, S.tSp || 0.1);
+  const r = await busy('Reading ' + D.meta.name + (box ? ' inside the box' : '') + ' for the topo…', async onP => {
+    if (box) return edCollect(D, box, null, 4e7, onP);
+    const area = Math.max(1, (D.box.max.x - D.box.min.x) * (D.box.max.y - D.box.min.y)); const want = Math.min(D.meta.points, Math.max(2e6, Math.min(1.2e7, area / (sp * sp) * 1.5)));
+    return lodReadSample(D, want, onP);
+  });
+  if (!r || !r.n) { if (r) toast('No points there.', true); return; }
+  const L = addCloud(D.meta.name + (box ? ' (topo box)' : ' (topo)'), { n: r.n, pos: r.pos, rgb: r.rgb, intensity: r.intensity, cls: r.cls, origin: S.origin, meta: { format: 'From LOD dataset ' + D.meta.name + (box ? ', inside the box' : ', even sample'), total: r.n, stride: 1 } });
+  await runTopo(L);
+}
+{ const _bt = buildTopo; buildTopo = function () { _bt.apply(this, arguments); const p = $('#topoMain'); if (!p) return; const D = (S.sel && S.sel.kind === 'cloud') ? null : edTargetD(); if (!D) return;
+  const btn = [...p.querySelectorAll('button')].find(b => b.textContent === 'Process topo'); if (!btn) return; const nb = btn.cloneNode(true); nb.disabled = false; btn.replaceWith(nb);
+  nb.addEventListener('click', () => { const v = id => { const e = document.getElementById(id); return e ? +e.value : undefined; }; Object.assign(S, { tSp: v('tSp') || 0.1, tSlope: v('tTerr') || 0.3, tGt: v('tGt') || 0.15, tTin: v('tTin') || 0.5, tGc: v('tGc') || 20, tSpot: v('tSpot') || 5 }); topoFromLod(D); });
+  const b = [...p.querySelectorAll('.note b')].find(x => /selected cloud/.test(x.textContent)); if (b) b.textContent = D.meta.name + ' (streamed: ' + (edRegion() ? 'the points inside the box' : 'an even sample of the whole dataset; draw a box for full detail on part of it') + ')';
+} }

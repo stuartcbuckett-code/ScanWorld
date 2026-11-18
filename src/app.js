@@ -647,7 +647,7 @@ $('#btnEDL').addEventListener('click', () => { S.edl = !S.edl; $('#btnEDL').clas
 $('#btnClipVis').addEventListener('click', () => { S.clip.on = !S.clip.on; if (S.clip.on && S.clip.box.isEmpty()) S.clip.box.copy(sceneBox()); syncClipUI(); S.dirty = true; });
 $('#ptSize').addEventListener('input', e => { S.ptSize = +e.target.value; S.dirty = true; });
 $('#btnShot').addEventListener('click', () => { draw(); canvas.toBlob(b => saveFile('scanbench-view.png', b), 'image/png'); });
-$$('.tab').forEach(t => t.addEventListener('click', () => { $$('.tab').forEach(x => x.classList.toggle('on', x === t)); $$('.pane').forEach(p => p.classList.toggle('on', p.id === 'pane-' + t.dataset.tab)); if (t.dataset.tab === 'edit' && !(S.sel && S.sel.kind === 'cloud')) buildEdit(); }));
+$$('.tab').forEach(t => t.addEventListener('click', () => { $$('.tab').forEach(x => x.classList.toggle('on', x === t)); $$('.pane').forEach(p => p.classList.toggle('on', p.id === 'pane-' + t.dataset.tab)); if (t.dataset.tab === 'edit' && !(S.sel && S.sel.kind === 'cloud')) buildEdit(); if (t.dataset.tab === 'topo' && !(S.sel && S.sel.kind === 'cloud')) buildTopo(); }));
 function closeDrawers() { $('#leftPane').classList.remove('open'); $('#rightPane').classList.remove('open'); $('#scrim').classList.remove('on'); }
 $('#tglLeft').addEventListener('click', () => { const o = !$('#leftPane').classList.contains('open'); closeDrawers(); if (o) { $('#leftPane').classList.add('open'); $('#scrim').classList.add('on'); } });
 $('#tglRight').addEventListener('click', () => { const o = !$('#rightPane').classList.contains('open'); closeDrawers(); if (o) { $('#rightPane').classList.add('open'); $('#scrim').classList.add('on'); } });
