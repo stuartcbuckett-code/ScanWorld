@@ -22,7 +22,7 @@ const SBConv = (() => {
   CRS.push({ group: 'pcg', id: 'PCG94', name: 'PCG94 (Perth Coastal Grid, GDA94)', epsg: 10464, wkt: tmWkt('GDA94 / PCG94', ...G94, GRS, pcgLon, 0.99999906, 50000, 3800000, 10464) });
   for (let z = 49; z <= 52; z++) CRS.push({ group: 'wgs84', id: 'UTM' + z + 'S', name: 'WGS 84 / UTM zone ' + z + 'S', epsg: 32700 + z, wkt: tmWkt('WGS 84 / UTM zone ' + z + 'S', 'WGS 84', 'WGS_1984', WGS, 6 * z - 183, 0.9996, 500000, 10000000, 32700 + z) });
   CRS.push({ group: 'wgs84', id: 'WGS84', name: 'WGS 84 (latitude, longitude)', epsg: 4326, wkt: 'GEOGCS["WGS 84",DATUM["WGS_1984",SPHEROID[' + WGS + ']],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433],AUTHORITY["EPSG","4326"]]' });
-  const VERT = [{ id: '', name: 'As in the scans / not stated' }, { id: 'ellipsoid', name: 'Ellipsoidal heights', datum: 'ellipsoid' },
+  const VERT = [{ id: '', name: 'From the scans’ headers' }, { id: 'ellipsoid', name: 'Ellipsoidal heights', datum: 'ellipsoid' },
     { id: 'AHD-2020', name: 'AHD, from AUSGeoid2020', datum: 'AHD', geoid: 'AUSGeoid2020', epsg: 5711 }, { id: 'AHD-09', name: 'AHD, from AUSGeoid09', datum: 'AHD', geoid: 'AUSGeoid09', epsg: 5711 }, { id: 'AHD', name: 'AHD (geoid not known)', datum: 'AHD', epsg: 5711 }];
   const supported = () => !!(window.showDirectoryPicker && window.Worker && window.CompressionStream);
 
@@ -178,7 +178,7 @@ const SBConv = (() => {
       if (uid === 'laszip encoded' && rid === 22204) r.chunkSize = new DataView(data.buffer, data.byteOffset).getUint32(12, true); if (uid === 'LASF_Projection' && rid === 2112) wkt = cstr(data); if (uid === 'LASF_Projection' && rid === 34735) { const g = new DataView(data.buffer, data.byteOffset, data.byteLength); gk = {}; for (let k = 0; k < g.getUint16(6, true); k++) { const q = 8 + k * 8; if (q + 8 > data.length) break; const id = g.getUint16(q, true), loc = g.getUint16(q + 2, true), v = g.getUint16(q + 6, true); if (loc) continue; if (id === 3072) gk.projected = v; if (id === 2048) gk.geographic = v; if (id === 4096) gk.vertical = v; } }
       vlrs.push({ userId: uid, recordId: rid, description: cstr(vb.subarray(p + 22, p + 54)), length: len, laszip: uid === 'laszip encoded', b64: b64(vb.subarray(p, p + 54 + len)) }); p += 54 + len; }
     const evlrs = []; if (r.nev && r.evStart && r.evStart < file.size) { const eb = new Uint8Array(await file.slice(r.evStart, Math.min(file.size, r.evStart + 64e6)).arrayBuffer()), ed = new DataView(eb.buffer); let q = 0; while (q + 60 <= eb.length && evlrs.length < r.nev) { const len = Number(ed.getBigUint64(q + 20, true)), uid = cstr(eb.subarray(q + 2, q + 18)), rid = ed.getUint16(q + 18, true); if (uid === 'LASF_Projection' && rid === 2112) wkt = cstr(eb.subarray(q + 60, q + 60 + len)); evlrs.push({ userId: uid, recordId: rid, description: cstr(eb.subarray(q + 22, q + 54)), length: len, b64: b64(eb.subarray(q, q + 60 + len)) }); q += 60 + len; } }
-    const epsg = w => { let best = null; for (const re of [/AUTHORITY\["EPSG","(\d+)"\]/g, /ID\["EPSG",(\d+)\]/g]) { let mm; while ((mm = re.exec(w))) best = [mm.index, +mm[1]]; } return best && best[1]; };
+    const epsg = w0 => { const w = String(w0).split(/VERT_?CS\[|VERTCRS\[/i)[0]; let best = null; for (const re of [/AUTHORITY\["EPSG","(\d+)"\]/g, /ID\["EPSG",(\d+)\]/g]) { let mm; while ((mm = re.exec(w))) best = [mm.index, +mm[1]]; } return best && best[1]; };
     if (wkt || gk) { r.crs = {}; if (wkt) { r.crs.wkt = wkt; const e = epsg(wkt); if (e) r.crs.epsg = e; } if (gk) { r.crs.geokeys = gk; const e = gk.projected || gk.geographic; if (!r.crs.epsg && e && e !== 32767) r.crs.epsg = e; } }
     r.meta = { format: r.laz ? 'LAZ' : 'LAS', version: r.vmaj + '.' + r.vmin, pointFormat: r.fmt, recordLength: r.rl, points: r.cnt, scale: r.scale, offset: r.offset, bounds: { min: r.min, max: r.max }, systemIdentifier: cstr(h.subarray(26, 58)), generatingSoftware: cstr(h.subarray(58, 90)), creationDate: dv.getUint16(92, true) + '-' + String(dv.getUint16(90, true)).padStart(3, '0'), globalEncoding: dv.getUint16(6, true), fileSourceId: dv.getUint16(4, true), header: b64(hdr), vlrs, evlrs };
     return r;
@@ -314,5 +314,20 @@ const SBConv = (() => {
       }
     } finally { if (pool) pool.close(); }
   }
-  return { run, supported, fmtN, fmtT, CRS, VERT };
+  // what the scans' headers say about coordinates and heights (LAS WKT / GeoTIFF keys, E57 coordinateMetadata)
+  async function probe(files) {
+    const out = { crs: null, vertical: null, files: 0 };
+    for (const f of [...files].filter(f => /\.(las|laz|e57)$/i.test(f.name)).slice(0, 40)) {
+      let c = null; try { if (/\.e57$/i.test(f.name)) { const ef = new E57File(fileSource(f)); await ef.init(); c = (e57Sources(ef, f, 0).find(x => x.crs) || {}).crs || null; } else c = (await lasHead(f)).crs || null; } catch (e) { }
+      out.files++; if (c && !out.crs) out.crs = c;
+    }
+    const c = out.crs; if (c) {
+      const w = String(c.wkt || c.text || ''), gv = c.geokeys && c.geokeys.vertical;
+      if (/VERT_?CS|VERTCRS/i.test(w)) { if (/AHD|Australian Height/i.test(w)) out.vertical = /AUSGeoid\s*2020/i.test(w) ? 'AHD-2020' : /AUSGeoid\s*0?9/i.test(w) ? 'AHD-09' : 'AHD'; else if (/ellipsoid/i.test(w)) out.vertical = 'ellipsoid'; }
+      else if (gv === 5711) out.vertical = 'AHD';
+      const known = CRS.find(x => x.epsg && x.epsg === c.epsg); out.id = known ? known.id : null; out.name = known ? known.name : (c.epsg ? 'EPSG:' + c.epsg : (w.match(/^(?:PROJCS|GEOGCS|COMPD_CS|PROJCRS|GEOGCRS|COMPOUNDCRS)\["([^"]+)"/) || [])[1] || 'a coordinate system');
+    }
+    return out;
+  }
+  return { run, probe, supported, fmtN, fmtT, CRS, VERT };
 })();
