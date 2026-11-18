@@ -200,14 +200,14 @@ async function edSubsample(D, kind, v) {
 }
 
 // ----- route the existing Edit buttons: with no cloud layer selected and an LOD dataset open, they act on the dataset -----
-const route = (name, lodFn) => { const orig = window[name]; const f = function (...a) { const D = edTargetD(); if (D) return lodFn(D, ...a); return orig.apply(this, a); }; return f; };
-noiseFilter = route('noiseFilter', D => edNoise(D));
-groundClassify = route('groundClassify', D => edGround(D));
-subsample = route('subsample', (D, kind, v) => edSubsample(D, kind, v));
-applyLasso = route('applyLasso', (D, action) => edLasso(D, action));
-classifyTerrain = route('classifyTerrain', D => edTerrain(D));
-classifyByCad = route('classifyByCad', D => edCad(D));
-findPeople = route('findPeople', D => edPeopleFind(D));
+const route = (orig, lodFn) => { const f = function (...a) { const D = edTargetD(); if (D) return lodFn(D, ...a); return orig.apply(this, a); }; return f; };
+noiseFilter = route(noiseFilter, D => edNoise(D));
+groundClassify = route(groundClassify, D => edGround(D));
+subsample = route(subsample, (D, kind, v) => edSubsample(D, kind, v));
+applyLasso = route(applyLasso, (D, action) => edLasso(D, action));
+classifyTerrain = route(classifyTerrain, D => edTerrain(D));
+classifyByCad = route(classifyByCad, D => edCad(D));
+findPeople = route(findPeople, D => edPeopleFind(D));
 { const orig = removePeople; removePeople = function (mode) { if (S.people && S.people.lod) return edPeopleRemove(S.people.lod, mode); return orig(mode); }; }
 { const orig = transformLayer; transformLayer = function (dx, dy, dz, rz, sc) { const D = edTargetD(); if (!D) return orig(dx, dy, dz, rz, sc); if (rz || sc !== 1) { toast('A streamed dataset can be shifted here, not rotated or scaled (that needs re-converting). Set Rotate to 0 and Scale to 1, or extract an area to a layer.', true); return; } edShiftApply(D, [dx, dy, dz]); buildEdit(); }; }
 { const orig = lassoMode; lassoMode = function (f, r) { if (!edTargetD()) return orig(f, r); const nc = needCloud; needCloud = () => ({}); try { return orig(f, r); } finally { needCloud = nc; } }; }

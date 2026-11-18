@@ -348,7 +348,8 @@ async function loadPlatformSample() {
   return true;
 }
 async function loadStartSample() {
-  if (/[?&](project|open|nosample)(=|&|$)/.test(location.search) || window.SB_HOME) return;   // opening a project: no sample
+  let rec = false; try { rec = localStorage.getItem('sb-rec') === '1'; } catch (e) { }
+  if (/[?&](project|open|nosample)(=|&|$)/.test(location.search) || window.SB_HOME || rec) return;   // a recovery copy waits to be restored: no sample   // opening a project: no sample
   const ok = await loadPlatformSample();
   if (!ok) { loadSample(); toast('Loaded a synthetic sample room so the tools have something to work on. Opening your own files replaces it.'); }
 }
