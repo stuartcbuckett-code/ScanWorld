@@ -20,19 +20,24 @@ function convUI(host, opts = {}) {
   const refresh = () => {
     list.textContent = ''; for (const f of st.files) list.append(E('div', {}, f.name + ' · ' + gb(f.size)));
     if (st.files.length > 1) list.append(E('div', { class: 'conv-sum' }, st.files.length + ' files, ' + gb(st.files.reduce((a, f) => a + f.size, 0)) + ' (they become one dataset)'));
-    outL.textContent = st.out ? 'Output folder: ' + st.out.name : ''; go.disabled = st.running || !st.files.length || !st.out;
+    outL.textContent = st.out ? 'Output folder: ' + st.out.name + (st.outNote || '') : ''; go.disabled = st.running || !st.files.length || !st.out;
   };
   const pickFiles = async () => {
-    try { if (window.showOpenFilePicker) { const hs = await window.showOpenFilePicker({ multiple: true, types: [{ description: 'Scans', accept: { 'application/octet-stream': ['.e57', '.las', '.laz'] } }] }); for (const h of hs) st.files.push(await h.getFile()); }
+    try { if (window.showOpenFilePicker) { const hs = await window.showOpenFilePicker({ multiple: true, types: [{ description: 'Scans', accept: { 'application/octet-stream': ['.e57', '.las', '.laz'] } }] }); for (const h of hs) st.files.push(await h.getFile()); if (hs[0]) st.src = hs[0]; }
       else { const i = E('input', { type: 'file', multiple: true, accept: '.e57,.las,.laz', hidden: true }); document.body.append(i); await new Promise(r => { i.addEventListener('change', r); i.click(); }); st.files.push(...i.files); i.remove(); } } catch (e) { if (e.name !== 'AbortError') alert(e.message); }
     refresh();
   };
   const pickFolderIn = async () => {
-    try { const h = await window.showDirectoryPicker({ mode: 'read' }); const walk = async d => { for await (const [nm, e] of d.entries()) { if (e.kind === 'directory') await walk(e); else if (/\.(e57|las|laz)$/i.test(nm)) st.files.push(await e.getFile()); } }; await walk(h); } catch (e) { if (e.name !== 'AbortError') alert(e.message); }
+    try { const h = await window.showDirectoryPicker({ mode: 'read' }); st.src = h; const walk = async d => { for await (const [nm, e] of d.entries()) { if (e.kind === 'directory') await walk(e); else if (/\.(e57|las|laz)$/i.test(nm)) st.files.push(await e.getFile()); } }; await walk(h); } catch (e) { if (e.name !== 'AbortError') alert(e.message); }
     refresh();
   };
   const pickOut = async () => {
-    try { const h = await window.showDirectoryPicker({ mode: 'readwrite', id: 'scanlod-out' }); let has = false; try { await h.getFileHandle('dataset.json'); has = true; } catch (e) { }
+    try { const o = { mode: 'readwrite', id: 'scanlod-out' }; if (st.src) o.startIn = st.src;   // opens where the scans are
+      let h = await window.showDirectoryPicker(o); st.outNote = '';
+      // the folder that holds the scans: make a project folder inside it, named after the scans
+      let holdsScans = false; for (const f of st.files.slice(0, 20)) { try { await h.getFileHandle(f.name); holdsScans = true; break; } catch (e) { } }
+      if (holdsScans) { const stem = (name.value.trim() || (st.files[0] ? st.files[0].name.replace(/\.[^.]+$/, '') : 'scan')).replace(/[\\/:*?"<>|]+/g, '_'); h = await h.getDirectoryHandle(stem + '_LOD', { create: true }); st.outNote = ' (made beside your scans)'; }
+      let has = false; try { await h.getFileHandle('dataset.json'); has = true; } catch (e) { }
       if (has && !confirm(h.name + ' already holds a converted dataset. Replace it?')) return; st.out = h; } catch (e) { if (e.name !== 'AbortError') alert(e.message); }
     refresh();
   };
@@ -55,7 +60,7 @@ function convUI(host, opts = {}) {
   stopB.addEventListener('click', () => { if (st.job) st.job.stop = true; stopB.disabled = true; stage.textContent = 'Stopping after the current piece of work…'; setTimeout(() => { stopB.disabled = false; }, 3000); });
   host.append(
     E('div', { class: 'conv-step' }, E('b', {}, '1. Scans'), E('div', { class: 'conv-row' }, E('button', { class: 'btn', onclick: pickFiles }, 'Choose files…'), E('button', { class: 'btn', onclick: pickFolderIn }, 'Choose a folder of tiles…'), E('button', { class: 'btn', onclick: () => { st.files = []; refresh(); } }, 'Clear')), list),
-    E('div', { class: 'conv-step' }, E('b', {}, '2. Where to put the project'), E('div', { class: 'conv-row' }, E('button', { class: 'btn', onclick: pickOut }, 'Choose output folder…')), outL, E('div', { class: 'conv-note' }, 'Use an empty folder on a drive with room. While converting it needs about 40 bytes per point (about 4× the size of LAZ files, about 2× E57); the finished project is about 17 bytes per point.')),
+    E('div', { class: 'conv-step' }, E('b', {}, '2. Where to put the project'), E('div', { class: 'conv-row' }, E('button', { class: 'btn', onclick: pickOut }, 'Choose output folder…')), outL, E('div', { class: 'conv-note' }, 'The folder picker opens where your scans are. Choose that folder and a project folder named after the scans is made inside it, or pick any other folder. Use a drive with room. While converting it needs about 40 bytes per point (about 4× the size of LAZ files, about 2× E57); the finished project is about 17 bytes per point.')),
     E('div', { class: 'conv-step' }, E('b', {}, '3. Options'), E('div', { class: 'conv-grid' }, E('label', {}, 'Name', name), E('label', {}, 'Memory', mem), E('label', {}, 'Workers', wk), E('label', {}, 'Coordinate system', crs), E('label', {}, 'Heights', vSel))),
     E('div', { class: 'conv-row' }, go, stopB), E('div', { class: 'conv-bar' }, bar), stage, done, log);
   refresh();

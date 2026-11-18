@@ -16,7 +16,7 @@ async function edPut(D, name, p) {   // store (or clear, with null) a tile's pat
   const E = edState(D); const prev = E.bytes.has(name) ? E.bytes.get(name) : (E.index && E.index.nodes[name] ? await (async () => { const [off, len] = E.index.nodes[name]; return D.store.read(D.dir + 'edits.bin', off, len); })() : null);
   if (E.op && !E.op.has(name)) E.op.set(name, prev);
   E.bytes.set(name, p ? await edGzip(edEncode(p)) : null); E.cache.delete(name); E.dirty = true; if (p && p.cls) D.edCls = true;
-  if (D.loaded.has(name)) { lodDrop(D, name); LP.force = true; } S.dirty = true;
+  if (E.op) (E.drop || (E.drop = new Set())).add(name); else if (D.loaded.has(name)) { lodDrop(D, name); LP.force = true; } S.dirty = true;
 }
 // a decoded tile with its patch applied: classes replaced, deleted points removed (and r.idx maps each point back to its place in the original tile)
 function edApply(r, p, full) {
@@ -46,7 +46,8 @@ async function edMerge(D, N, r, ch) {
   if (changed) await edPut(D, N.name, { n0, cls, del }); return changed;
 }
 function edBegin(D, what) { const E = edState(D); E.op = new Map(); E.opName = what; }
-function edEnd(D, summary) { const E = edState(D); if (E.op && E.op.size) { E.undo.push({ what: E.opName, nodes: E.op }); if (E.undo.length > ED.undoDepth) E.undo.shift(); E.log.push({ op: E.opName, when: new Date().toISOString(), summary }); markDirty(D.P); } E.op = null; refreshEditPane(); }
+function edEnd(D, summary) { const E = edState(D); if (E.drop) { for (const nm of E.drop) if (D.loaded.has(nm)) lodDrop(D, nm); E.drop = null; LP.force = true; S.dirty = true; }
+  if (E.op && E.op.size && D.edCls && /class|ground|terrain|type|people to/i.test(E.opName || '') && D.colorMode !== 'class') { D.colorMode = 'class'; try { lodRecolor(D); buildLodPanel(); } catch (e) { } } if (E.op && E.op.size) { E.undo.push({ what: E.opName, nodes: E.op }); if (E.undo.length > ED.undoDepth) E.undo.shift(); E.log.push({ op: E.opName, when: new Date().toISOString(), summary }); markDirty(D.P); } E.op = null; refreshEditPane(); }
 async function edUndo(D) { const E = edState(D), u = E.undo.pop(); if (!u) return; for (const [name, prev] of u.nodes) { E.bytes.set(name, prev); E.cache.delete(name); if (D.loaded.has(name)) lodDrop(D, name); } E.dirty = true; LP.force = true; S.dirty = true; toast('Undid: ' + u.what + '.'); refreshEditPane(); }
 async function edDiscard(D) {
   if (!confirm('Remove every edit to ' + D.meta.name + '? The converted points are unchanged, so this puts the dataset back as it was converted.')) return;
@@ -109,10 +110,12 @@ async function edBlocks(D, what, box, margin, fn, onP) {
     const T = { n, pos: new Float32Array(n * 3), rgb: parts.every(p => p.r.rgb) ? new Uint8Array(n * 3) : null, intensity: new Float32Array(n), cls: new Uint8Array(n), core: new Uint8Array(n), box: new THREE.Box3() }; let o = 0; const iM = D.iMax || 65535;
     for (const p of parts) for (const q of p.keep) { const x = p.r.pos[q * 3], y = p.r.pos[q * 3 + 1], z = p.r.pos[q * 3 + 2]; T.pos[o * 3] = x; T.pos[o * 3 + 1] = y; T.pos[o * 3 + 2] = z; T.box.expandByPoint(new THREE.Vector3(x, y, z)); if (T.rgb) { T.rgb[o * 3] = p.r.rgb[q * 3]; T.rgb[o * 3 + 1] = p.r.rgb[q * 3 + 1]; T.rgb[o * 3 + 2] = p.r.rgb[q * 3 + 2]; } T.intensity[o] = p.r.intensity ? p.r.intensity[q] / iM : 0.5; T.cls[o] = p.r.classification ? p.r.classification[q] : 1;
       T.core[o] = x >= core.min.x && x < core.max.x + (i === nx - 1 ? 1e-6 : 0) && y >= core.min.y && y < core.max.y + (j === ny - 1 ? 1e-6 : 0) && (!box || (z >= box.min.z && z <= box.max.z)) ? 1 : 0; o++; }
-    const res = await fn(T, f => onP && onP((b + f) / (nx * ny))); if (!res) continue;
-    o = 0; for (const p of parts) { const ch = { cls: res.cls ? new Uint8Array(p.r.n).fill(255) : null, del: res.del ? new Uint8Array(p.r.n) : null }; let any = false;
+    const nb = nx * ny; onP && onP((b + 0.3) / nb); await tick();
+    const res = await fn(T, f => onP && onP((b + 0.3 + 0.5 * f) / nb)); onP && onP((b + 0.8) / nb); if (!res) continue;
+    o = 0; const jobs = []; for (const p of parts) { const ch = { cls: res.cls ? new Uint8Array(p.r.n).fill(255) : null, del: res.del ? new Uint8Array(p.r.n) : null }; let any = false;
       for (const q of p.keep) { if (T.core[o]) { if (ch.cls && res.cls[o] !== 255) { ch.cls[q] = res.cls[o]; any = true; } if (ch.del && res.del[o]) { ch.del[q] = 1; any = true; points++; } } o++; }
-      if (any && await edMerge(D, p.N, p.r, ch)) tiles++; }
+      if (any) jobs.push([p, ch]); }
+    for (let q = 0; q < jobs.length; q += 16) { const rs = await Promise.all(jobs.slice(q, q + 16).map(([p, ch]) => edMerge(D, p.N, p.r, ch))); tiles += rs.filter(Boolean).length; }   // tiles in parallel
     onP && onP((b + 1) / (nx * ny)); await tick();
   }
   return { tiles, points };
@@ -128,7 +131,7 @@ async function edCollect(D, box, filter, max = 4e7, onP) {
 // ----- the tools -----
 const edAsk = (D, what) => { if (D.meta.points > 5e8 && !edRegion()) return confirm(what + ' over all ' + fmtN(D.meta.points) + ' points of ' + D.meta.name + ' reads every tile and can take a long time. Continue? (Draw a box first to work on part of it.)'); return true; };
 async function edRun(D, what, job) {
-  if (!edAsk(D, what)) return; edBegin(D, what); let res; try { res = await busy(what + ' on ' + D.meta.name + ' (' + edRegionText() + ')…', job); } finally { edEnd(D, res && res.summary); }
+  if (!edAsk(D, what)) return; edBegin(D, what); let res; ED.pause = true; try { res = await busy(what + ' on ' + D.meta.name + ' (' + edRegionText() + ')…', job); } finally { ED.pause = false; edEnd(D, res && res.summary); S.dirty = true; }
   if (res && res.summary) toast(res.summary + ' Save the project to keep the edits (the converted files are not changed).');
 }
 const edGround = D => edRun(D, 'Ground classification', async onP => { const r = await edBlocks(D, 'ground', edRegion(), Math.max(10, S.gCell * 6), async T => { const g = await AL.groundFilter(T.pos, T.n, S.gCell, S.gH); const cls = new Uint8Array(T.n); for (let i = 0; i < T.n; i++) cls[i] = g[i] ? 2 : 1; return { cls }; }, onP); return { summary: 'Ground classified (' + r.tiles + ' tiles changed).' }; });
@@ -250,3 +253,6 @@ buildEdit = function () {
   const tgt = [...p.querySelectorAll('.note')].find(n => /^Working on:/.test(n.textContent)); if (tgt) tgt.replaceChildren('Working on: ', el('b', {}, D.meta.name + ' (streamed)'));
   const tr = [...p.querySelectorAll('.sec')].find(s => /Transform layer/.test(s.textContent)); if (tr) tr.querySelector('.note').textContent = 'Shifts the whole streamed dataset (ΔE, ΔN, ΔZ). Rotating or scaling a converted dataset is not possible here; extract an area to a layer for that.';
 };
+
+// while a tool runs over a dataset, the 3D view waits (drawing every frame would slow the job down)
+const _drawEd = draw; draw = function () { if (ED.pause) { S.dirty = true; return; } return _drawEd(); };
