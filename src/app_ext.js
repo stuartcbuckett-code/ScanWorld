@@ -348,7 +348,7 @@ async function loadPlatformSample() {
   return true;
 }
 async function loadStartSample() {
-  if (/[?&](project|open)=/.test(location.search) || window.SB_HOME) return;   // opening a project: no sample
+  if (/[?&](project|open|nosample)(=|&|$)/.test(location.search) || window.SB_HOME) return;   // opening a project: no sample
   const ok = await loadPlatformSample();
   if (!ok) { loadSample(); toast('Loaded a synthetic sample room so the tools have something to work on. Opening your own files replaces it.'); }
 }

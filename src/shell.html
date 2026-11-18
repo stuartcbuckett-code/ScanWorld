@@ -90,6 +90,7 @@ input[type=checkbox] { accent-color: var(--accent); }
 .lbl { position: absolute; transform: translate(-50%, -120%); background: color-mix(in srgb, var(--panel) 92%, transparent); border: 1px solid var(--line); border-radius: 4px; padding: 2px 6px; font-family: var(--mono); font-size: 11px; white-space: nowrap; font-variant-numeric: tabular-nums; }
 .modechip { position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); background: var(--fg); color: var(--bg); padding: 7px 12px; border-radius: 999px; font-size: 12px; display: flex; gap: 10px; align-items: center; max-width: calc(100% - 24px); }
 .modechip button { background: transparent; border: 1px solid color-mix(in srgb, var(--bg) 40%, transparent); color: var(--bg); border-radius: 999px; padding: 2px 9px; cursor: pointer; font-size: 11px; }
+.homebtn { position: absolute; right: 84px; bottom: 26px; z-index: 3; background: var(--panel, #1b2129); box-shadow: 0 1px 4px rgba(0,0,0,.35); }
 .axes { position: absolute; right: 10px; bottom: 10px; width: 64px; height: 64px; pointer-events: none; }
 .welcome { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; }
 .status { display: flex; gap: 16px; align-items: center; padding-block: 5px; padding-left: max(12px, env(safe-area-inset-left, 0px)); padding-right: max(12px, env(safe-area-inset-right, 0px)); border-top: 1px solid var(--line); background: var(--panel); font-family: var(--mono); font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; min-width: 0; overflow: hidden; white-space: nowrap; }
@@ -132,7 +133,7 @@ kbd { font-family: var(--mono); font-size: 11px; background: var(--kbd); border:
     </div>
     <div class="grow"></div>
     <label class="btn primary" for="fileIn">Open files…</label>
-    <input type="file" id="fileIn" multiple hidden accept=".las,.laz,.e57,.ply,.xyz,.txt,.csv,.pts,.asc,.stl,.obj,.zip,.json,.bin">
+    <input type="file" id="fileIn" multiple hidden accept=".las,.laz,.e57,.ply,.xyz,.txt,.csv,.pts,.asc,.stl,.obj,.zip,.json,.bin,.tif,.tiff,.jpg,.jpeg,.png,.jgw,.jpgw,.pgw,.tfw,.wld,.ecw">
     <button class="btn icon only-narrow" id="tglRight" aria-label="Show tools">⚙</button>
   </header>
 
@@ -141,7 +142,7 @@ kbd { font-family: var(--mono); font-size: 11px; background: var(--kbd); border:
     <aside class="left" id="leftPane">
       <div class="sec">
         <h3>Load</h3>
-        <div class="drop" id="drop">Drop <b>E57, LAS, LAZ</b>, PLY, XYZ/PTS or STL/OBJ design meshes here.<br>Files stay on this device.</div>
+        <div class="drop" id="drop">Drop <b>E57, LAS, LAZ</b>, PLY, XYZ/PTS, STL/OBJ design meshes, aerial images (GeoTIFF, or JPEG + world file) or 360° photos here.<br>Files stay on this device.</div>
         <div class="field"><label for="budget">Point budget</label>
           <select id="budget"><option value="2000000">2 M per file</option><option value="5000000">5 M per file</option><option value="10000000" selected>10 M per file</option><option value="20000000">20 M per file</option><option value="40000000">40 M per file</option></select></div>
         <div class="field"><label for="meshUnits">Mesh units</label>
@@ -166,7 +167,7 @@ kbd { font-family: var(--mono); font-size: 11px; background: var(--kbd); border:
           <button class="btn" data-view="left">Left</button>
           <button class="btn" data-view="right">Right</button>
           <button class="btn" data-view="iso" title="Isometric (I)">Iso</button>
-          <button class="btn" id="btnFit" title="Fit all (F)">Fit</button>
+          <button class="btn" id="btnFit" title="Reset view: fit all the data (F)">Reset view</button>
         </div>
         <div class="vgroup" role="group" aria-label="Display">
           <button class="btn" id="btnOrtho" title="Orthographic projection (O)">Ortho</button>
@@ -180,6 +181,7 @@ kbd { font-family: var(--mono); font-size: 11px; background: var(--kbd); border:
           <input type="range" id="ptSize" min="1" max="8" step="0.5" value="2" style="width:80px">
         </div>
       </div>
+      <button class="btn homebtn" id="btnHome" title="Reset view: fit all the data (F)" aria-label="Reset view">⌂ Reset view</button>
       <svg class="axes" id="axes" viewBox="-32 -32 64 64" aria-hidden="true"></svg>
       <div class="modechip" id="modechip" hidden><span id="modetext"></span><button id="modeDone" hidden>Finish</button><button id="modeEsc">Esc · cancel</button></div>
       <div class="progress" id="prog" hidden><div class="row" style="justify-content:space-between"><span id="progText">Loading…</span><span class="mono" id="progPct">0%</span></div><div class="bar"><i id="progBar"></i></div></div>

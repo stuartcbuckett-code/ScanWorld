@@ -283,6 +283,24 @@ function quatToMat(w, x, y, z) {
     2 * (x * z - w * y), 2 * (y * z + w * x), 1 - 2 * (x * x + y * y)];
 }
 
+// E57 images (images2D): metadata now, pixels on demand (a file can hold hundreds of photos)
+function e57Images(f) {
+  const d2 = xChild(f.e57Root, 'images2D'); if (!d2) return [];
+  const txt = (n, k) => { const c = xChild(n, k); return c ? c.text.trim() : ''; };
+  return d2.children.filter(c => c.tag === 'vectorChild').map((n, i) => {
+    let kind = null, rep = null; for (const k of ['sphericalRepresentation', 'pinholeRepresentation', 'cylindricalRepresentation', 'visualReferenceRepresentation']) { rep = xChild(n, k); if (rep) { kind = k.replace('Representation', ''); break; } }
+    if (!rep) return null;
+    const blobN = xChild(rep, 'jpegImage') || xChild(rep, 'pngImage'); if (!blobN) return null;
+    const pose = xChild(n, 'pose'); let R = null, T = null;
+    if (pose) { const r = xChild(pose, 'rotation'), t = xChild(pose, 'translation'); R = r ? quatToMat(xNum(xChild(r, 'w'), 1), xNum(xChild(r, 'x'), 0), xNum(xChild(r, 'y'), 0), xNum(xChild(r, 'z'), 0)) : [1, 0, 0, 0, 1, 0, 0, 0, 1]; T = t ? [xNum(xChild(t, 'x'), 0), xNum(xChild(t, 'y'), 0), xNum(xChild(t, 'z'), 0)] : [0, 0, 0]; }
+    const off = Number(blobN.attrs.fileOffset), len = Number(blobN.attrs.length);
+    return { index: i, name: txt(n, 'name') || 'Image ' + (i + 1), guid: txt(n, 'guid'), scanGuid: txt(n, 'associatedData3DGuid'), kind, R, T,
+      width: xNum(xChild(rep, 'imageWidth'), 0), height: xNum(xChild(rep, 'imageHeight'), 0), pixelWidth: xNum(xChild(rep, 'pixelWidth'), 0), pixelHeight: xNum(xChild(rep, 'pixelHeight'), 0),
+      focalLength: xNum(xChild(rep, 'focalLength'), 0), cx: xNum(xChild(rep, 'principalPointX'), NaN), cy: xNum(xChild(rep, 'principalPointY'), NaN), radius: xNum(xChild(rep, 'radius'), 0),
+      mime: blobN.tag === 'pngImage' ? 'image/png' : 'image/jpeg',
+      read: async () => { const ph = f.toPhys(f.toLogical(off) + 16); return f.readLogical(ph, len); } };   // a blob section: 16-byte header, then the bytes
+  }).filter(Boolean);
+}
 async function readE57(src, opts = {}) {
   const budget = opts.budget || 10e6, onProgress = opts.onProgress || (() => {});
   const f = new E57File(src); await f.init();
@@ -364,7 +382,7 @@ async function readE57(src, opts = {}) {
     const X = cols[want[0]], Y = cols[want[1]], Z = cols[want[2]];
     const mm = Math.min(m, Math.ceil(Math.min(...active.map(d => d.idx)) / stride));
     B.grow(B.n + mm);
-    let kept = 0;
+    let kept = 0; const start0 = B.n;
     for (let i = 0; i < mm; i++) {
       if (inv && inv[i] !== 0) continue;
       let x, y, z;
@@ -388,12 +406,13 @@ async function readE57(src, opts = {}) {
       }
       kept++;
     }
-    scanMeta.push({ name: s.name || ('Scan ' + (scanMeta.length + 1)), count: s.count, kept, pose: { R, T } });
+    scanMeta.push({ name: s.name || ('Scan ' + (scanMeta.length + 1)), count: s.count, kept, pose: { R, T }, hasPose: !!pose, guid: (xChild(s.node, 'guid') || { text: '' }).text.trim(), range: [start0, B.n] });
     doneRecs += s.count;
   }
   const out = B.finish();
   if (!I_hasAny(scans)) out.intensity = null;
   out.meta = { format: 'E57 (' + scans.length + ' scan' + (scans.length > 1 ? 's' : '') + ')', total, stride, scans: scanMeta };
+  try { out.images2D = e57Images(f); } catch (e) { out.images2D = []; }
   return out;
   function I_hasAny(sc) { return info.some(s => xChild(xChild(s.pts, 'prototype'), 'intensity')); }
 }
@@ -699,5 +718,5 @@ function lazChunkSizes(u8, variable) {
   return { sizes, totals };
 }
 
-const SBIO = { lazChunkSizes, fileSource, readAny, readLAS, readE57, readText, readPLY, readSTL, readOBJ, writeLAS, writePLY, writeXYZ, writeDXF, makeZip, crc32, parseXML };
+const SBIO = { e57Images, E57File, lazChunkSizes, fileSource, readAny, readLAS, readE57, readText, readPLY, readSTL, readOBJ, writeLAS, writePLY, writeXYZ, writeDXF, makeZip, crc32, parseXML };
 if (typeof module !== 'undefined') module.exports = SBIO; else SB.SBIO = SBIO;

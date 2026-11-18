@@ -198,6 +198,12 @@ canvas.addEventListener('dblclick', e => {
 });
 canvas.addEventListener('wheel', e => { e.preventDefault(); zoomAt(e.clientX, e.clientY, Math.exp(e.deltaY * (e.deltaMode === 1 ? 0.05 : 0.0015))); }, { passive: false });
 function zoomAt(cx, cy, f) {
+  const b = sceneBox(), R = sceneRadius(), far = S.cam.dist / Math.max(R, 1) ;
+  if (!b.isEmpty() && far > 20) { // far out (looking at the Earth): zoom faster, and always back towards the data rather than the cursor
+    f = Math.pow(f, 1 + Math.min(3, Math.log10(far / 20) * 1.5));
+    const C = b.getCenter(new THREE.Vector3()); const k = f < 1 ? Math.min(1, (1 - f) * 2) : 0; S.cam.target.lerp(C, k);
+    S.cam.dist = Math.max(1e-3, Math.min(4e7, S.cam.dist * f)); updateCamera(); return;
+  }
   const P = worldAtTargetPlane(cx, cy);
   S.cam.dist = Math.max(1e-3, S.cam.dist * f);
   S.cam.target.sub(P).multiplyScalar(f).add(P);
@@ -634,14 +640,14 @@ function draw() {
 
 // ---------- toolbar ----------
 $$('[data-view]').forEach(b => b.addEventListener('click', () => setView(b.dataset.view)));
-$('#btnFit').addEventListener('click', () => fitAll());
+$('#btnFit').addEventListener('click', () => fitAll()); $('#btnHome').addEventListener('click', () => fitAll());
 function toggleOrtho() { S.cam.ortho = !S.cam.ortho; $('#btnOrtho').classList.toggle('on', S.cam.ortho); updateCamera(); }
 $('#btnOrtho').addEventListener('click', toggleOrtho);
 $('#btnEDL').addEventListener('click', () => { S.edl = !S.edl; $('#btnEDL').classList.toggle('on', S.edl); S.dirty = true; });
 $('#btnClipVis').addEventListener('click', () => { S.clip.on = !S.clip.on; if (S.clip.on && S.clip.box.isEmpty()) S.clip.box.copy(sceneBox()); syncClipUI(); S.dirty = true; });
 $('#ptSize').addEventListener('input', e => { S.ptSize = +e.target.value; S.dirty = true; });
 $('#btnShot').addEventListener('click', () => { draw(); canvas.toBlob(b => saveFile('scanbench-view.png', b), 'image/png'); });
-$$('.tab').forEach(t => t.addEventListener('click', () => { $$('.tab').forEach(x => x.classList.toggle('on', x === t)); $$('.pane').forEach(p => p.classList.toggle('on', p.id === 'pane-' + t.dataset.tab)); }));
+$$('.tab').forEach(t => t.addEventListener('click', () => { $$('.tab').forEach(x => x.classList.toggle('on', x === t)); $$('.pane').forEach(p => p.classList.toggle('on', p.id === 'pane-' + t.dataset.tab)); if (t.dataset.tab === 'edit' && !(S.sel && S.sel.kind === 'cloud')) buildEdit(); }));
 function closeDrawers() { $('#leftPane').classList.remove('open'); $('#rightPane').classList.remove('open'); $('#scrim').classList.remove('on'); }
 $('#tglLeft').addEventListener('click', () => { const o = !$('#leftPane').classList.contains('open'); closeDrawers(); if (o) { $('#leftPane').classList.add('open'); $('#scrim').classList.add('on'); } });
 $('#tglRight').addEventListener('click', () => { const o = !$('#rightPane').classList.contains('open'); closeDrawers(); if (o) { $('#rightPane').classList.add('open'); $('#scrim').classList.add('on'); } });
@@ -892,6 +898,16 @@ function exportSection(kind) {
 function buildEdit() {
   const p = pane('edit'); if (!p) return; p.textContent = '';
   const L = S.sel && S.sel.kind === 'cloud' ? S.sel : null;
+  if (!L) { // the tools need a point cloud layer: say so, and offer the quickest way to get one
+    const clouds = S.layers.filter(x => x.kind === 'cloud'), ds = (S.streams || []).filter(D => !D.closed);
+    const box = el('div', { class: 'sec', style: 'border-left:3px solid var(--accent)' }, el('h3', {}, 'Choose a point cloud to work on'),
+      el('div', { class: 'note' }, 'These tools change points in memory, so they need a point cloud layer selected. ' + (ds.length ? 'A streamed dataset (LOD project) only shows tiles; copy it into a working layer first: a sample of the whole site, or every point inside a box. Classify that, then export it.' : clouds.length ? 'Pick one:' : 'Load a cloud first (Layers → Open).')));
+    if (clouds.length) box.append(el('div', { class: 'row' }, ...clouds.slice(-4).map(c => el('button', { class: 'btn small primary', onclick: () => selectLayer(c) }, 'Use ' + c.name))));
+    for (const D of ds.slice(0, 3)) box.append(el('div', { class: 'row' }, el('span', { class: 'hint' }, D.meta.name + ':'),
+      el('button', { class: 'btn small primary', title: 'An even sample of the whole dataset (about ' + fmtN(S.extractN || 5e6) + ' points)', onclick: () => extractToLayer(D, 'sample') }, 'Sample → layer'),
+      el('button', { class: 'btn small', title: 'Every point inside the box or clipping box', onclick: () => extractToLayer(D, 'box') }, 'Box → layer')));
+    p.append(box);
+  }
   const tgt = el('div', { class: 'note' }, 'Working on: ', el('b', {}, S.sel ? S.sel.name : 'no layer selected'));
   const lassoS = el('div', { class: 'sec' }, el('h3', {}, 'Segment with lasso'), tgt,
     el('div', { class: 'note' }, 'Click around the area to make a polygon (or drag freehand), then press Enter. The polygon is taken from the current view.'),
