@@ -270,8 +270,8 @@ function buildTopo() {
   p.append(s2, s3, s4);
 }
 async function runTopo(L) {
-  const t0 = performance.now(); await poolReady();
-  const res = await busy('Processing topo on ' + POOL.size + ' cores…', onP => T_.topoSurvey(L.pos, L.n, { spacing: Math.max(0.02, S.tSp), slope: S.tSlope, groundTol: S.tGt, tinCell: Math.max(0.1, S.tTin), gradeChange: S.tGc / 100, spotSpacing: S.tSpot, maxWindow: S.tSlope > 0.5 ? 12 : 20, normalsFn: parNormalsFn(Math.max(0.5, S.tSp * 8)) }, onP));
+  const t0 = performance.now(); await poolReady(); S.tSp = S.tSp || 0.1; S.tSlope = S.tSlope || 0.3; S.tGt = S.tGt || 0.15; S.tTin = S.tTin || 0.5; S.tGc = S.tGc || 20; S.tSpot = S.tSpot || 5;
+  const res = await busy('Processing topo on ' + POOL.size + ' cores…', onP => T_.topoSurvey(L.pos, L.n, { rgb: L.rgb, intensity: L.intensity, spacing: Math.max(0.02, S.tSp), slope: S.tSlope, groundTol: S.tGt, tinCell: Math.max(0.1, S.tTin), gradeChange: S.tGc / 100, spotSpacing: S.tSpot, maxWindow: S.tSlope > 0.5 ? 12 : 20, normalsFn: parNormalsFn(Math.max(0.5, S.tSp * 8)) }, onP));
   if (!res) return; res.ms = performance.now() - t0; res.layer = L;
   // write classes back to the source cloud
   if (!L.cls) L.cls = new Uint8Array(L.n);

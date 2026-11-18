@@ -190,17 +190,19 @@ function breaklines(P, n, cls, opts = {}) {
   const at = (i, j) => z[Math.max(0, Math.min(ny - 1, j)) * nx + Math.max(0, Math.min(nx - 1, i))];
   const K = new Float32Array(nx * ny), dirx = new Float32Array(nx * ny), diry = new Float32Array(nx * ny);
   const h = cell;
+  // grade change measured over two baselines: one cell (sharp edges such as kerbs) and about a metre (rounded banks and batters); the stronger wins
+  const scales = [1]; const sW = Math.max(2, Math.round((opts.wideBase || 1) / cell)); if (sW > 1) scales.push(sW);
   for (let j = 1; j < ny - 1; j++) for (let i = 1; i < nx - 1; i++) {
     const k = j * nx + i; if (!has[k]) continue;
-    const zx = (at(i + 1, j) - at(i - 1, j)) / (2 * h), zy = (at(i, j + 1) - at(i, j - 1)) / (2 * h);
-    const zxx = (at(i + 1, j) - 2 * at(i, j) + at(i - 1, j)) / (h * h), zyy = (at(i, j + 1) - 2 * at(i, j) + at(i, j - 1)) / (h * h), zxy = (at(i + 1, j + 1) - at(i + 1, j - 1) - at(i - 1, j + 1) + at(i - 1, j - 1)) / (4 * h * h);
-    const gg = zx * zx + zy * zy;
-    let kk, dx, dy;
-    if (gg > 1e-8) { kk = (zxx * zx * zx + 2 * zxy * zx * zy + zyy * zy * zy) / gg; const l = Math.sqrt(gg); dx = zx / l; dy = zy / l; }
-    else { kk = 0; dx = 1; dy = 0; }
-    if (!isFinite(kk)) kk = 0;
-    // change in grade across one cell ~ kk*h ; store as grade change per cell
-    K[k] = kk * h; dirx[k] = dx; diry[k] = dy;
+    for (const sc of scales) { const hh = h * sc;
+      const zx = (at(i + sc, j) - at(i - sc, j)) / (2 * hh), zy = (at(i, j + sc) - at(i, j - sc)) / (2 * hh);
+      const zxx = (at(i + sc, j) - 2 * at(i, j) + at(i - sc, j)) / (hh * hh), zyy = (at(i, j + sc) - 2 * at(i, j) + at(i, j - sc)) / (hh * hh), zxy = (at(i + sc, j + sc) - at(i + sc, j - sc) - at(i - sc, j + sc) + at(i - sc, j - sc)) / (4 * hh * hh);
+      const gg = zx * zx + zy * zy; let kk, dx, dy;
+      if (gg > 1e-8) { kk = (zxx * zx * zx + 2 * zxy * zx * zy + zyy * zy * zy) / gg; const l = Math.sqrt(gg); dx = zx / l; dy = zy / l; } else { kk = 0; dx = 1; dy = 0; }
+      if (!isFinite(kk)) kk = 0;
+      const v = kk * hh * (sc > 1 ? 0.85 : 1);   // grade change across the baseline
+      if (sc === 1 || Math.abs(v) > Math.abs(K[k])) { K[k] = v; dirx[k] = dx; diry[k] = dy; }
+    }
   }
   const hi = opts.gradeChange ?? 0.25, lo = hi * 0.5; // e.g. 25% change of grade
   const edge = new Uint8Array(nx * ny);
@@ -307,6 +309,105 @@ function spotLevels(tin, idxGrid, spacing, R) {
 }
 function extentOf(P, n, cls, cell) { const sel = []; for (let i = 0; i < n; i++) if (cls[i] === 2) sel.push(P[i * 3], P[i * 3 + 1]); const o = C.outline2D(Float64Array.from(sel), sel.length / 2, cell, cell * 0.8, 2); return o.loops[0] || null; }
 
+
+// ---------- hard surfaces: sealed roads, kerbs, footpaths, unsealed tracks, water edges ----------
+// Ground cells are typed by colour (or intensity) and smoothness, cleaned up, kept by shape (a road is wide, a path is narrow and long),
+// then traced into 3D edge lines and centrelines. Kerbs are found as a 7–35 cm step just outside a sealed edge.
+function dpSimplify(pts, tol) {
+  if (pts.length < 3) return pts.slice();
+  const f = pts[0], l = pts[pts.length - 1]; if (pts.length > 3 && Math.hypot(f[0] - l[0], f[1] - l[1]) < 1e-9) {   // closed loop: split at the farthest point so both halves have a real chord
+    let far = 1, fd = -1; for (let i = 1; i < pts.length - 1; i++) { const d = Math.hypot(pts[i][0] - f[0], pts[i][1] - f[1]); if (d > fd) { fd = d; far = i; } }
+    const a = dpSimplify(pts.slice(0, far + 1), tol), b = dpSimplify(pts.slice(far), tol); return a.concat(b.slice(1)); } const keep = new Uint8Array(pts.length); keep[0] = keep[pts.length - 1] = 1; const st = [[0, pts.length - 1]];
+  while (st.length) { const [a, b] = st.pop(); const A = pts[a], B = pts[b]; const dx = B[0] - A[0], dy = B[1] - A[1], L = Math.hypot(dx, dy) || 1e-12; let mx = -1, mi = -1;
+    for (let i = a + 1; i < b; i++) { const d = Math.abs((pts[i][0] - A[0]) * dy - (pts[i][1] - A[1]) * dx) / L; if (d > mx) { mx = d; mi = i; } } if (mx > tol) { keep[mi] = 1; st.push([a, mi], [mi, b]); } }
+  return pts.filter((_, i) => keep[i]);
+}
+function maskComponents(mask, nx, ny) { const lab = new Int32Array(nx * ny).fill(-1), comps = []; for (let k = 0; k < nx * ny; k++) { if (!mask[k] || lab[k] >= 0) continue; const id = comps.length, cells = [k], st = [k]; lab[k] = id; while (st.length) { const q = st.pop(), i = q % nx, j = (q / nx) | 0; for (const [a, b] of [[i + 1, j], [i - 1, j], [i, j + 1], [i, j - 1]]) { if (a < 0 || b < 0 || a >= nx || b >= ny) continue; const w = b * nx + a; if (mask[w] && lab[w] < 0) { lab[w] = id; st.push(w); cells.push(w); } } } comps.push(cells); } return { lab, comps }; }
+function distField(mask, nx, ny) {   // chamfer distance (in cells) to the nearest cell outside the mask
+  const d = new Float32Array(nx * ny); for (let k = 0; k < nx * ny; k++) d[k] = mask[k] ? 1e9 : 0; const a = 1, b = Math.SQRT2;
+  for (let j = 0; j < ny; j++) for (let i = 0; i < nx; i++) { const k = j * nx + i; if (!d[k]) continue; let v = d[k]; if (i > 0) v = Math.min(v, d[k - 1] + a); if (j > 0) { v = Math.min(v, d[k - nx] + a); if (i > 0) v = Math.min(v, d[k - nx - 1] + b); if (i < nx - 1) v = Math.min(v, d[k - nx + 1] + b); } if (i === 0 || j === 0 || i === nx - 1 || j === ny - 1) v = Math.min(v, 1); d[k] = v; }
+  for (let j = ny - 1; j >= 0; j--) for (let i = nx - 1; i >= 0; i--) { const k = j * nx + i; if (!d[k]) continue; let v = d[k]; if (i < nx - 1) v = Math.min(v, d[k + 1] + a); if (j < ny - 1) { v = Math.min(v, d[k + nx] + a); if (i < nx - 1) v = Math.min(v, d[k + nx + 1] + b); if (i > 0) v = Math.min(v, d[k + nx - 1] + b); } d[k] = v; }
+  return d;
+}
+function maskEdges(inC, known, nx, ny, x0, y0, c) {   // boundary of a cell set as polylines (corner coordinates); runs along cells with no data are left out (they are scan limits, not edges)
+  const segs = new Map(), key = (x, y) => x + ',' + y; const add = (a, b) => { (segs.get(key(...a)) || segs.set(key(...a), []).get(key(...a))).push(b); };
+  for (let j = 0; j < ny; j++) for (let i = 0; i < nx; i++) { const k = j * nx + i; if (!inC[k]) continue;
+    const nb = [[i, j - 1, [i, j], [i + 1, j]], [i + 1, j, [i + 1, j], [i + 1, j + 1]], [i, j + 1, [i + 1, j + 1], [i, j + 1]], [i - 1, j, [i, j + 1], [i, j]]];
+    for (const [a, b, p, q] of nb) { const out = a < 0 || b < 0 || a >= nx || b >= ny; const w = out ? -1 : b * nx + a; if (!out && inC[w]) continue; if (out || !known[w]) continue; add(p, q); } }
+  const lines = [], used = new Set(), inc = new Map(); for (const list of segs.values()) for (const b of list) inc.set(key(...b), (inc.get(key(...b)) || 0) + 1);
+  const order = [...segs.keys()].sort((p, q) => (inc.get(p) ? 1 : 0) - (inc.get(q) ? 1 : 0));   // open runs from their first point, then closed loops
+  for (const k0 of order) for (const b0 of segs.get(k0)) { const id = k0 + '>' + key(...b0); if (used.has(id)) continue; used.add(id); const line = [k0.split(',').map(Number), b0]; let cur = b0;
+    for (;;) { const nx_ = (segs.get(key(...cur)) || []).find(q => !used.has(key(...cur) + '>' + key(...q))); if (!nx_) break; used.add(key(...cur) + '>' + key(...nx_)); line.push(nx_); cur = nx_; if (key(...cur) === k0) break; }
+    lines.push(line.map(([a, b]) => [x0 + a * c, y0 + b * c])); }
+  // join lines that end where another starts (tracing can split a run)
+  return lines;
+}
+function skeletonLines(mask, nx, ny, x0, y0, c, minLen) {   // Zhang–Suen thinning, traced into polylines
+  const m = Uint8Array.from(mask); let ch = true; const P = (i, j) => (i < 0 || j < 0 || i >= nx || j >= ny) ? 0 : m[j * nx + i];
+  while (ch) { ch = false; for (const step of [0, 1]) { const del = []; for (let j = 0; j < ny; j++) for (let i = 0; i < nx; i++) { if (!m[j * nx + i]) continue;
+    const p = [P(i, j - 1), P(i + 1, j - 1), P(i + 1, j), P(i + 1, j + 1), P(i, j + 1), P(i - 1, j + 1), P(i - 1, j), P(i - 1, j - 1)]; const B = p.reduce((a, v) => a + v, 0); if (B < 2 || B > 6) continue;
+    let A = 0; for (let q = 0; q < 8; q++) if (!p[q] && p[(q + 1) % 8]) A++; if (A !== 1) continue;
+    if (step === 0 ? (p[0] * p[2] * p[4] || p[2] * p[4] * p[6]) : (p[0] * p[2] * p[6] || p[0] * p[4] * p[6])) continue; del.push(j * nx + i); }
+    for (const k of del) m[k] = 0; if (del.length) ch = true; } }
+  const nbs = k => { const i = k % nx, j = (k / nx) | 0, o = []; for (let b = -1; b <= 1; b++) for (let a = -1; a <= 1; a++) { if (!a && !b) continue; const x = i + a, y = j + b; if (x >= 0 && y >= 0 && x < nx && y < ny && m[y * nx + x]) o.push(y * nx + x); } return o; };
+  const deg = k => nbs(k).length, seen = new Set(), lines = [];
+  const starts = []; for (let k = 0; k < nx * ny; k++) if (m[k] && deg(k) !== 2) starts.push(k); for (let k = 0; k < nx * ny; k++) if (m[k] && deg(k) === 2) starts.push(k);
+  for (const s0 of starts) for (const n1 of nbs(s0)) { const e = Math.min(s0, n1) + ':' + Math.max(s0, n1); if (seen.has(e)) continue; seen.add(e); const line = [s0, n1]; let prev = s0, cur = n1;
+    while (deg(cur) === 2) { const nx2 = nbs(cur).find(q => q !== prev); const e2 = Math.min(cur, nx2) + ':' + Math.max(cur, nx2); if (seen.has(e2)) break; seen.add(e2); line.push(nx2); prev = cur; cur = nx2; }
+    lines.push(line); }
+  const toXY = k => [x0 + (k % nx + 0.5) * c, y0 + (((k / nx) | 0) + 0.5) * c]; const len = l => { let s = 0; for (let q = 1; q < l.length; q++) s += Math.hypot(l[q][0] - l[q - 1][0], l[q][1] - l[q - 1][1]); return s; };
+  return lines.map(l => l.map(toXY)).filter(l => len(l) >= minLen);
+}
+function surfaces(P, n, cls, opts = {}) {
+  const rgb = opts.rgb, it = opts.intensity, cell = opts.cell || 0.25, zAt = opts.zAt; const out = { roads: [], paths: [], tracks: [], water: [], kerbs: [] };
+  const g = gridOf(P, n, cell, null); const { nx, ny } = g, N = nx * ny;
+  const cnt = new Uint32Array(N), gcnt = new Uint32Array(N), sz = new Float64Array(N), szz = new Float64Array(N), cr = new Float32Array(N), cg = new Float32Array(N), cb = new Float32Array(N), ci = new Float32Array(N), wat = new Uint32Array(N);
+  for (let i = 0; i < n; i++) { const k = cellIndex(g, P[i * 3], P[i * 3 + 1]); cnt[k]++; if (cls[i] === 9) wat[k]++; if (cls[i] !== 2 && cls[i] !== 11) continue; const z = P[i * 3 + 2]; gcnt[k]++; sz[k] += z; szz[k] += z * z;
+    if (rgb) { cr[k] += rgb[i * 3]; cg[k] += rgb[i * 3 + 1]; cb[k] += rgb[i * 3 + 2]; } if (it) ci[k] += it[i]; }
+  const type = new Uint8Array(N);   // 1 sealed, 2 paving, 3 unsealed (bare earth)
+  for (let k = 0; k < N; k++) { const m = gcnt[k]; if (m < 2) continue; const zm = sz[k] / m, sd = Math.sqrt(Math.max(0, szz[k] / m - zm * zm)); if (sd > 0.05) continue;
+    if (rgb) { const r = cr[k] / m, gg = cg[k] / m, b = cb[k] / m, mx = Math.max(r, gg, b), mn = Math.min(r, gg, b), sat = mx > 0 ? (mx - mn) / mx : 0, v = mx / 255, exg = (2 * gg - r - b) / (r + gg + b + 1e-6);
+      if (exg > 0.04) continue; if (sat < 0.16 && v < 0.5) type[k] = 1; else if (sat < 0.2 && v >= 0.5) type[k] = 2; else if (r >= gg && gg >= b * 0.85 && sat >= 0.16 && sat < 0.75 && exg < 0) type[k] = 3; else if (b > r + 15 && b >= gg && v < 0.65 && sd < 0.03) type[k] = 4; }
+    else if (it) { const v = ci[k] / m; if (v < 0.22) type[k] = 1; else if (v > 0.55) type[k] = 2; } }
+  // majority clean-up, twice
+  for (let pass = 0; pass < 2; pass++) { const t0 = type.slice(); for (let j = 1; j < ny - 1; j++) for (let i = 1; i < nx - 1; i++) { const k = j * nx + i; const h = [0, 0, 0, 0, 0]; for (let b = -1; b <= 1; b++) for (let a = -1; a <= 1; a++) h[t0[k + b * nx + a]]++; let best = 0; for (let t = 1; t < 5; t++) if (h[t] > h[best]) best = t; if (h[best] >= 5) type[k] = best; else if (h[t0[k]] < 3) type[k] = 0; } }
+  const known = new Uint8Array(N); for (let k = 0; k < N; k++) known[k] = cnt[k] > 0 ? 1 : 0;
+  const z = (x, y) => { const v = zAt ? zAt(x, y) : NaN; if (isFinite(v)) return v; const k = cellIndex(g, x, y); return gcnt[k] ? sz[k] / gcnt[k] : NaN; };
+  const lift = l => {   // 3D: a vertex at least every metre so the line follows the ground; heights missing at the scan limit are taken from the nearest vertex that has one
+    const d = []; for (let q = 0; q < l.length; q++) { if (q) { const a = l[q - 1], b = l[q], m = Math.ceil(Math.hypot(b[0] - a[0], b[1] - a[1]) / 1.0); for (let u = 1; u < m; u++) d.push([a[0] + (b[0] - a[0]) * u / m, a[1] + (b[1] - a[1]) * u / m]); } d.push(l[q]); }
+    const o = d.map(([x, y]) => [x, y, z(x, y)]); let last = NaN; for (const p of o) { if (isFinite(p[2])) last = p[2]; else p[2] = last; } last = NaN; for (let q = o.length - 1; q >= 0; q--) { if (isFinite(o[q][2])) last = o[q][2]; else o[q][2] = last; }
+    return o.filter(p => isFinite(p[2])); };
+  const smooth = l => { let s = dpSimplify(l, cell * 1.1); if (s.length > 3) s = smoothLine(s, 2); return s; };
+  for (const [t, kind] of [[1, 'roads'], [2, 'paths'], [3, 'tracks']]) {
+    const mask = new Uint8Array(N); for (let k = 0; k < N; k++) mask[k] = type[k] === t ? 1 : 0;
+    const { comps } = maskComponents(mask, nx, ny);
+    for (const cells of comps) {
+      const area = cells.length * cell * cell; if (area < (t === 1 ? 40 : 6)) continue;
+      const cm = new Uint8Array(N); for (const k of cells) cm[k] = 1; const df = distField(cm, nx, ny); let mxd = 0; for (const k of cells) mxd = Math.max(mxd, df[k]);
+      const width = 2 * mxd * cell, length = area / Math.max(width, cell);
+      if (t === 1 && width < 3) continue; if (t === 2 && (width < 0.8 || width > 4.5 || length / width < 4)) continue; if (t === 3 && (width < 1.5 || width > 9 || length / width < 5)) continue;
+      const edges = maskEdges(cm, known, nx, ny, g.x0, g.y0, cell).map(l => lift(smooth(l))).filter(l => l.length >= 2);
+      const centre = t === 2 ? [] : skeletonLines(cm, nx, ny, g.x0, g.y0, cell, Math.max(3, width)).map(l => lift(smooth(l))).filter(l => l.length >= 2);
+      const item = { area, width, edges, centre }; out[kind].push(item);
+      // kerbs along sealed edges: a step up of 7–35 cm just outside
+      if (t === 1) { item.edgesNoKerb = [];
+        for (const e of edges) { let run = null; const flush = () => { if (run && run.front.length >= 3) out.kerbs.push(run); run = null; };
+          let open = [];
+          for (let q = 0; q < e.length; q++) { const a = e[Math.max(0, q - 1)], b = e[Math.min(e.length - 1, q + 1)]; let dx = b[0] - a[0], dy = b[1] - a[1]; const L = Math.hypot(dx, dy) || 1; dx /= L; dy /= L; let nxv = dy, nyv = -dx;
+            const p = e[q]; const kin = cellIndex(g, p[0] - nxv * 0.4, p[1] - nyv * 0.4); if (!cm[kin]) { nxv = -nxv; nyv = -nyv; }   // normal points out of the road
+            const zi = z(p[0] - nxv * 0.25, p[1] - nyv * 0.25), zo = z(p[0] + nxv * 0.45, p[1] + nyv * 0.45), dz = zo - zi;
+            if (dz > 0.07 && dz < 0.35) { if (!run) run = { front: [], back: [] }; run.front.push([p[0], p[1], zi]); run.back.push([p[0] + nxv * 0.35, p[1] + nyv * 0.35, zo]); if (open.length > 1) item.edgesNoKerb.push(open); open = []; }
+            else { flush(); open.push(p); } }
+          flush(); if (open.length > 1) item.edgesNoKerb.push(open); }
+      }
+    }
+  }
+  // water: edges of class 9 areas
+  const wm = new Uint8Array(N); for (let k = 0; k < N; k++) wm[k] = wat[k] > cnt[k] * 0.5 || type[k] === 4 ? 1 : 0;
+  for (const cells of maskComponents(wm, nx, ny).comps) { if (cells.length * cell * cell < 4) continue; const cm = new Uint8Array(N); for (const k of cells) cm[k] = 1; out.water.push({ edges: maskEdges(cm, known, nx, ny, g.x0, g.y0, cell).map(l => lift(smooth(l))).filter(l => l.length >= 2) }); }
+  return out;
+}
+
 // ---------- full topo pipeline ----------
 async function topoSurvey(pos, n, opts = {}, onP = () => {}) {
   const st = (a, b) => f => onP(a + (b - a) * f);
@@ -332,10 +433,14 @@ async function topoSurvey(pos, n, opts = {}, onP = () => {}) {
   const STc = structures(P, m, CL.cls, CL.hag, {}); onP(0.86); await tickT();
   const TR = opts.trees === false ? [] : trees(P, m, CL.cls, CL.hag, {}); onP(0.92); await tickT();
   const spots = spotLevels(tin, idxGrid, opts.spotSpacing || 5);
+  let SF = { roads: [], paths: [], tracks: [], water: [], kerbs: [] };
+  if (opts.surfaces !== false) { try { const rgbR = opts.rgb ? new Uint8Array(m * 3) : null, itR = opts.intensity ? new Float32Array(m) : null; reps.forEach((r, j) => { if (rgbR) { rgbR[j * 3] = opts.rgb[r * 3]; rgbR[j * 3 + 1] = opts.rgb[r * 3 + 1]; rgbR[j * 3 + 2] = opts.rgb[r * 3 + 2]; } if (itR) itR[j] = opts.intensity[r]; });
+    SF = surfaces(P, m, CL.cls, { rgb: rgbR, intensity: itR, cell: opts.surfCell || 0.25, zAt: (x, y) => tinZ(tin, x, y, idxGrid) }); } catch (e) { console.warn('surfaces', e); } }
+  onP(0.95); await tickT();
   const extent = extentOf(P, m, CL.cls, Math.max(0.5, tinCell));
   let counts = {}; for (const c of CL.cls) counts[c] = (counts[c] || 0) + 1;
   onP(1);
-  return { spacing, P, m, cls: CL.cls, hag: CL.hag, slotCls, assign: vox.assign, breaklines: BL.lines, tin, idxGrid, trees: TR, ...STc, spots, extent, counts };
+  return { spacing, P, m, cls: CL.cls, hag: CL.hag, slotCls, assign: vox.assign, breaklines: BL.lines, tin, idxGrid, trees: TR, ...STc, spots, extent, counts, surfaces: SF };
 }
 
 // ---------- exports ----------
@@ -438,6 +543,6 @@ function fireHazard(t, veg, opts = {}) {
   const tot = cells.length * C * C;
   return { cell: C, cells, classes: FIRE_CLASSES, inputs: { ffdi, fmc, flammability: flam, scrubPerMetre: perM, litterCanopy: dCan, litterOpen: dOpen, zones: zones.length }, summary: { areaHa: tot / 1e4, areaByClass: area.map(a => a / 1e4), crownFireShare: cells.length ? cf / cells.length : 0, ladderShare: cells.length ? lf / cells.length : 0, intensityMax: mi, intensityMean: cells.length ? si / cells.length : 0, fuelMean: cells.length ? sw / cells.length : 0 } };
 }
-const SBT = { vegetation, fireHazard, litterLoad, circleFit, FIRE_CLASSES, smoothTin, niceInterval, lineZ, pmfGround, classify, tinPoints, buildTIN, tinContours, smoothLine, tinZ, tinIndex, breaklines, trees, structures, spotLevels, topoSurvey, landXML, bilinear, components2D };
+const SBT = { surfaces, dpSimplify, vegetation, fireHazard, litterLoad, circleFit, FIRE_CLASSES, smoothTin, niceInterval, lineZ, pmfGround, classify, tinPoints, buildTIN, tinContours, smoothLine, tinZ, tinIndex, breaklines, trees, structures, spotLevels, topoSurvey, landXML, bilinear, components2D };
 if (typeof module !== 'undefined') module.exports = SBT; else G.SBT = SBT;
 })();

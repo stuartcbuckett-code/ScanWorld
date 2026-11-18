@@ -1,0 +1,17204 @@
+  0
+SECTION
+  2
+HEADER
+  9
+$ACADVER
+  1
+AC1015
+  9
+$ACADMAINTVER
+ 70
+6
+  9
+$DWGCODEPAGE
+  3
+ANSI_1252
+  9
+$INSBASE
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  9
+$EXTMIN
+ 10
+1e+20
+ 20
+1e+20
+ 30
+1e+20
+  9
+$EXTMAX
+ 10
+-1e+20
+ 20
+-1e+20
+ 30
+-1e+20
+  9
+$LIMMIN
+ 10
+0.0
+ 20
+0.0
+  9
+$LIMMAX
+ 10
+420.0
+ 20
+297.0
+  9
+$ORTHOMODE
+ 70
+0
+  9
+$REGENMODE
+ 70
+1
+  9
+$FILLMODE
+ 70
+1
+  9
+$QTEXTMODE
+ 70
+0
+  9
+$MIRRTEXT
+ 70
+1
+  9
+$LTSCALE
+ 40
+1.0
+  9
+$ATTMODE
+ 70
+1
+  9
+$TEXTSIZE
+ 40
+2.5
+  9
+$TRACEWID
+ 40
+1.0
+  9
+$TEXTSTYLE
+  7
+Standard
+  9
+$CLAYER
+  8
+0
+  9
+$CELTYPE
+  6
+ByLayer
+  9
+$CECOLOR
+ 62
+256
+  9
+$CELTSCALE
+ 40
+1.0
+  9
+$DISPSILH
+ 70
+0
+  9
+$DIMSCALE
+ 40
+1.0
+  9
+$DIMASZ
+ 40
+2.5
+  9
+$DIMEXO
+ 40
+0.625
+  9
+$DIMDLI
+ 40
+3.75
+  9
+$DIMRND
+ 40
+0.0
+  9
+$DIMDLE
+ 40
+0.0
+  9
+$DIMEXE
+ 40
+1.25
+  9
+$DIMTP
+ 40
+0.0
+  9
+$DIMTM
+ 40
+0.0
+  9
+$DIMTXT
+ 40
+2.5
+  9
+$DIMCEN
+ 40
+2.5
+  9
+$DIMTSZ
+ 40
+0.0
+  9
+$DIMTOL
+ 70
+0
+  9
+$DIMLIM
+ 70
+0
+  9
+$DIMTIH
+ 70
+0
+  9
+$DIMTOH
+ 70
+0
+  9
+$DIMSE1
+ 70
+0
+  9
+$DIMSE2
+ 70
+0
+  9
+$DIMTAD
+ 70
+1
+  9
+$DIMZIN
+ 70
+8
+  9
+$DIMBLK
+  1
+
+  9
+$DIMASO
+ 70
+1
+  9
+$DIMSHO
+ 70
+1
+  9
+$DIMPOST
+  1
+
+  9
+$DIMAPOST
+  1
+
+  9
+$DIMALT
+ 70
+0
+  9
+$DIMALTD
+ 70
+3
+  9
+$DIMALTF
+ 40
+0.03937007874
+  9
+$DIMLFAC
+ 40
+1.0
+  9
+$DIMTOFL
+ 70
+1
+  9
+$DIMTVP
+ 40
+0.0
+  9
+$DIMTIX
+ 70
+0
+  9
+$DIMSOXD
+ 70
+0
+  9
+$DIMSAH
+ 70
+0
+  9
+$DIMBLK1
+  1
+
+  9
+$DIMBLK2
+  1
+
+  9
+$DIMSTYLE
+  2
+ISO-25
+  9
+$DIMCLRD
+ 70
+0
+  9
+$DIMCLRE
+ 70
+0
+  9
+$DIMCLRT
+ 70
+0
+  9
+$DIMTFAC
+ 40
+1.0
+  9
+$DIMGAP
+ 40
+0.625
+  9
+$DIMJUST
+ 70
+0
+  9
+$DIMSD1
+ 70
+0
+  9
+$DIMSD2
+ 70
+0
+  9
+$DIMTOLJ
+ 70
+0
+  9
+$DIMTZIN
+ 70
+8
+  9
+$DIMALTZ
+ 70
+0
+  9
+$DIMALTTZ
+ 70
+0
+  9
+$DIMUPT
+ 70
+0
+  9
+$DIMDEC
+ 70
+2
+  9
+$DIMTDEC
+ 70
+2
+  9
+$DIMALTU
+ 70
+2
+  9
+$DIMALTTD
+ 70
+3
+  9
+$DIMTXSTY
+  7
+Standard
+  9
+$DIMAUNIT
+ 70
+0
+  9
+$DIMADEC
+ 70
+0
+  9
+$DIMALTRND
+ 40
+0.0
+  9
+$DIMAZIN
+ 70
+0
+  9
+$DIMDSEP
+ 70
+44
+  9
+$DIMATFIT
+ 70
+3
+  9
+$DIMFRAC
+ 70
+0
+  9
+$DIMLDRBLK
+  1
+
+  9
+$DIMLUNIT
+ 70
+2
+  9
+$DIMLWD
+ 70
+-2
+  9
+$DIMLWE
+ 70
+-2
+  9
+$DIMTMOVE
+ 70
+0
+  9
+$LUNITS
+ 70
+2
+  9
+$LUPREC
+ 70
+3
+  9
+$SKETCHINC
+ 40
+1.0
+  9
+$FILLETRAD
+ 40
+10.0
+  9
+$AUNITS
+ 70
+0
+  9
+$AUPREC
+ 70
+2
+  9
+$MENU
+  1
+.
+  9
+$ELEVATION
+ 40
+0.0
+  9
+$PELEVATION
+ 40
+0.0
+  9
+$THICKNESS
+ 40
+0.0
+  9
+$LIMCHECK
+ 70
+0
+  9
+$CHAMFERA
+ 40
+0.0
+  9
+$CHAMFERB
+ 40
+0.0
+  9
+$CHAMFERC
+ 40
+0.0
+  9
+$CHAMFERD
+ 40
+0.0
+  9
+$SKPOLY
+ 70
+0
+  9
+$TDCREATE
+ 40
+2461363.414699074
+  9
+$TDUCREATE
+ 40
+2458532.153996898
+  9
+$TDUPDATE
+ 40
+2461363.414699074
+  9
+$TDUUPDATE
+ 40
+2458532.1544311
+  9
+$TDINDWG
+ 40
+0.0
+  9
+$TDUSRTIMER
+ 40
+0.0
+  9
+$USRTIMER
+ 70
+1
+  9
+$ANGBASE
+ 50
+0.0
+  9
+$ANGDIR
+ 70
+0
+  9
+$PDMODE
+ 70
+0
+  9
+$PDSIZE
+ 40
+0.0
+  9
+$PLINEWID
+ 40
+0.0
+  9
+$SPLFRAME
+ 70
+0
+  9
+$SPLINETYPE
+ 70
+6
+  9
+$SPLINESEGS
+ 70
+8
+  9
+$HANDSEED
+  5
+273
+  9
+$SURFTAB1
+ 70
+6
+  9
+$SURFTAB2
+ 70
+6
+  9
+$SURFTYPE
+ 70
+6
+  9
+$SURFU
+ 70
+6
+  9
+$SURFV
+ 70
+6
+  9
+$UCSBASE
+  2
+
+  9
+$UCSNAME
+  2
+
+  9
+$UCSORG
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  9
+$UCSXDIR
+ 10
+1.0
+ 20
+0.0
+ 30
+0.0
+  9
+$UCSYDIR
+ 10
+0.0
+ 20
+1.0
+ 30
+0.0
+  9
+$UCSORTHOREF
+  2
+
+  9
+$UCSORTHOVIEW
+ 70
+0
+  9
+$UCSORGTOP
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  9
+$UCSORGBOTTOM
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  9
+$UCSORGLEFT
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  9
+$UCSORGRIGHT
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  9
+$UCSORGFRONT
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  9
+$UCSORGBACK
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  9
+$PUCSBASE
+  2
+
+  9
+$PUCSNAME
+  2
+
+  9
+$PUCSORG
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  9
+$PUCSXDIR
+ 10
+1.0
+ 20
+0.0
+ 30
+0.0
+  9
+$PUCSYDIR
+ 10
+0.0
+ 20
+1.0
+ 30
+0.0
+  9
+$PUCSORTHOREF
+  2
+
+  9
+$PUCSORTHOVIEW
+ 70
+0
+  9
+$PUCSORGTOP
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  9
+$PUCSORGBOTTOM
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  9
+$PUCSORGLEFT
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  9
+$PUCSORGRIGHT
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  9
+$PUCSORGFRONT
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  9
+$PUCSORGBACK
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  9
+$USERI1
+ 70
+0
+  9
+$USERI2
+ 70
+0
+  9
+$USERI3
+ 70
+0
+  9
+$USERI4
+ 70
+0
+  9
+$USERI5
+ 70
+0
+  9
+$USERR1
+ 40
+0.0
+  9
+$USERR2
+ 40
+0.0
+  9
+$USERR3
+ 40
+0.0
+  9
+$USERR4
+ 40
+0.0
+  9
+$USERR5
+ 40
+0.0
+  9
+$WORLDVIEW
+ 70
+1
+  9
+$SHADEDGE
+ 70
+3
+  9
+$SHADEDIF
+ 70
+70
+  9
+$TILEMODE
+ 70
+1
+  9
+$MAXACTVP
+ 70
+64
+  9
+$PINSBASE
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  9
+$PLIMCHECK
+ 70
+0
+  9
+$PEXTMIN
+ 10
+1e+20
+ 20
+1e+20
+ 30
+1e+20
+  9
+$PEXTMAX
+ 10
+-1e+20
+ 20
+-1e+20
+ 30
+-1e+20
+  9
+$PLIMMIN
+ 10
+0.0
+ 20
+0.0
+  9
+$PLIMMAX
+ 10
+420.0
+ 20
+297.0
+  9
+$UNITMODE
+ 70
+0
+  9
+$VISRETAIN
+ 70
+1
+  9
+$PLINEGEN
+ 70
+0
+  9
+$PSLTSCALE
+ 70
+1
+  9
+$TREEDEPTH
+ 70
+3020
+  9
+$CMLSTYLE
+  2
+Standard
+  9
+$CMLJUST
+ 70
+0
+  9
+$CMLSCALE
+ 40
+20.0
+  9
+$PROXYGRAPHICS
+ 70
+1
+  9
+$MEASUREMENT
+ 70
+1
+  9
+$CELWEIGHT
+370
+-1
+  9
+$ENDCAPS
+280
+0
+  9
+$JOINSTYLE
+280
+0
+  9
+$LWDISPLAY
+290
+0
+  9
+$INSUNITS
+ 70
+6
+  9
+$HYPERLINKBASE
+  1
+
+  9
+$STYLESHEET
+  1
+
+  9
+$XEDIT
+290
+1
+  9
+$CEPSNTYPE
+380
+0
+  9
+$PSTYLEMODE
+290
+1
+  9
+$FINGERPRINTGUID
+  2
+{A3DD9C4A-5085-4920-AD74-329C5D510D3B}
+  9
+$VERSIONGUID
+  2
+{94AEB761-17B6-4B31-8729-8FEE22FEB158}
+  9
+$EXTNAMES
+290
+1
+  9
+$PSVPSCALE
+ 40
+0.0
+  9
+$OLESTARTUP
+290
+0
+  0
+ENDSEC
+  0
+SECTION
+  2
+CLASSES
+  0
+CLASS
+  1
+ACDBDICTIONARYWDFLT
+  2
+AcDbDictionaryWithDefault
+  3
+ObjectDBX Classes
+ 90
+0
+280
+0
+281
+0
+  0
+CLASS
+  1
+SUN
+  2
+AcDbSun
+  3
+SCENEOE
+ 90
+1153
+280
+0
+281
+0
+  0
+CLASS
+  1
+VISUALSTYLE
+  2
+AcDbVisualStyle
+  3
+ObjectDBX Classes
+ 90
+4095
+280
+0
+281
+0
+  0
+CLASS
+  1
+MATERIAL
+  2
+AcDbMaterial
+  3
+ObjectDBX Classes
+ 90
+1153
+280
+0
+281
+0
+  0
+CLASS
+  1
+SCALE
+  2
+AcDbScale
+  3
+ObjectDBX Classes
+ 90
+1153
+280
+0
+281
+0
+  0
+CLASS
+  1
+TABLESTYLE
+  2
+AcDbTableStyle
+  3
+ObjectDBX Classes
+ 90
+4095
+280
+0
+281
+0
+  0
+CLASS
+  1
+MLEADERSTYLE
+  2
+AcDbMLeaderStyle
+  3
+ACDB_MLEADERSTYLE_CLASS
+ 90
+4095
+280
+0
+281
+0
+  0
+CLASS
+  1
+DICTIONARYVAR
+  2
+AcDbDictionaryVar
+  3
+ObjectDBX Classes
+ 90
+0
+280
+0
+281
+0
+  0
+CLASS
+  1
+CELLSTYLEMAP
+  2
+AcDbCellStyleMap
+  3
+ObjectDBX Classes
+ 90
+1152
+280
+0
+281
+0
+  0
+CLASS
+  1
+MENTALRAYRENDERSETTINGS
+  2
+AcDbMentalRayRenderSettings
+  3
+SCENEOE
+ 90
+1024
+280
+0
+281
+0
+  0
+CLASS
+  1
+ACDBDETAILVIEWSTYLE
+  2
+AcDbDetailViewStyle
+  3
+ObjectDBX Classes
+ 90
+1025
+280
+0
+281
+0
+  0
+CLASS
+  1
+ACDBSECTIONVIEWSTYLE
+  2
+AcDbSectionViewStyle
+  3
+ObjectDBX Classes
+ 90
+1025
+280
+0
+281
+0
+  0
+CLASS
+  1
+RASTERVARIABLES
+  2
+AcDbRasterVariables
+  3
+ISM
+ 90
+0
+280
+0
+281
+0
+  0
+CLASS
+  1
+ACDBPLACEHOLDER
+  2
+AcDbPlaceHolder
+  3
+ObjectDBX Classes
+ 90
+0
+280
+0
+281
+0
+  0
+CLASS
+  1
+LAYOUT
+  2
+AcDbLayout
+  3
+ObjectDBX Classes
+ 90
+0
+280
+0
+281
+0
+  0
+ENDSEC
+  0
+SECTION
+  2
+TABLES
+  0
+TABLE
+  2
+VPORT
+  5
+8
+330
+0
+100
+AcDbSymbolTable
+ 70
+1
+  0
+VPORT
+  5
+23
+330
+8
+100
+AcDbSymbolTableRecord
+100
+AcDbViewportTableRecord
+  2
+*Active
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 11
+1.0
+ 21
+1.0
+ 12
+0.0
+ 22
+0.0
+ 13
+0.0
+ 23
+0.0
+ 14
+0.5
+ 24
+0.5
+ 15
+0.5
+ 25
+0.5
+ 16
+0.0
+ 26
+0.0
+ 36
+1.0
+ 17
+0.0
+ 27
+0.0
+ 37
+0.0
+ 40
+1000.0
+ 41
+1.34
+ 42
+50.0
+ 43
+0.0
+ 44
+0.0
+ 50
+0.0
+ 51
+0.0
+ 71
+0
+ 72
+1000
+ 73
+1
+ 74
+3
+ 75
+0
+ 76
+0
+ 77
+0
+ 78
+0
+281
+0
+ 65
+0
+146
+0.0
+  0
+ENDTAB
+  0
+TABLE
+  2
+LTYPE
+  5
+2
+330
+0
+100
+AcDbSymbolTable
+ 70
+21
+  0
+LTYPE
+  5
+24
+330
+2
+100
+AcDbSymbolTableRecord
+100
+AcDbLinetypeTableRecord
+  2
+ByBlock
+ 70
+0
+  3
+
+ 72
+65
+ 73
+0
+ 40
+0.0
+  0
+LTYPE
+  5
+25
+330
+2
+100
+AcDbSymbolTableRecord
+100
+AcDbLinetypeTableRecord
+  2
+ByLayer
+ 70
+0
+  3
+
+ 72
+65
+ 73
+0
+ 40
+0.0
+  0
+LTYPE
+  5
+26
+330
+2
+100
+AcDbSymbolTableRecord
+100
+AcDbLinetypeTableRecord
+  2
+Continuous
+ 70
+0
+  3
+
+ 72
+65
+ 73
+0
+ 40
+0.0
+  0
+LTYPE
+  5
+2F
+330
+2
+100
+AcDbSymbolTableRecord
+100
+AcDbLinetypeTableRecord
+  2
+CENTER
+ 70
+0
+  3
+Center ____ _ ____ _ ____ _ ____ _ ____ _ ____
+ 72
+65
+ 73
+4
+ 40
+5.08
+ 49
+3.175
+ 74
+0
+ 49
+-0.635
+ 74
+0
+ 49
+0.635
+ 74
+0
+ 49
+-0.635
+ 74
+0
+  0
+LTYPE
+  5
+30
+330
+2
+100
+AcDbSymbolTableRecord
+100
+AcDbLinetypeTableRecord
+  2
+CENTERX2
+ 70
+0
+  3
+Center (2x) ________  __  ________  __  ________
+ 72
+65
+ 73
+4
+ 40
+8.89
+ 49
+6.35
+ 74
+0
+ 49
+-0.635
+ 74
+0
+ 49
+1.27
+ 74
+0
+ 49
+-0.635
+ 74
+0
+  0
+LTYPE
+  5
+31
+330
+2
+100
+AcDbSymbolTableRecord
+100
+AcDbLinetypeTableRecord
+  2
+CENTER2
+ 70
+0
+  3
+Center (.5x) ____ _ ____ _ ____ _ ____ _ ____
+ 72
+65
+ 73
+4
+ 40
+2.54
+ 49
+1.587
+ 74
+0
+ 49
+-0.318
+ 74
+0
+ 49
+0.318
+ 74
+0
+ 49
+-0.318
+ 74
+0
+  0
+LTYPE
+  5
+32
+330
+2
+100
+AcDbSymbolTableRecord
+100
+AcDbLinetypeTableRecord
+  2
+DASHED
+ 70
+0
+  3
+Dashed __ __ __ __ __ __ __ __ __ __ __ __ __ _
+ 72
+65
+ 73
+2
+ 40
+1.524
+ 49
+1.27
+ 74
+0
+ 49
+-0.254
+ 74
+0
+  0
+LTYPE
+  5
+33
+330
+2
+100
+AcDbSymbolTableRecord
+100
+AcDbLinetypeTableRecord
+  2
+DASHEDX2
+ 70
+0
+  3
+Dashed (2x) ____  ____  ____  ____  ____  ____
+ 72
+65
+ 73
+2
+ 40
+3.048
+ 49
+2.54
+ 74
+0
+ 49
+-0.508
+ 74
+0
+  0
+LTYPE
+  5
+34
+330
+2
+100
+AcDbSymbolTableRecord
+100
+AcDbLinetypeTableRecord
+  2
+DASHED2
+ 70
+0
+  3
+Dashed (.5x) _ _ _ _ _ _ _ _ _ _ _ _ _ _
+ 72
+65
+ 73
+2
+ 40
+0.762
+ 49
+0.635
+ 74
+0
+ 49
+-0.127
+ 74
+0
+  0
+LTYPE
+  5
+35
+330
+2
+100
+AcDbSymbolTableRecord
+100
+AcDbLinetypeTableRecord
+  2
+PHANTOM
+ 70
+0
+  3
+Phantom ______  __  __  ______  __  __  ______
+ 72
+65
+ 73
+6
+ 40
+6.35
+ 49
+3.175
+ 74
+0
+ 49
+-0.635
+ 74
+0
+ 49
+0.635
+ 74
+0
+ 49
+-0.635
+ 74
+0
+ 49
+0.635
+ 74
+0
+ 49
+-0.635
+ 74
+0
+  0
+LTYPE
+  5
+36
+330
+2
+100
+AcDbSymbolTableRecord
+100
+AcDbLinetypeTableRecord
+  2
+PHANTOMX2
+ 70
+0
+  3
+Phantom (2x)____________    ____    ____    ____________
+ 72
+65
+ 73
+6
+ 40
+10.795
+ 49
+6.35
+ 74
+0
+ 49
+-0.635
+ 74
+0
+ 49
+1.27
+ 74
+0
+ 49
+-0.635
+ 74
+0
+ 49
+1.27
+ 74
+0
+ 49
+-0.635
+ 74
+0
+  0
+LTYPE
+  5
+37
+330
+2
+100
+AcDbSymbolTableRecord
+100
+AcDbLinetypeTableRecord
+  2
+PHANTOM2
+ 70
+0
+  3
+Phantom (.5x) ___ _ _ ___ _ _ ___ _ _ ___ _ _ ___
+ 72
+65
+ 73
+6
+ 40
+3.175
+ 49
+1.587
+ 74
+0
+ 49
+-0.318
+ 74
+0
+ 49
+0.318
+ 74
+0
+ 49
+-0.318
+ 74
+0
+ 49
+0.318
+ 74
+0
+ 49
+-0.318
+ 74
+0
+  0
+LTYPE
+  5
+38
+330
+2
+100
+AcDbSymbolTableRecord
+100
+AcDbLinetypeTableRecord
+  2
+DASHDOT
+ 70
+0
+  3
+Dash dot __ . __ . __ . __ . __ . __ . __ . __
+ 72
+65
+ 73
+4
+ 40
+3.556
+ 49
+2.54
+ 74
+0
+ 49
+-0.508
+ 74
+0
+ 49
+0.0
+ 74
+0
+ 49
+-0.508
+ 74
+0
+  0
+LTYPE
+  5
+39
+330
+2
+100
+AcDbSymbolTableRecord
+100
+AcDbLinetypeTableRecord
+  2
+DASHDOTX2
+ 70
+0
+  3
+Dash dot (2x) ____  .  ____  .  ____  .  ____
+ 72
+65
+ 73
+4
+ 40
+6.096
+ 49
+5.08
+ 74
+0
+ 49
+-0.508
+ 74
+0
+ 49
+0.0
+ 74
+0
+ 49
+-0.508
+ 74
+0
+  0
+LTYPE
+  5
+3A
+330
+2
+100
+AcDbSymbolTableRecord
+100
+AcDbLinetypeTableRecord
+  2
+DASHDOT2
+ 70
+0
+  3
+Dash dot (.5x) _ . _ . _ . _ . _ . _ . _ . _
+ 72
+65
+ 73
+4
+ 40
+1.778
+ 49
+1.27
+ 74
+0
+ 49
+-0.254
+ 74
+0
+ 49
+0.0
+ 74
+0
+ 49
+-0.254
+ 74
+0
+  0
+LTYPE
+  5
+3B
+330
+2
+100
+AcDbSymbolTableRecord
+100
+AcDbLinetypeTableRecord
+  2
+DOT
+ 70
+0
+  3
+Dot .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+ 72
+65
+ 73
+2
+ 40
+0.508
+ 49
+0.0
+ 74
+0
+ 49
+-0.508
+ 74
+0
+  0
+LTYPE
+  5
+3C
+330
+2
+100
+AcDbSymbolTableRecord
+100
+AcDbLinetypeTableRecord
+  2
+DOTX2
+ 70
+0
+  3
+Dot (2x) .    .    .    .    .    .    .    . 
+ 72
+65
+ 73
+2
+ 40
+1.016
+ 49
+0.0
+ 74
+0
+ 49
+-1.016
+ 74
+0
+  0
+LTYPE
+  5
+3D
+330
+2
+100
+AcDbSymbolTableRecord
+100
+AcDbLinetypeTableRecord
+  2
+DOT2
+ 70
+0
+  3
+Dot (.5) . . . . . . . . . . . . . . . . . . . 
+ 72
+65
+ 73
+2
+ 40
+0.254
+ 49
+0.0
+ 74
+0
+ 49
+-0.254
+ 74
+0
+  0
+LTYPE
+  5
+3E
+330
+2
+100
+AcDbSymbolTableRecord
+100
+AcDbLinetypeTableRecord
+  2
+DIVIDE
+ 70
+0
+  3
+Divide __ . . __ . . __ . . __ . . __ . . __
+ 72
+65
+ 73
+6
+ 40
+4.064
+ 49
+2.54
+ 74
+0
+ 49
+-0.508
+ 74
+0
+ 49
+0.0
+ 74
+0
+ 49
+-0.508
+ 74
+0
+ 49
+0.0
+ 74
+0
+ 49
+-0.508
+ 74
+0
+  0
+LTYPE
+  5
+3F
+330
+2
+100
+AcDbSymbolTableRecord
+100
+AcDbLinetypeTableRecord
+  2
+DIVIDEX2
+ 70
+0
+  3
+Divide (2x) ____  . .  ____  . .  ____  . .  ____
+ 72
+65
+ 73
+6
+ 40
+6.604
+ 49
+5.08
+ 74
+0
+ 49
+-0.508
+ 74
+0
+ 49
+0.0
+ 74
+0
+ 49
+-0.508
+ 74
+0
+ 49
+0.0
+ 74
+0
+ 49
+-0.508
+ 74
+0
+  0
+LTYPE
+  5
+40
+330
+2
+100
+AcDbSymbolTableRecord
+100
+AcDbLinetypeTableRecord
+  2
+DIVIDE2
+ 70
+0
+  3
+Divide(.5x) _ . _ . _ . _ . _ . _ . _ . _
+ 72
+65
+ 73
+6
+ 40
+2.032
+ 49
+1.27
+ 74
+0
+ 49
+-0.254
+ 74
+0
+ 49
+0.0
+ 74
+0
+ 49
+-0.254
+ 74
+0
+ 49
+0.0
+ 74
+0
+ 49
+-0.254
+ 74
+0
+  0
+ENDTAB
+  0
+TABLE
+  2
+LAYER
+  5
+1
+330
+0
+100
+AcDbSymbolTable
+ 70
+304
+  0
+LAYER
+  5
+27
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+0
+ 70
+0
+ 62
+7
+  6
+Continuous
+370
+-3
+390
+13
+  0
+LAYER
+  5
+28
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Defpoints
+ 70
+0
+ 62
+7
+  6
+Continuous
+290
+0
+370
+-3
+390
+13
+  0
+LAYER
+  5
+141
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Airport_Light
+ 70
+0
+ 62
+30
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+APAPL - Survey of Airport Light
+  0
+LAYER
+  5
+143
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Airport_Sealed - Centre
+ 70
+0
+ 62
+7
+  6
+DASHED
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+APASC - Survey of Airport Sealed - Centre
+  0
+LAYER
+  5
+144
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Airport_Sealed - Edge
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+APASE - Survey of Airport Sealed - Edge
+  0
+LAYER
+  5
+145
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Airport_Unsealed - Centre
+ 70
+0
+ 62
+7
+  6
+DASHED
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+APAUC - Survey of Airport Unsealed - Centre
+  0
+LAYER
+  5
+146
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Airport_Unsealed - Edge
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+APAUE - Survey of Airport Unsealed - Edge
+  0
+LAYER
+  5
+147
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Airport_High Strength Pavement Edge
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+APHPE - Survey of Airport High Strength Pavement Edge
+  0
+LAYER
+  5
+148
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Airport_Hazard Beacon
+ 70
+0
+ 62
+30
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+APHZB - Survey of Airport Hazard Beacon
+  0
+LAYER
+  5
+149
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Airport_Line Marking
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+APLMK - Survey of Airport Line Marking
+  0
+LAYER
+  5
+14A
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Comms_Box
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+CMBOX - Survey of Comms Box
+  0
+LAYER
+  5
+14B
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Comms_Pit - Centre
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+CMCPC - Survey of Comms Pit - Centre
+  0
+LAYER
+  5
+14C
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Comms_Pit - Edge
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+CMCPE - Survey of Comms Pit - Edge
+  0
+LAYER
+  5
+14D
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Comms_Conduit UUS-A
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+CMCUA - Survey of Comms Conduit UUS-A
+  0
+LAYER
+  5
+14E
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Comms_Conduit UUS-B
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+CMCUB - Survey of Comms Conduit UUS-B
+  0
+LAYER
+  5
+14F
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Comms_Conduit UUS-C
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+CMCUC - Survey of Comms Conduit UUS-C
+  0
+LAYER
+  5
+150
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Comms_Conduit UUS-D
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+CMCUD - Survey of Comms Conduit UUS-D
+  0
+LAYER
+  5
+151
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Comms_Elevated Joint
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+CMEJO - Survey of Comms Elevated Joint
+  0
+LAYER
+  5
+152
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Comms_Emergency Phone
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+CMEPH - Survey of Comms Emergency Phone
+  0
+LAYER
+  5
+153
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Comms_Manhole - Centre
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+CMMHC - Survey of Comms Manhole - Centre
+  0
+LAYER
+  5
+154
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Comms_Manhole - Edge
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+CMMHE - Survey of Comms Manhole - Edge
+  0
+LAYER
+  5
+155
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Comms_Marker Sign
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+CMMRK - Survey of Comms Marker Sign
+  0
+LAYER
+  5
+156
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Comms_Optic Fibre UUS-A
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+CMOAG - Survey of Comms Optic Fibre UUS-A
+  0
+LAYER
+  5
+157
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Comms_Optic Fibre UUS-B
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+CMOUB - Survey of Comms Optic Fibre UUS-B
+  0
+LAYER
+  5
+158
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Comms_Optic Fibre UUS-C
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+CMOUC - Survey of Comms Optic Fibre UUS-C
+  0
+LAYER
+  5
+159
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Comms_Optic Fibre UUS-D
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+CMOUD - Survey of Comms Optic Fibre UUS-D
+  0
+LAYER
+  5
+15A
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Comms_Phone Box
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+CMPHO - Survey of Comms Phone Box
+  0
+LAYER
+  5
+15B
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Comms_Pillar
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+CMPIL - Survey of Comms Pillar
+  0
+LAYER
+  5
+15C
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Comms_Tower - Centre
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+CMTWC - Survey of Comms Tower - Centre
+  0
+LAYER
+  5
+15D
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Comms_Tower - Legs
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+CMTWL - Survey of Comms Tower - Legs
+  0
+LAYER
+  5
+15E
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Drainage_Connection
+ 70
+0
+ 62
+3
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+DRCON - Survey of Drainage Connection
+  0
+LAYER
+  5
+15F
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Drainage_Culvert
+ 70
+0
+ 62
+3
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+DRCUL - Survey of Drainage Culvert
+  0
+LAYER
+  5
+160
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Drainage_Inspection Point
+ 70
+0
+ 62
+3
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+DRDIP - Survey of Drainage Inspection Point
+  0
+LAYER
+  5
+161
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Drainage_Drain Toe
+ 70
+0
+ 62
+3
+  6
+DASHED
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+DRDTO - Survey of Drainage Drain Toe
+  0
+LAYER
+  5
+162
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Drainage_Drain Top
+ 70
+0
+ 62
+3
+  6
+DASHED
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+DRDTP - Survey of Drainage Drain Top
+  0
+LAYER
+  5
+163
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Drainage_Downpipe
+ 70
+0
+ 62
+3
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+DRDWN - Survey of Drainage Downpipe
+  0
+LAYER
+  5
+164
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Drainage_Flood Level
+ 70
+0
+ 62
+3
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+DRFLD - Survey of Drainage Flood Level
+  0
+LAYER
+  5
+165
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Drainage_Flood Level Indicator
+ 70
+0
+ 62
+3
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+DRFLI - Survey of Drainage Flood Level Indicator
+  0
+LAYER
+  5
+166
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Drainage_Flood Level Line
+ 70
+0
+ 62
+3
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+DRFLL - Survey of Drainage Flood Level Line
+  0
+LAYER
+  5
+167
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Drainage_Gully
+ 70
+0
+ 62
+3
+  6
+DASHED
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+DRGLY - Survey of Drainage Gully
+  0
+LAYER
+  5
+168
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Drainage_Headwall
+ 70
+0
+ 62
+3
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+DRHWL - Survey of Drainage Headwall
+  0
+LAYER
+  5
+169
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Drainage_Inspection Pit
+ 70
+0
+ 62
+3
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+DRINP - Survey of Drainage Inspection Pit
+  0
+LAYER
+  5
+16A
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Drainage_Invert
+ 70
+0
+ 62
+3
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+DRINV - Survey of Drainage Invert
+  0
+LAYER
+  5
+16B
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Drainage_Kerb Gully
+ 70
+0
+ 62
+3
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+DRKGU - Survey of Drainage Kerb Gully
+  0
+LAYER
+  5
+16C
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Drainage_Manhole - Centre(Round)
+ 70
+0
+ 62
+3
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+DRMHC - Survey of Drainage Manhole - Centre(Round)
+  0
+LAYER
+  5
+16D
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Drainage_Manhole - Edge
+ 70
+0
+ 62
+3
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+DRMHE - Survey of Drainage Manhole - Edge
+  0
+LAYER
+  5
+16E
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Drainage_Overt Level Of Pipe
+ 70
+0
+ 62
+3
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+DROLP - Survey of Drainage Overt Level Of Pipe
+  0
+LAYER
+  5
+16F
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Drainage_Pipe AG
+ 70
+0
+ 62
+3
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+DRPIP - Survey of Drainage Pipe AG
+  0
+LAYER
+  5
+170
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Drainage_Side Entry Pit
+ 70
+0
+ 62
+3
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+DRSEP - Survey of Drainage Side Entry Pit
+  0
+LAYER
+  5
+171
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Drainage_Surface Drain
+ 70
+0
+ 62
+3
+  6
+DASHED
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+DRSFD - Survey of Drainage Surface Drain
+  0
+LAYER
+  5
+172
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Drainage_Slot Drain
+ 70
+0
+ 62
+3
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+DRSLT - Survey of Drainage Slot Drain
+  0
+LAYER
+  5
+173
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Drainage_Sump
+ 70
+0
+ 62
+3
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+DRSUM - Survey of Drainage Sump
+  0
+LAYER
+  5
+174
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Drainage_Trap Grease
+ 70
+0
+ 62
+3
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+DRTRG - Survey of Drainage Trap Grease
+  0
+LAYER
+  5
+175
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Drainage_Pipe UUS-A
+ 70
+0
+ 62
+3
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+DRUPA - Survey of Drainage Pipe UUS-A
+  0
+LAYER
+  5
+176
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Drainage_Pipe UUS-B
+ 70
+0
+ 62
+3
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+DRUPB - Survey of Drainage Pipe UUS-B
+  0
+LAYER
+  5
+177
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Drainage_Pipe UUS-C
+ 70
+0
+ 62
+3
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+DRUPC - Survey of Drainage Pipe UUS-C
+  0
+LAYER
+  5
+178
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Drainage_Pipe UUS-D
+ 70
+0
+ 62
+3
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+DRUPD - Survey of Drainage Pipe UUS-D
+  0
+LAYER
+  5
+179
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Electrical_Cable AG
+ 70
+0
+ 62
+30
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+ELCAB - Survey of Electrical Cable AG
+  0
+LAYER
+  5
+17A
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Electrical_Wire Catenary
+ 70
+0
+ 62
+30
+  6
+DASHED
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+ELCAN - Survey of Electrical Wire Catenary
+  0
+LAYER
+  5
+17B
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Electrical_Conduit UUS-A
+ 70
+0
+ 62
+30
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+ELCUA - Survey of Electrical Conduit UUS-A
+  0
+LAYER
+  5
+17C
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Electrical_Conduit UUS-B
+ 70
+0
+ 62
+30
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+ELCUB - Survey of Electrical Conduit UUS-B
+  0
+LAYER
+  5
+17D
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Electrical_Conduit UUS-C
+ 70
+0
+ 62
+30
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+ELCUC - Survey of Electrical Conduit UUS-C
+  0
+LAYER
+  5
+17E
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Electrical_Conduit UUS-D
+ 70
+0
+ 62
+30
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+ELCUD - Survey of Electrical Conduit UUS-D
+  0
+LAYER
+  5
+17F
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Electrical_Earthing Point
+ 70
+0
+ 62
+30
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+ELEAR - Survey of Electrical Earthing Point
+  0
+LAYER
+  5
+180
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Electrical_Pit - Centre
+ 70
+0
+ 62
+30
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+ELEPC - Survey of Electrical Pit - Centre
+  0
+LAYER
+  5
+181
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Electrical_Pit - Edge
+ 70
+0
+ 62
+30
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+ELEPE - Survey of Electrical Pit - Edge
+  0
+LAYER
+  5
+182
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Electrical_Earth Stake
+ 70
+0
+ 62
+30
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+ELEST - Survey of Electrical Earth Stake
+  0
+LAYER
+  5
+183
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Electrical_Green Dome
+ 70
+0
+ 62
+30
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+ELGRE - Survey of Electrical Green Dome
+  0
+LAYER
+  5
+184
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Electrical_Light Pole
+ 70
+0
+ 62
+30
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+ELLIP - Survey of Electrical Light Pole
+  0
+LAYER
+  5
+185
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Electrical_Meter Box
+ 70
+0
+ 62
+30
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+ELMET - Survey of Electrical Meter Box
+  0
+LAYER
+  5
+186
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Electrical_Marker Sign
+ 70
+0
+ 62
+30
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+ELMKS - Survey of Electrical Marker Sign
+  0
+LAYER
+  5
+187
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Electrical_Overhead Power Lines
+ 70
+0
+ 62
+30
+  6
+DASHED
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+ELOHP - Survey of Electrical Overhead Power Lines
+  0
+LAYER
+  5
+188
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Electrical_Point of Attachment
+ 70
+0
+ 62
+30
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+ELPOA - Survey of Electrical Point of Attachment
+  0
+LAYER
+  5
+189
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Electrical_Power Pole
+ 70
+0
+ 62
+30
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+ELPWP - Survey of Electrical Power Pole
+  0
+LAYER
+  5
+18A
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Electrical_Service Pillar
+ 70
+0
+ 62
+30
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+ELSRP - Survey of Electrical Service Pillar
+  0
+LAYER
+  5
+18B
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Electrical_Cabinet
+ 70
+0
+ 62
+30
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+ELSSC - Survey of Electrical Cabinet
+  0
+LAYER
+  5
+18C
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Electrical_Stay Pole
+ 70
+0
+ 62
+30
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+ELSTP - Survey of Electrical Stay Pole
+  0
+LAYER
+  5
+18D
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Electrical_Stay Wire
+ 70
+0
+ 62
+30
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+ELSTW - Survey of Electrical Stay Wire
+  0
+LAYER
+  5
+18E
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Electrical_Transformer
+ 70
+0
+ 62
+30
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+ELTRA - Survey of Electrical Transformer
+  0
+LAYER
+  5
+18F
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Fuel_Bowser
+ 70
+0
+ 62
+34
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+FUBOW - Survey of Fuel Bowser
+  0
+LAYER
+  5
+190
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Fuel_Dip Stick For UG Tank
+ 70
+0
+ 62
+34
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+FUDIP - Survey of Fuel Dip Stick For UG Tank
+  0
+LAYER
+  5
+191
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Fuel_Tank Earth Point
+ 70
+0
+ 62
+34
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+FUEAR - Survey of Fuel Tank Earth Point
+  0
+LAYER
+  5
+192
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Fuel_Emergency Stop Switch
+ 70
+0
+ 62
+34
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+FUESS - Survey of Fuel Emergency Stop Switch
+  0
+LAYER
+  5
+193
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Fuel_Fill For UG Tank
+ 70
+0
+ 62
+34
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+FUFIL - Survey of Fuel Fill For UG Tank
+  0
+LAYER
+  5
+194
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Fuel_Marker Sign
+ 70
+0
+ 62
+34
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+FUMKS - Survey of Fuel Marker Sign
+  0
+LAYER
+  5
+195
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Fuel_Pipe UUS-A
+ 70
+0
+ 62
+34
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+FUPIA - Survey of Fuel Pipe UUS-A
+  0
+LAYER
+  5
+196
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Fuel_Pipe UUS-B
+ 70
+0
+ 62
+34
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+FUPIB - Survey of Fuel Pipe UUS-B
+  0
+LAYER
+  5
+197
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Fuel_Pipe UUS-C
+ 70
+0
+ 62
+34
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+FUPIC - Survey of Fuel Pipe UUS-C
+  0
+LAYER
+  5
+198
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Fuel_Pipe UUS-D
+ 70
+0
+ 62
+34
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+FUPID - Survey of Fuel Pipe UUS-D
+  0
+LAYER
+  5
+199
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Fuel_Pipe AG
+ 70
+0
+ 62
+34
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+FUPIP - Survey of Fuel Pipe AG
+  0
+LAYER
+  5
+19A
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Fuel_Sump
+ 70
+0
+ 62
+34
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+FUSUM - Survey of Fuel Sump
+  0
+LAYER
+  5
+19B
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Fuel_Tank - AG
+ 70
+0
+ 62
+34
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+FUTAG - Survey of Fuel Tank - AG
+  0
+LAYER
+  5
+19C
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Fuel_Tank - UG
+ 70
+0
+ 62
+34
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+FUTUG - Survey of Fuel Tank - UG
+  0
+LAYER
+  5
+19D
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Fuel_Valve
+ 70
+0
+ 62
+34
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+FUVAL - Survey of Fuel Valve
+  0
+LAYER
+  5
+19E
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Fuel_Vent
+ 70
+0
+ 62
+34
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+FUVEN - Survey of Fuel Vent
+  0
+LAYER
+  5
+19F
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Gas_Meter
+ 70
+0
+ 62
+2
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+GAMET - Survey of Gas Meter
+  0
+LAYER
+  5
+1A0
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Gas_Manhole - Centre(Round)
+ 70
+0
+ 62
+2
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+GAMHC - Survey of Gas Manhole - Centre(Round)
+  0
+LAYER
+  5
+1A1
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Gas_Manhole - Edge
+ 70
+0
+ 62
+2
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+GAMHE - Survey of Gas Manhole - Edge
+  0
+LAYER
+  5
+1A2
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Gas_Marker
+ 70
+0
+ 62
+2
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+GAMRK - Survey of Gas Marker
+  0
+LAYER
+  5
+1A3
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Gas_Pipe AG
+ 70
+0
+ 62
+2
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+GAPIP - Survey of Gas Pipe AG
+  0
+LAYER
+  5
+1A4
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Gas_Pipe UUS-A
+ 70
+0
+ 62
+2
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+GAPUA - Survey of Gas Pipe UUS-A
+  0
+LAYER
+  5
+1A5
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Gas_Pipe UUS-B
+ 70
+0
+ 62
+2
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+GAPUB - Survey of Gas Pipe UUS-B
+  0
+LAYER
+  5
+1A6
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Gas_Pipe UUS-C
+ 70
+0
+ 62
+2
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+GAPUC - Survey of Gas Pipe UUS-C
+  0
+LAYER
+  5
+1A7
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Gas_Pipe UUS-D
+ 70
+0
+ 62
+2
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+GAPUD - Survey of Gas Pipe UUS-D
+  0
+LAYER
+  5
+1A8
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Gas_Tank - AG
+ 70
+0
+ 62
+2
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+GATAG - Survey of Gas Tank - AG
+  0
+LAYER
+  5
+1A9
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Gas_Tank - UG
+ 70
+0
+ 62
+2
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+GATUG - Survey of Gas Tank - UG
+  0
+LAYER
+  5
+1AA
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Gas_Valve
+ 70
+0
+ 62
+2
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+GAVAL - Survey of Gas Valve
+  0
+LAYER
+  5
+1AB
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Photo_Location
+ 70
+0
+ 62
+6
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+PHOTO - Survey of Photo Location
+  0
+LAYER
+  5
+1AC
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Plant_Flange Bolt
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+PLFBO - Survey of Plant Flange Bolt
+  0
+LAYER
+  5
+1AD
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Plant_Flange Outer 3 Point Circle
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+PLFOT - Survey of Plant Flange Outer 3 Point Circle
+  0
+LAYER
+  5
+1AE
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Plant_Flange Raised Face 3 Point
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+PLFRF - Survey of Plant Flange Raised Face 3 Point
+  0
+LAYER
+  5
+1AF
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Plant_Pipe Bend
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+PLPBE - Survey of Plant Pipe Bend
+  0
+LAYER
+  5
+1B0
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Plant_Pipe Support
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+PLPSU - Survey of Plant Pipe Support
+  0
+LAYER
+  5
+1B1
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Plant_Pipe Top CL
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+PLPTC - Survey of Plant Pipe Top CL
+  0
+LAYER
+  5
+1B2
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Plant_Pipe 3 Point Circle
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+PLPTP - Survey of Plant Pipe 3 Point Circle
+  0
+LAYER
+  5
+1B3
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Plant_Pipe Weld
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+PLPWE - Survey of Plant Pipe Weld
+  0
+LAYER
+  5
+1B4
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Plant_Sensor
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+PLSEN - Survey of Plant Sensor
+  0
+LAYER
+  5
+1B5
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Plant_Valve
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+PLVAL - Survey of Plant Valve
+  0
+LAYER
+  5
+1B6
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Rail_Traffic Control Box
+ 70
+0
+ 62
+30
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+RACBX - Survey of Rail Traffic Control Box
+  0
+LAYER
+  5
+1B7
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Rail_Cable Manhole
+ 70
+0
+ 62
+30
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+RACMH - Survey of Rail Cable Manhole
+  0
+LAYER
+  5
+1B8
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Rail_Cable Marker
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+RACMK - Survey of Rail Cable Marker
+  0
+LAYER
+  5
+1B9
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Rail_Single Point On Rail
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+RAONR - Survey of Rail Single Point On Rail
+  0
+LAYER
+  5
+1BA
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Rail_Centre Track
+ 70
+0
+ 62
+7
+  6
+DASHED
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+RARCL - Survey of Rail Centre Track
+  0
+LAYER
+  5
+1BB
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Rail_Cable Pit
+ 70
+0
+ 62
+30
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+RARCP - Survey of Rail Cable Pit
+  0
+LAYER
+  5
+1BC
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Rail_Traffic Signals
+ 70
+0
+ 62
+30
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+RASIG - Survey of Rail Traffic Signals
+  0
+LAYER
+  5
+1BD
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Rail_Telephone Box
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+RATEL - Survey of Rail Telephone Box
+  0
+LAYER
+  5
+1BE
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Road_Traffic Camera
+ 70
+0
+ 62
+30
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+RDCAM - Survey of Road Traffic Camera
+  0
+LAYER
+  5
+1BF
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Road_Driveway - Centre
+ 70
+0
+ 62
+7
+  6
+DASHED
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+RDDWC - Survey of Road Driveway - Centre
+  0
+LAYER
+  5
+1C0
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Road_Driveway - Edge
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+RDDWE - Survey of Road Driveway - Edge
+  0
+LAYER
+  5
+1C1
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Road_Footpath
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+RDFPE - Survey of Road Footpath
+  0
+LAYER
+  5
+1C2
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Road_Kerb - Front
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+RDKFE - Survey of Road Kerb - Front
+  0
+LAYER
+  5
+1C3
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Road_Kerb - Back
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+RDKRB - Survey of Road Kerb - Back
+  0
+LAYER
+  5
+1C4
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Road_Traffic Light Control Box
+ 70
+0
+ 62
+30
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+RDLCB - Survey of Road Traffic Light Control Box
+  0
+LAYER
+  5
+1C5
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Road_Line Marking - General
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+RDLIN - Survey of Road Line Marking - General
+  0
+LAYER
+  5
+1C6
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Road_Lane Marking - Single Broken
+ 70
+0
+ 62
+7
+  6
+DASHED
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+RDLMB - Survey of Road Lane Marking - Single Broken
+  0
+LAYER
+  5
+1C7
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Road_Lane Marking - Double Solid
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+RDLMD - Survey of Road Lane Marking - Double Solid
+  0
+LAYER
+  5
+1C8
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Road_Lane Marking - Double Broken (1 Side)
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+RDLMH - Survey of Road Lane Marking - Double Broken (1 Side)
+  0
+LAYER
+  5
+1C9
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Road_Line Marking - Parking
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+RDLMP - Survey of Road Line Marking - Parking
+  0
+LAYER
+  5
+1CA
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Road_Lane Marking - Single Solid
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+RDLMS - Survey of Road Lane Marking - Single Solid
+  0
+LAYER
+  5
+1CB
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Road_Pedestrian Signal
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+RDPSI - Survey of Road Pedestrian Signal
+  0
+LAYER
+  5
+1CC
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Road_Sealed - Centreline
+ 70
+0
+ 62
+7
+  6
+DASHED
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+RDSCE - Survey of Road Sealed - Centreline
+  0
+LAYER
+  5
+1CD
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Road_Sealed - Edge
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+RDSED - Survey of Road Sealed - Edge
+  0
+LAYER
+  5
+1CE
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Road_Side Guide Post
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+RDSGP - Survey of Road Side Guide Post
+  0
+LAYER
+  5
+1CF
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Road_Shoulder
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+RDSHO - Survey of Road Shoulder
+  0
+LAYER
+  5
+1D0
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Road_Speed Hump
+ 70
+0
+ 62
+7
+  6
+DASHED
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+RDSHU - Survey of Road Speed Hump
+  0
+LAYER
+  5
+1D1
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Road_Stop Line
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+RDSTP - Survey of Road Stop Line
+  0
+LAYER
+  5
+1D2
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Road_Traffic Detector Loops
+ 70
+0
+ 62
+30
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+RDTDL - Survey of Road Traffic Detector Loops
+  0
+LAYER
+  5
+1D3
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Road_Traffic Earth Pit
+ 70
+0
+ 62
+30
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+RDTEP - Survey of Road Traffic Earth Pit
+  0
+LAYER
+  5
+1D4
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Road_Traffic Lights
+ 70
+0
+ 62
+30
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+RDTLI - Survey of Road Traffic Lights
+  0
+LAYER
+  5
+1D5
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Road_Traffic Pit - Centre
+ 70
+0
+ 62
+30
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+RDTPC - Survey of Road Traffic Pit - Centre
+  0
+LAYER
+  5
+1D6
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Road_Unsealed - Centreline
+ 70
+0
+ 62
+7
+  6
+DASHED
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+RDUNC - Survey of Road Unsealed - Centreline
+  0
+LAYER
+  5
+1D7
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Road_Unsealed - Edge
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+RDUNE - Survey of Road Unsealed - Edge
+  0
+LAYER
+  5
+1D8
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Reticulation_Controller
+ 70
+0
+ 62
+5
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+RECON - Survey of Reticulation Controller
+  0
+LAYER
+  5
+1D9
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Reticulation_Cable UG
+ 70
+0
+ 62
+30
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+RECUG - Survey of Reticulation Cable UG
+  0
+LAYER
+  5
+1DA
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Reticulation_Pump
+ 70
+0
+ 62
+5
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+REPMP - Survey of Reticulation Pump
+  0
+LAYER
+  5
+1DB
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Reticulation_Pipe
+ 70
+0
+ 62
+5
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+REREP - Survey of Reticulation Pipe
+  0
+LAYER
+  5
+1DC
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Reticulation_Solenoid
+ 70
+0
+ 62
+30
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+RESOL - Survey of Reticulation Solenoid
+  0
+LAYER
+  5
+1DD
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Reticulation_Sprinkler
+ 70
+0
+ 62
+5
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+RESPR - Survey of Reticulation Sprinkler
+  0
+LAYER
+  5
+1DE
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Sign_Dieback Marker
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+SIDBM - Survey of Sign Dieback Marker
+  0
+LAYER
+  5
+1DF
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Sign_Illuminated Advert Sign
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+SIIAS - Survey of Sign Illuminated Advert Sign
+  0
+LAYER
+  5
+1E0
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Sign_Overhead Sign
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+SIOHS - Survey of Sign Overhead Sign
+  0
+LAYER
+  5
+1E1
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Sign_Street Finger Board
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+SISFB - Survey of Sign Street Finger Board
+  0
+LAYER
+  5
+1E2
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Sign_Multiple Poles
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+SISMP - Survey of Sign Multiple Poles
+  0
+LAYER
+  5
+1E3
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Survey_Aerial Survey Marker
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+SSASM - Survey of Survey Aerial Survey Marker
+  0
+LAYER
+  5
+1E4
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Survey_Boundary Peg
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+SSBPE - Survey of Survey Boundary Peg
+  0
+LAYER
+  5
+1E5
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Survey_Cadastral Boundary
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+SSCAD - Survey of Survey Cadastral Boundary
+  0
+LAYER
+  5
+1E6
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Survey_Check Shot
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+SSCHK - Survey of Survey Check Shot
+  0
+LAYER
+  5
+1E7
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Survey_Scan Target
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+SSHDS - Survey of Survey Scan Target
+  0
+LAYER
+  5
+1E8
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Survey_Primary Control
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+SSPCS - Survey of Survey Primary Control
+  0
+LAYER
+  5
+1E9
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Survey_Permanent Survey Mark
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+SSPER - Survey of Survey Permanent Survey Mark
+  0
+LAYER
+  5
+1EA
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Survey_Reference Mark
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+SSREF - Survey of Survey Reference Mark
+  0
+LAYER
+  5
+1EB
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Survey_Reference Line
+ 70
+0
+ 62
+7
+  6
+DASHED
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+SSREL - Survey of Survey Reference Line
+  0
+LAYER
+  5
+1EC
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Survey_Resected Station
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+SSRSC - Survey of Survey Resected Station
+  0
+LAYER
+  5
+1ED
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Survey_Secondary Control
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+SSSCS - Survey of Survey Secondary Control
+  0
+LAYER
+  5
+1EE
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Survey_Setout Point
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+SSSET - Survey of Survey Setout Point
+  0
+LAYER
+  5
+1EF
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Survey_Standard Survey Mark
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+SSSSM - Survey of Survey Standard Survey Mark
+  0
+LAYER
+  5
+1F0
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Survey_Scan World Location
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+SSSWL - Survey of Survey Scan World Location
+  0
+LAYER
+  5
+1F1
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Survey_Temporary Bench Mark
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+SSTBM - Survey of Survey Temporary Bench Mark
+  0
+LAYER
+  5
+1F2
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Survey_Tertiary Control
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+SSTCS - Survey of Survey Tertiary Control
+  0
+LAYER
+  5
+1F3
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Structural_Air Con
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+STACN - Survey of Structural Air Con
+  0
+LAYER
+  5
+1F4
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Structural_Anchor Point
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+STANC - Survey of Structural Anchor Point
+  0
+LAYER
+  5
+1F5
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Structural_Antenna
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+STANT - Survey of Structural Antenna
+  0
+LAYER
+  5
+1F6
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Structural_Awning
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+STAWN - Survey of Structural Awning
+  0
+LAYER
+  5
+1F7
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Structural_Rubbish Bin
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+STBIN - Survey of Structural Rubbish Bin
+  0
+LAYER
+  5
+1F8
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Structural_Bike Rack
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+STBKR - Survey of Structural Bike Rack
+  0
+LAYER
+  5
+1F9
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Structural_Blinding Material
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+STBLI - Survey of Structural Blinding Material
+  0
+LAYER
+  5
+1FA
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Structural_Bolt
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+STBLT - Survey of Structural Bolt
+  0
+LAYER
+  5
+1FB
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Structural_Bollard
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+STBOL - Survey of Structural Bollard
+  0
+LAYER
+  5
+1FC
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Structural_Boom Gate
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+STBOO - Survey of Structural Boom Gate
+  0
+LAYER
+  5
+1FD
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Structural_Bore
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+STBOR - Survey of Structural Bore
+  0
+LAYER
+  5
+1FE
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Structural_Bridge
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+STBRD - Survey of Structural Bridge
+  0
+LAYER
+  5
+1FF
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Structural_Bus Shelter
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+STBSH - Survey of Structural Bus Shelter
+  0
+LAYER
+  5
+200
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Structural_Building
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+STBUI - Survey of Structural Building
+  0
+LAYER
+  5
+201
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Structural_Clothes Hoist
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+STCLO - Survey of Structural Clothes Hoist
+  0
+LAYER
+  5
+202
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Structural_Concrete Edge
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+STCNE - Survey of Structural Concrete Edge
+  0
+LAYER
+  5
+203
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Structural_Column
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+STCOL - Survey of Structural Column
+  0
+LAYER
+  5
+204
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Structural_Cyclone Tie Down Blocks
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+STCTB - Survey of Structural Cyclone Tie Down Blocks
+  0
+LAYER
+  5
+205
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Structural_Dam
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+STDAM - Survey of Structural Dam
+  0
+LAYER
+  5
+206
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Structural_Door
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+STDOR - Survey of Structural Door
+  0
+LAYER
+  5
+207
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Structural_Fence
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+STFEN - Survey of Structural Fence
+  0
+LAYER
+  5
+208
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Structural_Flag Pole
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+STFLG - Survey of Structural Flag Pole
+  0
+LAYER
+  5
+209
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Structural_Floor Level
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+STFLO - Survey of Structural Floor Level
+  0
+LAYER
+  5
+20A
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Structural_Footing - Centre
+ 70
+0
+ 62
+7
+  6
+DASHED
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+STFTC - Survey of Structural Footing - Centre
+  0
+LAYER
+  5
+20B
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Structural_Footing - Edge
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+STFTE - Survey of Structural Footing - Edge
+  0
+LAYER
+  5
+20C
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Structural_Gate
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+STGAT - Survey of Structural Gate
+  0
+LAYER
+  5
+20D
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Structural_Guardrail
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+STGRR - Survey of Structural Guardrail
+  0
+LAYER
+  5
+20E
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Structural_Cultural Site
+ 70
+0
+ 62
+7
+  6
+DASHED
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+STHER - Survey of Structural Cultural Site
+  0
+LAYER
+  5
+20F
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Structural_Jetty
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+STJTY - Survey of Structural Jetty
+  0
+LAYER
+  5
+210
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Structural_Letter Box
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+STLET - Survey of Structural Letter Box
+  0
+LAYER
+  5
+211
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Structural_Mast
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+STMST - Survey of Structural Mast
+  0
+LAYER
+  5
+212
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Structural_Muster Point
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+STMUS - Survey of Structural Muster Point
+  0
+LAYER
+  5
+213
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Structural_Paving
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+STPAV - Survey of Structural Paving
+  0
+LAYER
+  5
+214
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Structural_Parking Meter
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+STPKM - Survey of Structural Parking Meter
+  0
+LAYER
+  5
+215
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Structural_Post
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+STPOS - Survey of Structural Post
+  0
+LAYER
+  5
+216
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Structural_Ramp
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+STRAM - Survey of Structural Ramp
+  0
+LAYER
+  5
+217
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Structural_Rock Anchor
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+STRCA - Survey of Structural Rock Anchor
+  0
+LAYER
+  5
+218
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Structural_Roof Line
+ 70
+0
+ 62
+7
+  6
+DASHED
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+STRFL - Survey of Structural Roof Line
+  0
+LAYER
+  5
+219
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Structural_Retaining Wall - Toe
+ 70
+0
+ 62
+7
+  6
+DASHED
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+STRWB - Survey of Structural Retaining Wall - Toe
+  0
+LAYER
+  5
+21A
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Structural_Retaining Wall - Top
+ 70
+0
+ 62
+7
+  6
+DASHED
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+STRWT - Survey of Structural Retaining Wall - Top
+  0
+LAYER
+  5
+21B
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Structural_Sea Container
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+STSCX - Survey of Structural Sea Container
+  0
+LAYER
+  5
+21C
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Structural_Seat- Park Bench
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+STSIT - Survey of Structural Seat- Park Bench
+  0
+LAYER
+  5
+21D
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Structural_Soffit Level
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+STSOF - Survey of Structural Soffit Level
+  0
+LAYER
+  5
+21E
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Structural_Stairs
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+STSTA - Survey of Structural Stairs
+  0
+LAYER
+  5
+21F
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Structural_Staywire Pa
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+STSTW - Survey of Structural Staywire Pa
+  0
+LAYER
+  5
+220
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Structural_Swimming Pool
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+STSWM - Survey of Structural Swimming Pool
+  0
+LAYER
+  5
+221
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Structural_Tank
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+STTAN - Survey of Structural Tank
+  0
+LAYER
+  5
+222
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Structural_Umbrella
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+STUMB - Survey of Structural Umbrella
+  0
+LAYER
+  5
+223
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Structural_Veranda
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+STVER - Survey of Structural Veranda
+  0
+LAYER
+  5
+224
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Structural_Well
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+STWEL - Survey of Structural Well
+  0
+LAYER
+  5
+225
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Structural_Window
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+STWIN - Survey of Structural Window
+  0
+LAYER
+  5
+226
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Structural_Wall - Toe
+ 70
+0
+ 62
+7
+  6
+DASHED
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+STWLB - Survey of Structural Wall - Toe
+  0
+LAYER
+  5
+227
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Structural_Wall - Top
+ 70
+0
+ 62
+7
+  6
+DASHED
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+STWLT - Survey of Structural Wall - Top
+  0
+LAYER
+  5
+228
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Sewer_Leach Drain - UG
+ 70
+0
+ 62
+52
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+SWLCH - Survey of Sewer Leach Drain - UG
+  0
+LAYER
+  5
+229
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Sewer_Manhole - Centre(Round)
+ 70
+0
+ 62
+52
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+SWMHC - Survey of Sewer Manhole - Centre(Round)
+  0
+LAYER
+  5
+22A
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Sewer_Manhole - Edge
+ 70
+0
+ 62
+52
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+SWMHE - Survey of Sewer Manhole - Edge
+  0
+LAYER
+  5
+22B
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Sewer_Marker Sign
+ 70
+0
+ 62
+52
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+SWMKS - Survey of Sewer Marker Sign
+  0
+LAYER
+  5
+22C
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Sewer_Pipe AG
+ 70
+0
+ 62
+52
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+SWPAG - Survey of Sewer Pipe AG
+  0
+LAYER
+  5
+22D
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Sewer_Pipe UUS-A
+ 70
+0
+ 62
+52
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+SWPUA - Survey of Sewer Pipe UUS-A
+  0
+LAYER
+  5
+22E
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Sewer_Pipe UUS-B
+ 70
+0
+ 62
+52
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+SWPUB - Survey of Sewer Pipe UUS-B
+  0
+LAYER
+  5
+22F
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Sewer_Pipe UUS-C
+ 70
+0
+ 62
+52
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+SWPUC - Survey of Sewer Pipe UUS-C
+  0
+LAYER
+  5
+230
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Sewer_Pipe UUS-D
+ 70
+0
+ 62
+52
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+SWPUD - Survey of Sewer Pipe UUS-D
+  0
+LAYER
+  5
+231
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Sewer_Septic Tank
+ 70
+0
+ 62
+52
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+SWSEP - Survey of Sewer Septic Tank
+  0
+LAYER
+  5
+232
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Sewer_Stop Valve
+ 70
+0
+ 62
+52
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+SWSVA - Survey of Sewer Stop Valve
+  0
+LAYER
+  5
+233
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Sewer_Vent
+ 70
+0
+ 62
+52
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+SWSVE - Survey of Sewer Vent
+  0
+LAYER
+  5
+234
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Text_Note
+ 70
+0
+ 62
+7
+  6
+DASHED
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+TETNO - Survey of Text Note
+  0
+LAYER
+  5
+235
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Text_Point Description
+ 70
+0
+ 62
+7
+  6
+DASHED
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+TETPD - Survey of Text Point Description
+  0
+LAYER
+  5
+236
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Text_Point Elevation
+ 70
+0
+ 62
+7
+  6
+DASHED
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+TETPE - Survey of Text Point Elevation
+  0
+LAYER
+  5
+237
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Text_Point Label
+ 70
+0
+ 62
+7
+  6
+DASHED
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+TETPL - Survey of Text Point Label
+  0
+LAYER
+  5
+238
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Text_Point Number
+ 70
+0
+ 62
+7
+  6
+DASHED
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+TETPN - Survey of Text Point Number
+  0
+LAYER
+  5
+239
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Topography_Breakline
+ 70
+0
+ 62
+34
+  6
+DASHED
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+TPBRK - Survey of Topography Breakline
+  0
+LAYER
+  5
+23A
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Topography_Bank - Toe
+ 70
+0
+ 62
+34
+  6
+DASHED
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+TPBTO - Survey of Topography Bank - Toe
+  0
+LAYER
+  5
+23B
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Topography_Bank - Top
+ 70
+0
+ 62
+34
+  6
+DASHED
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+TPBTP - Survey of Topography Bank - Top
+  0
+LAYER
+  5
+23C
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Topography_DTM TIN
+ 70
+0
+ 62
+5
+  6
+CONTINUOUS
+370
+13
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+TPTIN - Survey of Topography DTM TIN
+  0
+LAYER
+  5
+23D
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Topography_Contour Major
+ 70
+0
+ 62
+34
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+TPCMA - Survey of Topography Contour Major
+  0
+LAYER
+  5
+23E
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Topography_Contour Minor
+ 70
+0
+ 62
+34
+  6
+DASHED
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+TPCMI - Survey of Topography Contour Minor
+  0
+LAYER
+  5
+23F
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Topography_Water Level
+ 70
+0
+ 62
+34
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+TPLEV - Survey of Topography Water Level
+  0
+LAYER
+  5
+240
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Topography_Natural Surface (Spot Height)
+ 70
+0
+ 62
+34
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+TPNAT - Survey of Topography Natural Surface (Spot Height)
+  0
+LAYER
+  5
+241
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Topography_Water Course - Edge
+ 70
+0
+ 62
+5
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+TPWAT - Survey of Topography Water Course - Edge
+  0
+LAYER
+  5
+242
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Topography_Water Body - Edge
+ 70
+0
+ 62
+5
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+TPWBD - Survey of Topography Water Body - Edge
+  0
+LAYER
+  5
+243
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Topography_Water Course - Centreline
+ 70
+0
+ 62
+5
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+TPWCL - Survey of Topography Water Course - Centreline
+  0
+LAYER
+  5
+244
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_UUS_UG Service Marker
+ 70
+0
+ 62
+6
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+UGESM - Survey of UUS UG Service Marker
+  0
+LAYER
+  5
+245
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_UUS_UG Trench Evidence
+ 70
+0
+ 62
+6
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+UGETE - Survey of UUS UG Trench Evidence
+  0
+LAYER
+  5
+246
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_UUS_UUS Extents
+ 70
+0
+ 62
+6
+  6
+DASHED
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+UGUEX - Survey of UUS UUS Extents
+  0
+LAYER
+  5
+247
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Unknown_Line Generic
+ 70
+0
+ 62
+6
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+UNLGE - Survey of Unknown Line Generic
+  0
+LAYER
+  5
+248
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Unknown_Manhole Undefined - Centre(Round)
+ 70
+0
+ 62
+6
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+UNMHC - Survey of Unknown Manhole Undefined - Centre(Round)
+  0
+LAYER
+  5
+249
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Unknown_Manhole Undefined - Edge
+ 70
+0
+ 62
+6
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+UNMHE - Survey of Unknown Manhole Undefined - Edge
+  0
+LAYER
+  5
+24A
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Unknown_Point Generic
+ 70
+0
+ 62
+6
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+UNPGE - Survey of Unknown Point Generic
+  0
+LAYER
+  5
+24B
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Unknown_Service AG
+ 70
+0
+ 62
+6
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+UNSER - Survey of Unknown Service AG
+  0
+LAYER
+  5
+24C
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Unknown_Service UUS-A
+ 70
+0
+ 62
+6
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+UNUUA - Survey of Unknown Service UUS-A
+  0
+LAYER
+  5
+24D
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Unknown_Service UUS-B
+ 70
+0
+ 62
+6
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+UNUUB - Survey of Unknown Service UUS-B
+  0
+LAYER
+  5
+24E
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Unknown_Service UUS-C
+ 70
+0
+ 62
+6
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+UNUUC - Survey of Unknown Service UUS-C
+  0
+LAYER
+  5
+24F
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Unknown_Service UUS-D
+ 70
+0
+ 62
+6
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+UNUUD - Survey of Unknown Service UUS-D
+  0
+LAYER
+  5
+250
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Unknown_Valve (Unknown Type)
+ 70
+0
+ 62
+6
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+UNVLV - Survey of Unknown Valve (Unknown Type)
+  0
+LAYER
+  5
+251
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Vegetation_Bush-Shrub
+ 70
+0
+ 62
+82
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+VEBUS - Survey of Vegetation Bush-Shrub
+  0
+LAYER
+  5
+252
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Vegetation_Hedge
+ 70
+0
+ 62
+82
+  6
+DASHED
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+VEHED - Survey of Vegetation Hedge
+  0
+LAYER
+  5
+253
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Vegetation_Lawn Area
+ 70
+0
+ 62
+82
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+VELAW - Survey of Vegetation Lawn Area
+  0
+LAYER
+  5
+254
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Vegetation_Stump
+ 70
+0
+ 62
+82
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+VESTU - Survey of Vegetation Stump
+  0
+LAYER
+  5
+255
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Vegetation_Tree - Dead
+ 70
+0
+ 62
+82
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+VETDE - Survey of Vegetation Tree - Dead
+  0
+LAYER
+  5
+256
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Vegetation_Tree Line
+ 70
+0
+ 62
+82
+  6
+DASHED
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+VETLI - Survey of Vegetation Tree Line
+  0
+LAYER
+  5
+257
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Vegetation_Tree
+ 70
+0
+ 62
+82
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+VETRE - Survey of Vegetation Tree
+  0
+LAYER
+  5
+258
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Vegetation_Tree - Trunk
+ 70
+0
+ 62
+82
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+VETTR - Survey of Vegetation Tree - Trunk
+  0
+LAYER
+  5
+259
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Water_Meter
+ 70
+0
+ 62
+5
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+WAMET - Survey of Water Meter
+  0
+LAYER
+  5
+25A
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Water_Manhole - Centre
+ 70
+0
+ 62
+5
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+WAMHC - Survey of Water Manhole - Centre
+  0
+LAYER
+  5
+25B
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Water_Manhole - Edge
+ 70
+0
+ 62
+5
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+WAMHE - Survey of Water Manhole - Edge
+  0
+LAYER
+  5
+25C
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Water_Marker Sign
+ 70
+0
+ 62
+5
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+WAMKS - Survey of Water Marker Sign
+  0
+LAYER
+  5
+25D
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Water_Pipe AG
+ 70
+0
+ 62
+5
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+WAPAG - Survey of Water Pipe AG
+  0
+LAYER
+  5
+25E
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Water_Pipe UUS-A
+ 70
+0
+ 62
+5
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+WAPUA - Survey of Water Pipe UUS-A
+  0
+LAYER
+  5
+25F
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Water_Pipe UUS-B
+ 70
+0
+ 62
+5
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+WAPUB - Survey of Water Pipe UUS-B
+  0
+LAYER
+  5
+260
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Water_Pipe UUS-C
+ 70
+0
+ 62
+5
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+WAPUC - Survey of Water Pipe UUS-C
+  0
+LAYER
+  5
+261
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Water_Pipe UUS-D
+ 70
+0
+ 62
+5
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+WAPUD - Survey of Water Pipe UUS-D
+  0
+LAYER
+  5
+262
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Water_Standpipe
+ 70
+0
+ 62
+5
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+WASTP - Survey of Water Standpipe
+  0
+LAYER
+  5
+263
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Water_Tank
+ 70
+0
+ 62
+5
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+WATAN - Survey of Water Tank
+  0
+LAYER
+  5
+264
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Water_Taps - Water
+ 70
+0
+ 62
+5
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+WATAP - Survey of Water Taps - Water
+  0
+LAYER
+  5
+265
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Water_Valve AG
+ 70
+0
+ 62
+5
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+WAVAG - Survey of Water Valve AG
+  0
+LAYER
+  5
+266
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Water_Valve UG
+ 70
+0
+ 62
+5
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+WAVUG - Survey of Water Valve UG
+  0
+LAYER
+  5
+267
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Fire Water_Fire Extinguisher
+ 70
+0
+ 62
+1
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+WFFEX - Survey of Fire Water Fire Extinguisher
+  0
+LAYER
+  5
+268
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Fire Water_Fire Hose Reel
+ 70
+0
+ 62
+1
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+WFFHR - Survey of Fire Water Fire Hose Reel
+  0
+LAYER
+  5
+269
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Fire Water_Hydrant - Ground
+ 70
+0
+ 62
+1
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+WFHYG - Survey of Fire Water Hydrant - Ground
+  0
+LAYER
+  5
+26A
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Fire Water_Hydrant - Pillar
+ 70
+0
+ 62
+1
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+WFHYP - Survey of Fire Water Hydrant - Pillar
+  0
+LAYER
+  5
+26B
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Fire Water_Pipe AG
+ 70
+0
+ 62
+1
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+WFPAG - Survey of Fire Water Pipe AG
+  0
+LAYER
+  5
+26C
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Fire Water_Pipe UUS-A
+ 70
+0
+ 62
+1
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+WFPUA - Survey of Fire Water Pipe UUS-A
+  0
+LAYER
+  5
+26D
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Fire Water_Pipe UUS-B
+ 70
+0
+ 62
+1
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+WFPUB - Survey of Fire Water Pipe UUS-B
+  0
+LAYER
+  5
+26E
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Fire Water_Pipe UUS-C
+ 70
+0
+ 62
+1
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+WFPUC - Survey of Fire Water Pipe UUS-C
+  0
+LAYER
+  5
+26F
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Surv_Fire Water_Pipe UUS-D
+ 70
+0
+ 62
+1
+  6
+CONTINUOUS
+370
+20
+390
+13
+1001
+AcAecLayerStandard
+1000
+
+1000
+WFPUD - Survey of Fire Water Pipe UUS-D
+  0
+ENDTAB
+  0
+TABLE
+  2
+STYLE
+  5
+5
+330
+0
+100
+AcDbSymbolTable
+ 70
+1
+  0
+STYLE
+  5
+29
+330
+5
+100
+AcDbSymbolTableRecord
+100
+AcDbTextStyleTableRecord
+  2
+Standard
+ 70
+0
+ 40
+0.0
+ 41
+1.0
+ 50
+0.0
+ 71
+0
+ 42
+2.5
+  3
+txt
+  4
+
+  0
+ENDTAB
+  0
+TABLE
+  2
+VIEW
+  5
+7
+330
+0
+100
+AcDbSymbolTable
+ 70
+0
+  0
+ENDTAB
+  0
+TABLE
+  2
+UCS
+  5
+6
+330
+0
+100
+AcDbSymbolTable
+ 70
+0
+  0
+ENDTAB
+  0
+TABLE
+  2
+APPID
+  5
+3
+330
+0
+100
+AcDbSymbolTable
+ 70
+4
+  0
+APPID
+  5
+2A
+330
+3
+100
+AcDbSymbolTableRecord
+100
+AcDbRegAppTableRecord
+  2
+ACAD
+ 70
+0
+  0
+APPID
+  5
+142
+330
+3
+100
+AcDbSymbolTableRecord
+100
+AcDbRegAppTableRecord
+  2
+AcAecLayerStandard
+ 70
+0
+  0
+APPID
+  5
+270
+330
+3
+100
+AcDbSymbolTableRecord
+100
+AcDbRegAppTableRecord
+  2
+HATCHBACKGROUNDCOLOR
+ 70
+0
+  0
+APPID
+  5
+271
+330
+3
+100
+AcDbSymbolTableRecord
+100
+AcDbRegAppTableRecord
+  2
+EZDXF
+ 70
+0
+  0
+ENDTAB
+  0
+TABLE
+  2
+DIMSTYLE
+  5
+4
+330
+0
+100
+AcDbSymbolTable
+ 70
+1
+100
+AcDbDimStyleTable
+  0
+DIMSTYLE
+105
+2B
+330
+4
+100
+AcDbSymbolTableRecord
+100
+AcDbDimStyleTableRecord
+  2
+Standard
+ 70
+0
+  3
+
+  4
+
+ 40
+1.0
+ 41
+2.5
+ 42
+0.625
+ 43
+3.75
+ 44
+1.25
+ 45
+0.0
+ 46
+0.0
+ 47
+0.0
+ 48
+0.0
+140
+2.5
+141
+2.5
+142
+0.0
+143
+0.03937007874
+144
+1.0
+145
+0.0
+146
+1.0
+147
+0.625
+148
+0.0
+ 71
+0
+ 72
+0
+ 73
+0
+ 74
+0
+ 75
+0
+ 76
+0
+ 77
+1
+ 78
+8
+ 79
+3
+170
+0
+171
+3
+172
+1
+173
+0
+174
+0
+175
+0
+176
+0
+177
+0
+178
+0
+179
+2
+271
+2
+272
+2
+273
+2
+274
+3
+275
+0
+276
+0
+277
+2
+278
+44
+279
+0
+280
+0
+281
+0
+282
+0
+283
+0
+284
+8
+285
+0
+286
+0
+288
+0
+289
+3
+371
+-2
+372
+-2
+  0
+ENDTAB
+  0
+TABLE
+  2
+BLOCK_RECORD
+  5
+9
+330
+0
+100
+AcDbSymbolTable
+ 70
+39
+  0
+BLOCK_RECORD
+  5
+17
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+*Model_Space
+340
+1A
+  0
+BLOCK_RECORD
+  5
+1B
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+*Paper_Space
+340
+1E
+  0
+BLOCK_RECORD
+  5
+41
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+12
+340
+0
+  0
+BLOCK_RECORD
+  5
+48
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+15
+340
+0
+  0
+BLOCK_RECORD
+  5
+4F
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+17
+340
+0
+  0
+BLOCK_RECORD
+  5
+56
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+18
+340
+0
+  0
+BLOCK_RECORD
+  5
+5D
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+2
+340
+0
+  0
+BLOCK_RECORD
+  5
+64
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+201
+340
+0
+  0
+BLOCK_RECORD
+  5
+6A
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+308
+340
+0
+  0
+BLOCK_RECORD
+  5
+71
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+309
+340
+0
+  0
+BLOCK_RECORD
+  5
+78
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+311
+340
+0
+  0
+BLOCK_RECORD
+  5
+7F
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+414
+340
+0
+  0
+BLOCK_RECORD
+  5
+86
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+512
+340
+0
+  0
+BLOCK_RECORD
+  5
+8D
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+514
+340
+0
+  0
+BLOCK_RECORD
+  5
+94
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+517
+340
+0
+  0
+BLOCK_RECORD
+  5
+9B
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+628
+340
+0
+  0
+BLOCK_RECORD
+  5
+A2
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+711
+340
+0
+  0
+BLOCK_RECORD
+  5
+A9
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+712
+340
+0
+  0
+BLOCK_RECORD
+  5
+B0
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+724
+340
+0
+  0
+BLOCK_RECORD
+  5
+B7
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+725
+340
+0
+  0
+BLOCK_RECORD
+  5
+BE
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+731
+340
+0
+  0
+BLOCK_RECORD
+  5
+C5
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+732
+340
+0
+  0
+BLOCK_RECORD
+  5
+CC
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+742
+340
+0
+  0
+BLOCK_RECORD
+  5
+D3
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+744
+340
+0
+  0
+BLOCK_RECORD
+  5
+DA
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+751
+340
+0
+  0
+BLOCK_RECORD
+  5
+E1
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+752
+340
+0
+  0
+BLOCK_RECORD
+  5
+E8
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+753
+340
+0
+  0
+BLOCK_RECORD
+  5
+EF
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+754
+340
+0
+  0
+BLOCK_RECORD
+  5
+F6
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+755
+340
+0
+  0
+BLOCK_RECORD
+  5
+FD
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+757
+340
+0
+  0
+BLOCK_RECORD
+  5
+104
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+758
+340
+0
+  0
+BLOCK_RECORD
+  5
+10B
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+759
+340
+0
+  0
+BLOCK_RECORD
+  5
+112
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+771
+340
+0
+  0
+BLOCK_RECORD
+  5
+119
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+8
+340
+0
+  0
+BLOCK_RECORD
+  5
+120
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+804
+340
+0
+  0
+BLOCK_RECORD
+  5
+127
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+807
+340
+0
+  0
+BLOCK_RECORD
+  5
+12E
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+FU_VALV
+340
+0
+  0
+BLOCK_RECORD
+  5
+135
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+plus
+340
+0
+  0
+BLOCK_RECORD
+  5
+13A
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+t1r
+340
+0
+  0
+ENDTAB
+  0
+ENDSEC
+  0
+SECTION
+  2
+BLOCKS
+  0
+BLOCK
+  5
+18
+330
+17
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+*Model_Space
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+*Model_Space
+  1
+
+  0
+ENDBLK
+  5
+19
+330
+17
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+1C
+330
+1B
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+*Paper_Space
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+*Paper_Space
+  1
+
+  0
+ENDBLK
+  5
+1D
+330
+1B
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+42
+330
+41
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+12
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+12
+  1
+
+  0
+CIRCLE
+  5
+44
+330
+41
+100
+AcDbEntity
+  8
+0
+100
+AcDbCircle
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+ 40
+0.25
+  0
+LINE
+  5
+45
+330
+41
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+-0.15
+ 20
+0.0
+ 30
+0.0
+ 11
+0.15
+ 21
+0.0
+ 31
+0.0
+  0
+LINE
+  5
+46
+330
+41
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+0.0
+ 20
+-0.15
+ 30
+0.0
+ 11
+0.0
+ 21
+0.15
+ 31
+0.0
+  0
+TEXT
+  5
+47
+330
+41
+100
+AcDbEntity
+  8
+0
+100
+AcDbText
+ 10
+0.3
+ 20
+-0.06
+ 30
+0.0
+ 40
+0.12
+  1
+12
+100
+AcDbText
+  0
+ENDBLK
+  5
+43
+330
+41
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+49
+330
+48
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+15
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+15
+  1
+
+  0
+CIRCLE
+  5
+4B
+330
+48
+100
+AcDbEntity
+  8
+0
+100
+AcDbCircle
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+ 40
+0.25
+  0
+LINE
+  5
+4C
+330
+48
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+-0.15
+ 20
+0.0
+ 30
+0.0
+ 11
+0.15
+ 21
+0.0
+ 31
+0.0
+  0
+LINE
+  5
+4D
+330
+48
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+0.0
+ 20
+-0.15
+ 30
+0.0
+ 11
+0.0
+ 21
+0.15
+ 31
+0.0
+  0
+TEXT
+  5
+4E
+330
+48
+100
+AcDbEntity
+  8
+0
+100
+AcDbText
+ 10
+0.3
+ 20
+-0.06
+ 30
+0.0
+ 40
+0.12
+  1
+15
+100
+AcDbText
+  0
+ENDBLK
+  5
+4A
+330
+48
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+50
+330
+4F
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+17
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+17
+  1
+
+  0
+CIRCLE
+  5
+52
+330
+4F
+100
+AcDbEntity
+  8
+0
+100
+AcDbCircle
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+ 40
+0.25
+  0
+LINE
+  5
+53
+330
+4F
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+-0.15
+ 20
+0.0
+ 30
+0.0
+ 11
+0.15
+ 21
+0.0
+ 31
+0.0
+  0
+LINE
+  5
+54
+330
+4F
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+0.0
+ 20
+-0.15
+ 30
+0.0
+ 11
+0.0
+ 21
+0.15
+ 31
+0.0
+  0
+TEXT
+  5
+55
+330
+4F
+100
+AcDbEntity
+  8
+0
+100
+AcDbText
+ 10
+0.3
+ 20
+-0.06
+ 30
+0.0
+ 40
+0.12
+  1
+17
+100
+AcDbText
+  0
+ENDBLK
+  5
+51
+330
+4F
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+57
+330
+56
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+18
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+18
+  1
+
+  0
+CIRCLE
+  5
+59
+330
+56
+100
+AcDbEntity
+  8
+0
+100
+AcDbCircle
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+ 40
+0.25
+  0
+LINE
+  5
+5A
+330
+56
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+-0.15
+ 20
+0.0
+ 30
+0.0
+ 11
+0.15
+ 21
+0.0
+ 31
+0.0
+  0
+LINE
+  5
+5B
+330
+56
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+0.0
+ 20
+-0.15
+ 30
+0.0
+ 11
+0.0
+ 21
+0.15
+ 31
+0.0
+  0
+TEXT
+  5
+5C
+330
+56
+100
+AcDbEntity
+  8
+0
+100
+AcDbText
+ 10
+0.3
+ 20
+-0.06
+ 30
+0.0
+ 40
+0.12
+  1
+18
+100
+AcDbText
+  0
+ENDBLK
+  5
+58
+330
+56
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+5E
+330
+5D
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+2
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+2
+  1
+
+  0
+CIRCLE
+  5
+60
+330
+5D
+100
+AcDbEntity
+  8
+0
+100
+AcDbCircle
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+ 40
+0.25
+  0
+LINE
+  5
+61
+330
+5D
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+-0.15
+ 20
+0.0
+ 30
+0.0
+ 11
+0.15
+ 21
+0.0
+ 31
+0.0
+  0
+LINE
+  5
+62
+330
+5D
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+0.0
+ 20
+-0.15
+ 30
+0.0
+ 11
+0.0
+ 21
+0.15
+ 31
+0.0
+  0
+TEXT
+  5
+63
+330
+5D
+100
+AcDbEntity
+  8
+0
+100
+AcDbText
+ 10
+0.3
+ 20
+-0.06
+ 30
+0.0
+ 40
+0.12
+  1
+2
+100
+AcDbText
+  0
+ENDBLK
+  5
+5F
+330
+5D
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+65
+330
+64
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+201
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+201
+  1
+
+  0
+CIRCLE
+  5
+67
+330
+64
+100
+AcDbEntity
+  8
+0
+100
+AcDbCircle
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+ 40
+0.5
+  0
+LINE
+  5
+68
+330
+64
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+-0.15
+ 20
+0.0
+ 30
+0.0
+ 11
+0.15
+ 21
+0.0
+ 31
+0.0
+  0
+LINE
+  5
+69
+330
+64
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+0.0
+ 20
+-0.15
+ 30
+0.0
+ 11
+0.0
+ 21
+0.15
+ 31
+0.0
+  0
+ENDBLK
+  5
+66
+330
+64
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+6B
+330
+6A
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+308
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+308
+  1
+
+  0
+CIRCLE
+  5
+6D
+330
+6A
+100
+AcDbEntity
+  8
+0
+100
+AcDbCircle
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+ 40
+0.25
+  0
+LINE
+  5
+6E
+330
+6A
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+-0.15
+ 20
+0.0
+ 30
+0.0
+ 11
+0.15
+ 21
+0.0
+ 31
+0.0
+  0
+LINE
+  5
+6F
+330
+6A
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+0.0
+ 20
+-0.15
+ 30
+0.0
+ 11
+0.0
+ 21
+0.15
+ 31
+0.0
+  0
+TEXT
+  5
+70
+330
+6A
+100
+AcDbEntity
+  8
+0
+100
+AcDbText
+ 10
+0.3
+ 20
+-0.06
+ 30
+0.0
+ 40
+0.12
+  1
+308
+100
+AcDbText
+  0
+ENDBLK
+  5
+6C
+330
+6A
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+72
+330
+71
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+309
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+309
+  1
+
+  0
+CIRCLE
+  5
+74
+330
+71
+100
+AcDbEntity
+  8
+0
+100
+AcDbCircle
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+ 40
+0.25
+  0
+LINE
+  5
+75
+330
+71
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+-0.15
+ 20
+0.0
+ 30
+0.0
+ 11
+0.15
+ 21
+0.0
+ 31
+0.0
+  0
+LINE
+  5
+76
+330
+71
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+0.0
+ 20
+-0.15
+ 30
+0.0
+ 11
+0.0
+ 21
+0.15
+ 31
+0.0
+  0
+TEXT
+  5
+77
+330
+71
+100
+AcDbEntity
+  8
+0
+100
+AcDbText
+ 10
+0.3
+ 20
+-0.06
+ 30
+0.0
+ 40
+0.12
+  1
+309
+100
+AcDbText
+  0
+ENDBLK
+  5
+73
+330
+71
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+79
+330
+78
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+311
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+311
+  1
+
+  0
+CIRCLE
+  5
+7B
+330
+78
+100
+AcDbEntity
+  8
+0
+100
+AcDbCircle
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+ 40
+0.25
+  0
+LINE
+  5
+7C
+330
+78
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+-0.15
+ 20
+0.0
+ 30
+0.0
+ 11
+0.15
+ 21
+0.0
+ 31
+0.0
+  0
+LINE
+  5
+7D
+330
+78
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+0.0
+ 20
+-0.15
+ 30
+0.0
+ 11
+0.0
+ 21
+0.15
+ 31
+0.0
+  0
+TEXT
+  5
+7E
+330
+78
+100
+AcDbEntity
+  8
+0
+100
+AcDbText
+ 10
+0.3
+ 20
+-0.06
+ 30
+0.0
+ 40
+0.12
+  1
+311
+100
+AcDbText
+  0
+ENDBLK
+  5
+7A
+330
+78
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+80
+330
+7F
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+414
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+414
+  1
+
+  0
+CIRCLE
+  5
+82
+330
+7F
+100
+AcDbEntity
+  8
+0
+100
+AcDbCircle
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+ 40
+0.25
+  0
+LINE
+  5
+83
+330
+7F
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+-0.15
+ 20
+0.0
+ 30
+0.0
+ 11
+0.15
+ 21
+0.0
+ 31
+0.0
+  0
+LINE
+  5
+84
+330
+7F
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+0.0
+ 20
+-0.15
+ 30
+0.0
+ 11
+0.0
+ 21
+0.15
+ 31
+0.0
+  0
+TEXT
+  5
+85
+330
+7F
+100
+AcDbEntity
+  8
+0
+100
+AcDbText
+ 10
+0.3
+ 20
+-0.06
+ 30
+0.0
+ 40
+0.12
+  1
+414
+100
+AcDbText
+  0
+ENDBLK
+  5
+81
+330
+7F
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+87
+330
+86
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+512
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+512
+  1
+
+  0
+CIRCLE
+  5
+89
+330
+86
+100
+AcDbEntity
+  8
+0
+100
+AcDbCircle
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+ 40
+0.25
+  0
+LINE
+  5
+8A
+330
+86
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+-0.15
+ 20
+0.0
+ 30
+0.0
+ 11
+0.15
+ 21
+0.0
+ 31
+0.0
+  0
+LINE
+  5
+8B
+330
+86
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+0.0
+ 20
+-0.15
+ 30
+0.0
+ 11
+0.0
+ 21
+0.15
+ 31
+0.0
+  0
+TEXT
+  5
+8C
+330
+86
+100
+AcDbEntity
+  8
+0
+100
+AcDbText
+ 10
+0.3
+ 20
+-0.06
+ 30
+0.0
+ 40
+0.12
+  1
+512
+100
+AcDbText
+  0
+ENDBLK
+  5
+88
+330
+86
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+8E
+330
+8D
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+514
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+514
+  1
+
+  0
+CIRCLE
+  5
+90
+330
+8D
+100
+AcDbEntity
+  8
+0
+100
+AcDbCircle
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+ 40
+0.25
+  0
+LINE
+  5
+91
+330
+8D
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+-0.15
+ 20
+0.0
+ 30
+0.0
+ 11
+0.15
+ 21
+0.0
+ 31
+0.0
+  0
+LINE
+  5
+92
+330
+8D
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+0.0
+ 20
+-0.15
+ 30
+0.0
+ 11
+0.0
+ 21
+0.15
+ 31
+0.0
+  0
+TEXT
+  5
+93
+330
+8D
+100
+AcDbEntity
+  8
+0
+100
+AcDbText
+ 10
+0.3
+ 20
+-0.06
+ 30
+0.0
+ 40
+0.12
+  1
+514
+100
+AcDbText
+  0
+ENDBLK
+  5
+8F
+330
+8D
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+95
+330
+94
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+517
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+517
+  1
+
+  0
+CIRCLE
+  5
+97
+330
+94
+100
+AcDbEntity
+  8
+0
+100
+AcDbCircle
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+ 40
+0.25
+  0
+LINE
+  5
+98
+330
+94
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+-0.15
+ 20
+0.0
+ 30
+0.0
+ 11
+0.15
+ 21
+0.0
+ 31
+0.0
+  0
+LINE
+  5
+99
+330
+94
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+0.0
+ 20
+-0.15
+ 30
+0.0
+ 11
+0.0
+ 21
+0.15
+ 31
+0.0
+  0
+TEXT
+  5
+9A
+330
+94
+100
+AcDbEntity
+  8
+0
+100
+AcDbText
+ 10
+0.3
+ 20
+-0.06
+ 30
+0.0
+ 40
+0.12
+  1
+517
+100
+AcDbText
+  0
+ENDBLK
+  5
+96
+330
+94
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+9C
+330
+9B
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+628
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+628
+  1
+
+  0
+CIRCLE
+  5
+9E
+330
+9B
+100
+AcDbEntity
+  8
+0
+100
+AcDbCircle
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+ 40
+0.25
+  0
+LINE
+  5
+9F
+330
+9B
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+-0.15
+ 20
+0.0
+ 30
+0.0
+ 11
+0.15
+ 21
+0.0
+ 31
+0.0
+  0
+LINE
+  5
+A0
+330
+9B
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+0.0
+ 20
+-0.15
+ 30
+0.0
+ 11
+0.0
+ 21
+0.15
+ 31
+0.0
+  0
+TEXT
+  5
+A1
+330
+9B
+100
+AcDbEntity
+  8
+0
+100
+AcDbText
+ 10
+0.3
+ 20
+-0.06
+ 30
+0.0
+ 40
+0.12
+  1
+628
+100
+AcDbText
+  0
+ENDBLK
+  5
+9D
+330
+9B
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+A3
+330
+A2
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+711
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+711
+  1
+
+  0
+CIRCLE
+  5
+A5
+330
+A2
+100
+AcDbEntity
+  8
+0
+100
+AcDbCircle
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+ 40
+0.25
+  0
+LINE
+  5
+A6
+330
+A2
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+-0.15
+ 20
+0.0
+ 30
+0.0
+ 11
+0.15
+ 21
+0.0
+ 31
+0.0
+  0
+LINE
+  5
+A7
+330
+A2
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+0.0
+ 20
+-0.15
+ 30
+0.0
+ 11
+0.0
+ 21
+0.15
+ 31
+0.0
+  0
+TEXT
+  5
+A8
+330
+A2
+100
+AcDbEntity
+  8
+0
+100
+AcDbText
+ 10
+0.3
+ 20
+-0.06
+ 30
+0.0
+ 40
+0.12
+  1
+711
+100
+AcDbText
+  0
+ENDBLK
+  5
+A4
+330
+A2
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+AA
+330
+A9
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+712
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+712
+  1
+
+  0
+CIRCLE
+  5
+AC
+330
+A9
+100
+AcDbEntity
+  8
+0
+100
+AcDbCircle
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+ 40
+0.25
+  0
+LINE
+  5
+AD
+330
+A9
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+-0.15
+ 20
+0.0
+ 30
+0.0
+ 11
+0.15
+ 21
+0.0
+ 31
+0.0
+  0
+LINE
+  5
+AE
+330
+A9
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+0.0
+ 20
+-0.15
+ 30
+0.0
+ 11
+0.0
+ 21
+0.15
+ 31
+0.0
+  0
+TEXT
+  5
+AF
+330
+A9
+100
+AcDbEntity
+  8
+0
+100
+AcDbText
+ 10
+0.3
+ 20
+-0.06
+ 30
+0.0
+ 40
+0.12
+  1
+712
+100
+AcDbText
+  0
+ENDBLK
+  5
+AB
+330
+A9
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+B1
+330
+B0
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+724
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+724
+  1
+
+  0
+CIRCLE
+  5
+B3
+330
+B0
+100
+AcDbEntity
+  8
+0
+100
+AcDbCircle
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+ 40
+0.25
+  0
+LINE
+  5
+B4
+330
+B0
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+-0.15
+ 20
+0.0
+ 30
+0.0
+ 11
+0.15
+ 21
+0.0
+ 31
+0.0
+  0
+LINE
+  5
+B5
+330
+B0
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+0.0
+ 20
+-0.15
+ 30
+0.0
+ 11
+0.0
+ 21
+0.15
+ 31
+0.0
+  0
+TEXT
+  5
+B6
+330
+B0
+100
+AcDbEntity
+  8
+0
+100
+AcDbText
+ 10
+0.3
+ 20
+-0.06
+ 30
+0.0
+ 40
+0.12
+  1
+724
+100
+AcDbText
+  0
+ENDBLK
+  5
+B2
+330
+B0
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+B8
+330
+B7
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+725
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+725
+  1
+
+  0
+CIRCLE
+  5
+BA
+330
+B7
+100
+AcDbEntity
+  8
+0
+100
+AcDbCircle
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+ 40
+0.25
+  0
+LINE
+  5
+BB
+330
+B7
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+-0.15
+ 20
+0.0
+ 30
+0.0
+ 11
+0.15
+ 21
+0.0
+ 31
+0.0
+  0
+LINE
+  5
+BC
+330
+B7
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+0.0
+ 20
+-0.15
+ 30
+0.0
+ 11
+0.0
+ 21
+0.15
+ 31
+0.0
+  0
+TEXT
+  5
+BD
+330
+B7
+100
+AcDbEntity
+  8
+0
+100
+AcDbText
+ 10
+0.3
+ 20
+-0.06
+ 30
+0.0
+ 40
+0.12
+  1
+725
+100
+AcDbText
+  0
+ENDBLK
+  5
+B9
+330
+B7
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+BF
+330
+BE
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+731
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+731
+  1
+
+  0
+CIRCLE
+  5
+C1
+330
+BE
+100
+AcDbEntity
+  8
+0
+100
+AcDbCircle
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+ 40
+0.25
+  0
+LINE
+  5
+C2
+330
+BE
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+-0.15
+ 20
+0.0
+ 30
+0.0
+ 11
+0.15
+ 21
+0.0
+ 31
+0.0
+  0
+LINE
+  5
+C3
+330
+BE
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+0.0
+ 20
+-0.15
+ 30
+0.0
+ 11
+0.0
+ 21
+0.15
+ 31
+0.0
+  0
+TEXT
+  5
+C4
+330
+BE
+100
+AcDbEntity
+  8
+0
+100
+AcDbText
+ 10
+0.3
+ 20
+-0.06
+ 30
+0.0
+ 40
+0.12
+  1
+731
+100
+AcDbText
+  0
+ENDBLK
+  5
+C0
+330
+BE
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+C6
+330
+C5
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+732
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+732
+  1
+
+  0
+CIRCLE
+  5
+C8
+330
+C5
+100
+AcDbEntity
+  8
+0
+100
+AcDbCircle
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+ 40
+0.25
+  0
+LINE
+  5
+C9
+330
+C5
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+-0.15
+ 20
+0.0
+ 30
+0.0
+ 11
+0.15
+ 21
+0.0
+ 31
+0.0
+  0
+LINE
+  5
+CA
+330
+C5
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+0.0
+ 20
+-0.15
+ 30
+0.0
+ 11
+0.0
+ 21
+0.15
+ 31
+0.0
+  0
+TEXT
+  5
+CB
+330
+C5
+100
+AcDbEntity
+  8
+0
+100
+AcDbText
+ 10
+0.3
+ 20
+-0.06
+ 30
+0.0
+ 40
+0.12
+  1
+732
+100
+AcDbText
+  0
+ENDBLK
+  5
+C7
+330
+C5
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+CD
+330
+CC
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+742
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+742
+  1
+
+  0
+CIRCLE
+  5
+CF
+330
+CC
+100
+AcDbEntity
+  8
+0
+100
+AcDbCircle
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+ 40
+0.25
+  0
+LINE
+  5
+D0
+330
+CC
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+-0.15
+ 20
+0.0
+ 30
+0.0
+ 11
+0.15
+ 21
+0.0
+ 31
+0.0
+  0
+LINE
+  5
+D1
+330
+CC
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+0.0
+ 20
+-0.15
+ 30
+0.0
+ 11
+0.0
+ 21
+0.15
+ 31
+0.0
+  0
+TEXT
+  5
+D2
+330
+CC
+100
+AcDbEntity
+  8
+0
+100
+AcDbText
+ 10
+0.3
+ 20
+-0.06
+ 30
+0.0
+ 40
+0.12
+  1
+742
+100
+AcDbText
+  0
+ENDBLK
+  5
+CE
+330
+CC
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+D4
+330
+D3
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+744
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+744
+  1
+
+  0
+CIRCLE
+  5
+D6
+330
+D3
+100
+AcDbEntity
+  8
+0
+100
+AcDbCircle
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+ 40
+0.25
+  0
+LINE
+  5
+D7
+330
+D3
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+-0.15
+ 20
+0.0
+ 30
+0.0
+ 11
+0.15
+ 21
+0.0
+ 31
+0.0
+  0
+LINE
+  5
+D8
+330
+D3
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+0.0
+ 20
+-0.15
+ 30
+0.0
+ 11
+0.0
+ 21
+0.15
+ 31
+0.0
+  0
+TEXT
+  5
+D9
+330
+D3
+100
+AcDbEntity
+  8
+0
+100
+AcDbText
+ 10
+0.3
+ 20
+-0.06
+ 30
+0.0
+ 40
+0.12
+  1
+744
+100
+AcDbText
+  0
+ENDBLK
+  5
+D5
+330
+D3
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+DB
+330
+DA
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+751
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+751
+  1
+
+  0
+CIRCLE
+  5
+DD
+330
+DA
+100
+AcDbEntity
+  8
+0
+100
+AcDbCircle
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+ 40
+0.25
+  0
+LINE
+  5
+DE
+330
+DA
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+-0.15
+ 20
+0.0
+ 30
+0.0
+ 11
+0.15
+ 21
+0.0
+ 31
+0.0
+  0
+LINE
+  5
+DF
+330
+DA
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+0.0
+ 20
+-0.15
+ 30
+0.0
+ 11
+0.0
+ 21
+0.15
+ 31
+0.0
+  0
+TEXT
+  5
+E0
+330
+DA
+100
+AcDbEntity
+  8
+0
+100
+AcDbText
+ 10
+0.3
+ 20
+-0.06
+ 30
+0.0
+ 40
+0.12
+  1
+751
+100
+AcDbText
+  0
+ENDBLK
+  5
+DC
+330
+DA
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+E2
+330
+E1
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+752
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+752
+  1
+
+  0
+CIRCLE
+  5
+E4
+330
+E1
+100
+AcDbEntity
+  8
+0
+100
+AcDbCircle
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+ 40
+0.25
+  0
+LINE
+  5
+E5
+330
+E1
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+-0.15
+ 20
+0.0
+ 30
+0.0
+ 11
+0.15
+ 21
+0.0
+ 31
+0.0
+  0
+LINE
+  5
+E6
+330
+E1
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+0.0
+ 20
+-0.15
+ 30
+0.0
+ 11
+0.0
+ 21
+0.15
+ 31
+0.0
+  0
+TEXT
+  5
+E7
+330
+E1
+100
+AcDbEntity
+  8
+0
+100
+AcDbText
+ 10
+0.3
+ 20
+-0.06
+ 30
+0.0
+ 40
+0.12
+  1
+752
+100
+AcDbText
+  0
+ENDBLK
+  5
+E3
+330
+E1
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+E9
+330
+E8
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+753
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+753
+  1
+
+  0
+CIRCLE
+  5
+EB
+330
+E8
+100
+AcDbEntity
+  8
+0
+100
+AcDbCircle
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+ 40
+0.25
+  0
+LINE
+  5
+EC
+330
+E8
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+-0.15
+ 20
+0.0
+ 30
+0.0
+ 11
+0.15
+ 21
+0.0
+ 31
+0.0
+  0
+LINE
+  5
+ED
+330
+E8
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+0.0
+ 20
+-0.15
+ 30
+0.0
+ 11
+0.0
+ 21
+0.15
+ 31
+0.0
+  0
+TEXT
+  5
+EE
+330
+E8
+100
+AcDbEntity
+  8
+0
+100
+AcDbText
+ 10
+0.3
+ 20
+-0.06
+ 30
+0.0
+ 40
+0.12
+  1
+753
+100
+AcDbText
+  0
+ENDBLK
+  5
+EA
+330
+E8
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+F0
+330
+EF
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+754
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+754
+  1
+
+  0
+CIRCLE
+  5
+F2
+330
+EF
+100
+AcDbEntity
+  8
+0
+100
+AcDbCircle
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+ 40
+0.25
+  0
+LINE
+  5
+F3
+330
+EF
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+-0.15
+ 20
+0.0
+ 30
+0.0
+ 11
+0.15
+ 21
+0.0
+ 31
+0.0
+  0
+LINE
+  5
+F4
+330
+EF
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+0.0
+ 20
+-0.15
+ 30
+0.0
+ 11
+0.0
+ 21
+0.15
+ 31
+0.0
+  0
+TEXT
+  5
+F5
+330
+EF
+100
+AcDbEntity
+  8
+0
+100
+AcDbText
+ 10
+0.3
+ 20
+-0.06
+ 30
+0.0
+ 40
+0.12
+  1
+754
+100
+AcDbText
+  0
+ENDBLK
+  5
+F1
+330
+EF
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+F7
+330
+F6
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+755
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+755
+  1
+
+  0
+CIRCLE
+  5
+F9
+330
+F6
+100
+AcDbEntity
+  8
+0
+100
+AcDbCircle
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+ 40
+0.25
+  0
+LINE
+  5
+FA
+330
+F6
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+-0.15
+ 20
+0.0
+ 30
+0.0
+ 11
+0.15
+ 21
+0.0
+ 31
+0.0
+  0
+LINE
+  5
+FB
+330
+F6
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+0.0
+ 20
+-0.15
+ 30
+0.0
+ 11
+0.0
+ 21
+0.15
+ 31
+0.0
+  0
+TEXT
+  5
+FC
+330
+F6
+100
+AcDbEntity
+  8
+0
+100
+AcDbText
+ 10
+0.3
+ 20
+-0.06
+ 30
+0.0
+ 40
+0.12
+  1
+755
+100
+AcDbText
+  0
+ENDBLK
+  5
+F8
+330
+F6
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+FE
+330
+FD
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+757
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+757
+  1
+
+  0
+CIRCLE
+  5
+100
+330
+FD
+100
+AcDbEntity
+  8
+0
+100
+AcDbCircle
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+ 40
+0.25
+  0
+LINE
+  5
+101
+330
+FD
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+-0.15
+ 20
+0.0
+ 30
+0.0
+ 11
+0.15
+ 21
+0.0
+ 31
+0.0
+  0
+LINE
+  5
+102
+330
+FD
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+0.0
+ 20
+-0.15
+ 30
+0.0
+ 11
+0.0
+ 21
+0.15
+ 31
+0.0
+  0
+TEXT
+  5
+103
+330
+FD
+100
+AcDbEntity
+  8
+0
+100
+AcDbText
+ 10
+0.3
+ 20
+-0.06
+ 30
+0.0
+ 40
+0.12
+  1
+757
+100
+AcDbText
+  0
+ENDBLK
+  5
+FF
+330
+FD
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+105
+330
+104
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+758
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+758
+  1
+
+  0
+CIRCLE
+  5
+107
+330
+104
+100
+AcDbEntity
+  8
+0
+100
+AcDbCircle
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+ 40
+0.25
+  0
+LINE
+  5
+108
+330
+104
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+-0.15
+ 20
+0.0
+ 30
+0.0
+ 11
+0.15
+ 21
+0.0
+ 31
+0.0
+  0
+LINE
+  5
+109
+330
+104
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+0.0
+ 20
+-0.15
+ 30
+0.0
+ 11
+0.0
+ 21
+0.15
+ 31
+0.0
+  0
+TEXT
+  5
+10A
+330
+104
+100
+AcDbEntity
+  8
+0
+100
+AcDbText
+ 10
+0.3
+ 20
+-0.06
+ 30
+0.0
+ 40
+0.12
+  1
+758
+100
+AcDbText
+  0
+ENDBLK
+  5
+106
+330
+104
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+10C
+330
+10B
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+759
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+759
+  1
+
+  0
+CIRCLE
+  5
+10E
+330
+10B
+100
+AcDbEntity
+  8
+0
+100
+AcDbCircle
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+ 40
+0.25
+  0
+LINE
+  5
+10F
+330
+10B
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+-0.15
+ 20
+0.0
+ 30
+0.0
+ 11
+0.15
+ 21
+0.0
+ 31
+0.0
+  0
+LINE
+  5
+110
+330
+10B
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+0.0
+ 20
+-0.15
+ 30
+0.0
+ 11
+0.0
+ 21
+0.15
+ 31
+0.0
+  0
+TEXT
+  5
+111
+330
+10B
+100
+AcDbEntity
+  8
+0
+100
+AcDbText
+ 10
+0.3
+ 20
+-0.06
+ 30
+0.0
+ 40
+0.12
+  1
+759
+100
+AcDbText
+  0
+ENDBLK
+  5
+10D
+330
+10B
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+113
+330
+112
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+771
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+771
+  1
+
+  0
+CIRCLE
+  5
+115
+330
+112
+100
+AcDbEntity
+  8
+0
+100
+AcDbCircle
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+ 40
+0.25
+  0
+LINE
+  5
+116
+330
+112
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+-0.15
+ 20
+0.0
+ 30
+0.0
+ 11
+0.15
+ 21
+0.0
+ 31
+0.0
+  0
+LINE
+  5
+117
+330
+112
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+0.0
+ 20
+-0.15
+ 30
+0.0
+ 11
+0.0
+ 21
+0.15
+ 31
+0.0
+  0
+TEXT
+  5
+118
+330
+112
+100
+AcDbEntity
+  8
+0
+100
+AcDbText
+ 10
+0.3
+ 20
+-0.06
+ 30
+0.0
+ 40
+0.12
+  1
+771
+100
+AcDbText
+  0
+ENDBLK
+  5
+114
+330
+112
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+11A
+330
+119
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+8
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+8
+  1
+
+  0
+CIRCLE
+  5
+11C
+330
+119
+100
+AcDbEntity
+  8
+0
+100
+AcDbCircle
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+ 40
+0.25
+  0
+LINE
+  5
+11D
+330
+119
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+-0.15
+ 20
+0.0
+ 30
+0.0
+ 11
+0.15
+ 21
+0.0
+ 31
+0.0
+  0
+LINE
+  5
+11E
+330
+119
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+0.0
+ 20
+-0.15
+ 30
+0.0
+ 11
+0.0
+ 21
+0.15
+ 31
+0.0
+  0
+TEXT
+  5
+11F
+330
+119
+100
+AcDbEntity
+  8
+0
+100
+AcDbText
+ 10
+0.3
+ 20
+-0.06
+ 30
+0.0
+ 40
+0.12
+  1
+8
+100
+AcDbText
+  0
+ENDBLK
+  5
+11B
+330
+119
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+121
+330
+120
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+804
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+804
+  1
+
+  0
+CIRCLE
+  5
+123
+330
+120
+100
+AcDbEntity
+  8
+0
+100
+AcDbCircle
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+ 40
+0.25
+  0
+LINE
+  5
+124
+330
+120
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+-0.15
+ 20
+0.0
+ 30
+0.0
+ 11
+0.15
+ 21
+0.0
+ 31
+0.0
+  0
+LINE
+  5
+125
+330
+120
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+0.0
+ 20
+-0.15
+ 30
+0.0
+ 11
+0.0
+ 21
+0.15
+ 31
+0.0
+  0
+TEXT
+  5
+126
+330
+120
+100
+AcDbEntity
+  8
+0
+100
+AcDbText
+ 10
+0.3
+ 20
+-0.06
+ 30
+0.0
+ 40
+0.12
+  1
+804
+100
+AcDbText
+  0
+ENDBLK
+  5
+122
+330
+120
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+128
+330
+127
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+807
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+807
+  1
+
+  0
+CIRCLE
+  5
+12A
+330
+127
+100
+AcDbEntity
+  8
+0
+100
+AcDbCircle
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+ 40
+0.25
+  0
+LINE
+  5
+12B
+330
+127
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+-0.15
+ 20
+0.0
+ 30
+0.0
+ 11
+0.15
+ 21
+0.0
+ 31
+0.0
+  0
+LINE
+  5
+12C
+330
+127
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+0.0
+ 20
+-0.15
+ 30
+0.0
+ 11
+0.0
+ 21
+0.15
+ 31
+0.0
+  0
+TEXT
+  5
+12D
+330
+127
+100
+AcDbEntity
+  8
+0
+100
+AcDbText
+ 10
+0.3
+ 20
+-0.06
+ 30
+0.0
+ 40
+0.12
+  1
+807
+100
+AcDbText
+  0
+ENDBLK
+  5
+129
+330
+127
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+12F
+330
+12E
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+FU_VALV
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+FU_VALV
+  1
+
+  0
+CIRCLE
+  5
+131
+330
+12E
+100
+AcDbEntity
+  8
+0
+100
+AcDbCircle
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+ 40
+0.25
+  0
+LINE
+  5
+132
+330
+12E
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+-0.15
+ 20
+0.0
+ 30
+0.0
+ 11
+0.15
+ 21
+0.0
+ 31
+0.0
+  0
+LINE
+  5
+133
+330
+12E
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+0.0
+ 20
+-0.15
+ 30
+0.0
+ 11
+0.0
+ 21
+0.15
+ 31
+0.0
+  0
+TEXT
+  5
+134
+330
+12E
+100
+AcDbEntity
+  8
+0
+100
+AcDbText
+ 10
+0.3
+ 20
+-0.06
+ 30
+0.0
+ 40
+0.12
+  1
+FU_VALV
+100
+AcDbText
+  0
+ENDBLK
+  5
+130
+330
+12E
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+136
+330
+135
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+plus
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+plus
+  1
+
+  0
+LINE
+  5
+138
+330
+135
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+-0.25
+ 20
+0.0
+ 30
+0.0
+ 11
+0.25
+ 21
+0.0
+ 31
+0.0
+  0
+LINE
+  5
+139
+330
+135
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+0.0
+ 20
+-0.25
+ 30
+0.0
+ 11
+0.0
+ 21
+0.25
+ 31
+0.0
+  0
+ENDBLK
+  5
+137
+330
+135
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+13B
+330
+13A
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+t1r
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+t1r
+  1
+
+  0
+CIRCLE
+  5
+13D
+330
+13A
+100
+AcDbEntity
+  8
+0
+100
+AcDbCircle
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+ 40
+0.25
+  0
+LINE
+  5
+13E
+330
+13A
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+-0.15
+ 20
+0.0
+ 30
+0.0
+ 11
+0.15
+ 21
+0.0
+ 31
+0.0
+  0
+LINE
+  5
+13F
+330
+13A
+100
+AcDbEntity
+  8
+0
+100
+AcDbLine
+ 10
+0.0
+ 20
+-0.15
+ 30
+0.0
+ 11
+0.0
+ 21
+0.15
+ 31
+0.0
+  0
+TEXT
+  5
+140
+330
+13A
+100
+AcDbEntity
+  8
+0
+100
+AcDbText
+ 10
+0.3
+ 20
+-0.06
+ 30
+0.0
+ 40
+0.12
+  1
+t1r
+100
+AcDbText
+  0
+ENDBLK
+  5
+13C
+330
+13A
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+ENDSEC
+  0
+SECTION
+  2
+ENTITIES
+  0
+ENDSEC
+  0
+SECTION
+  2
+OBJECTS
+  0
+DICTIONARY
+  5
+A
+330
+0
+100
+AcDbDictionary
+281
+1
+  3
+ACAD_COLOR
+350
+B
+  3
+ACAD_GROUP
+350
+C
+  3
+ACAD_LAYOUT
+350
+D
+  3
+ACAD_MATERIAL
+350
+E
+  3
+ACAD_MLEADERSTYLE
+350
+F
+  3
+ACAD_MLINESTYLE
+350
+10
+  3
+ACAD_PLOTSETTINGS
+350
+11
+  3
+ACAD_PLOTSTYLENAME
+350
+12
+  3
+ACAD_SCALELIST
+350
+14
+  3
+ACAD_TABLESTYLE
+350
+15
+  3
+ACAD_VISUALSTYLE
+350
+16
+  3
+EZDXF_META
+350
+2D
+  0
+DICTIONARY
+  5
+B
+330
+A
+100
+AcDbDictionary
+281
+1
+  0
+DICTIONARY
+  5
+C
+330
+A
+100
+AcDbDictionary
+281
+1
+  0
+DICTIONARY
+  5
+D
+330
+A
+100
+AcDbDictionary
+281
+1
+  3
+Model
+350
+1A
+  3
+Layout1
+350
+1E
+  0
+DICTIONARY
+  5
+E
+330
+A
+100
+AcDbDictionary
+281
+1
+  3
+ByBlock
+350
+1F
+  3
+ByLayer
+350
+20
+  3
+Global
+350
+21
+  0
+DICTIONARY
+  5
+F
+330
+A
+100
+AcDbDictionary
+281
+1
+  3
+Standard
+350
+2C
+  0
+DICTIONARY
+  5
+10
+330
+A
+100
+AcDbDictionary
+281
+1
+  3
+Standard
+350
+22
+  0
+DICTIONARY
+  5
+11
+330
+A
+100
+AcDbDictionary
+281
+1
+  0
+ACDBDICTIONARYWDFLT
+  5
+12
+330
+A
+100
+AcDbDictionary
+281
+1
+  3
+Normal
+350
+13
+100
+AcDbDictionaryWithDefault
+340
+13
+  0
+ACDBPLACEHOLDER
+  5
+13
+330
+12
+  0
+DICTIONARY
+  5
+14
+330
+A
+100
+AcDbDictionary
+281
+1
+  0
+DICTIONARY
+  5
+15
+330
+A
+100
+AcDbDictionary
+281
+1
+  0
+DICTIONARY
+  5
+16
+330
+A
+100
+AcDbDictionary
+281
+1
+  0
+LAYOUT
+  5
+1A
+330
+D
+100
+AcDbPlotSettings
+  1
+
+  4
+A3
+  6
+
+ 40
+7.5
+ 41
+20.0
+ 42
+7.5
+ 43
+20.0
+ 44
+420.0
+ 45
+297.0
+ 46
+0.0
+ 47
+0.0
+ 48
+0.0
+ 49
+0.0
+140
+0.0
+141
+0.0
+142
+1.0
+143
+1.0
+ 70
+1024
+ 72
+1
+ 73
+0
+ 74
+5
+  7
+
+ 75
+16
+ 76
+0
+ 77
+2
+ 78
+300
+147
+1.0
+148
+0.0
+149
+0.0
+100
+AcDbLayout
+  1
+Model
+ 70
+1
+ 71
+0
+ 10
+0.0
+ 20
+0.0
+ 11
+420.0
+ 21
+297.0
+ 12
+0.0
+ 22
+0.0
+ 32
+0.0
+ 14
+1e+20
+ 24
+1e+20
+ 34
+1e+20
+ 15
+-1e+20
+ 25
+-1e+20
+ 35
+-1e+20
+146
+0.0
+ 13
+0.0
+ 23
+0.0
+ 33
+0.0
+ 16
+1.0
+ 26
+0.0
+ 36
+0.0
+ 17
+0.0
+ 27
+1.0
+ 37
+0.0
+ 76
+1
+330
+17
+  0
+LAYOUT
+  5
+1E
+330
+D
+100
+AcDbPlotSettings
+  1
+
+  4
+A3
+  6
+
+ 40
+7.5
+ 41
+20.0
+ 42
+7.5
+ 43
+20.0
+ 44
+420.0
+ 45
+297.0
+ 46
+0.0
+ 47
+0.0
+ 48
+0.0
+ 49
+0.0
+140
+0.0
+141
+0.0
+142
+1.0
+143
+1.0
+ 70
+0
+ 72
+1
+ 73
+0
+ 74
+5
+  7
+
+ 75
+16
+ 76
+0
+ 77
+2
+ 78
+300
+147
+1.0
+148
+0.0
+149
+0.0
+100
+AcDbLayout
+  1
+Layout1
+ 70
+1
+ 71
+1
+ 10
+0.0
+ 20
+0.0
+ 11
+420.0
+ 21
+297.0
+ 12
+0.0
+ 22
+0.0
+ 32
+0.0
+ 14
+1e+20
+ 24
+1e+20
+ 34
+1e+20
+ 15
+-1e+20
+ 25
+-1e+20
+ 35
+-1e+20
+146
+0.0
+ 13
+0.0
+ 23
+0.0
+ 33
+0.0
+ 16
+1.0
+ 26
+0.0
+ 36
+0.0
+ 17
+0.0
+ 27
+1.0
+ 37
+0.0
+ 76
+1
+330
+1B
+  0
+MATERIAL
+  5
+1F
+102
+{ACAD_REACTORS
+330
+E
+102
+}
+330
+E
+100
+AcDbMaterial
+  1
+ByBlock
+  2
+
+ 70
+0
+ 40
+1.0
+ 71
+1
+ 41
+1.0
+ 91
+-1023410177
+ 42
+1.0
+ 72
+1
+  3
+
+ 73
+1
+ 74
+1
+ 75
+1
+ 44
+0.5
+ 73
+0
+ 45
+1.0
+ 46
+1.0
+ 77
+1
+  4
+
+ 78
+1
+ 79
+1
+170
+1
+ 48
+1.0
+171
+1
+  6
+
+172
+1
+173
+1
+174
+1
+140
+1.0
+141
+1.0
+175
+1
+  7
+
+176
+1
+177
+1
+178
+1
+143
+1.0
+179
+1
+  8
+
+270
+1
+271
+1
+272
+1
+145
+1.0
+146
+1.0
+273
+1
+  9
+
+274
+1
+275
+1
+276
+1
+ 42
+1.0
+ 72
+1
+  3
+
+ 73
+1
+ 74
+1
+ 75
+1
+ 94
+63
+  0
+MATERIAL
+  5
+20
+102
+{ACAD_REACTORS
+330
+E
+102
+}
+330
+E
+100
+AcDbMaterial
+  1
+ByLayer
+  2
+
+ 70
+0
+ 40
+1.0
+ 71
+1
+ 41
+1.0
+ 91
+-1023410177
+ 42
+1.0
+ 72
+1
+  3
+
+ 73
+1
+ 74
+1
+ 75
+1
+ 44
+0.5
+ 73
+0
+ 45
+1.0
+ 46
+1.0
+ 77
+1
+  4
+
+ 78
+1
+ 79
+1
+170
+1
+ 48
+1.0
+171
+1
+  6
+
+172
+1
+173
+1
+174
+1
+140
+1.0
+141
+1.0
+175
+1
+  7
+
+176
+1
+177
+1
+178
+1
+143
+1.0
+179
+1
+  8
+
+270
+1
+271
+1
+272
+1
+145
+1.0
+146
+1.0
+273
+1
+  9
+
+274
+1
+275
+1
+276
+1
+ 42
+1.0
+ 72
+1
+  3
+
+ 73
+1
+ 74
+1
+ 75
+1
+ 94
+63
+  0
+MATERIAL
+  5
+21
+102
+{ACAD_REACTORS
+330
+E
+102
+}
+330
+E
+100
+AcDbMaterial
+  1
+Global
+  2
+
+ 70
+0
+ 40
+1.0
+ 71
+1
+ 41
+1.0
+ 91
+-1023410177
+ 42
+1.0
+ 72
+1
+  3
+
+ 73
+1
+ 74
+1
+ 75
+1
+ 44
+0.5
+ 73
+0
+ 45
+1.0
+ 46
+1.0
+ 77
+1
+  4
+
+ 78
+1
+ 79
+1
+170
+1
+ 48
+1.0
+171
+1
+  6
+
+172
+1
+173
+1
+174
+1
+140
+1.0
+141
+1.0
+175
+1
+  7
+
+176
+1
+177
+1
+178
+1
+143
+1.0
+179
+1
+  8
+
+270
+1
+271
+1
+272
+1
+145
+1.0
+146
+1.0
+273
+1
+  9
+
+274
+1
+275
+1
+276
+1
+ 42
+1.0
+ 72
+1
+  3
+
+ 73
+1
+ 74
+1
+ 75
+1
+ 94
+63
+  0
+MLINESTYLE
+  5
+22
+102
+{ACAD_REACTORS
+330
+10
+102
+}
+330
+10
+100
+AcDbMlineStyle
+  2
+Standard
+ 70
+0
+  3
+
+ 62
+256
+ 51
+90.0
+ 52
+90.0
+ 71
+2
+ 49
+0.5
+ 62
+256
+  6
+BYLAYER
+ 49
+-0.5
+ 62
+256
+  6
+BYLAYER
+  0
+MLEADERSTYLE
+  5
+2C
+102
+{ACAD_REACTORS
+330
+F
+102
+}
+330
+F
+100
+AcDbMLeaderStyle
+179
+2
+170
+2
+171
+1
+172
+0
+ 90
+2
+ 40
+0.0
+ 41
+0.0
+173
+1
+ 91
+-1056964608
+ 92
+-2
+290
+1
+ 42
+2.0
+291
+1
+ 43
+8.0
+  3
+Standard
+ 44
+4.0
+300
+
+342
+29
+174
+1
+175
+1
+176
+0
+178
+1
+ 93
+-1056964608
+ 45
+4.0
+292
+0
+297
+0
+ 46
+4.0
+ 94
+-1056964608
+ 47
+1.0
+ 49
+1.0
+140
+1.0
+294
+1
+141
+0.0
+177
+0
+142
+1.0
+295
+0
+296
+0
+143
+3.75
+271
+0
+272
+9
+273
+9
+  0
+DICTIONARY
+  5
+2D
+330
+A
+100
+AcDbDictionary
+280
+1
+281
+1
+  3
+CREATED_BY_EZDXF
+350
+2E
+  3
+WRITTEN_BY_EZDXF
+350
+272
+  0
+DICTIONARYVAR
+  5
+2E
+330
+2D
+100
+DictionaryVariables
+280
+0
+  1
+1.4.5 @ 2026-11-18T01:57:10.048427+00:00
+  0
+DICTIONARYVAR
+  5
+272
+330
+2D
+100
+DictionaryVariables
+280
+0
+  1
+1.4.5 @ 2026-11-18T01:57:10.062899+00:00
+  0
+ENDSEC
+  0
+EOF

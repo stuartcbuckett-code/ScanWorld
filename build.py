@@ -18,17 +18,19 @@ dl = read('node_modules', 'delaunator', 'delaunator.min.js')
 io, al, cad, topo, crs = (read('src', f) for f in ['io.js', 'algo.js', 'cad.js', 'topo.js', 'crs.js'])
 ffl = read('node_modules', 'fflate', 'umd', 'index.js')
 gtf = read('node_modules', 'geotiff', 'dist-browser', 'geotiff.js')
+import json as _json
+cadstd = read('src', 'cadstd.js') + '\nwindow.S551 = ' + read('data', 's551_layers.json') + ';\nwindow.S551_DXF = ' + _json.dumps(read('data', 's551_template.dxf')) + ';'
 conv = read('src', 'conv.js') + '\n' + read('src', 'conv_ui.js')
 app = read('src', 'app.js')
-ext = '\n'.join(read('src', f) for f in ['app_ext.js', 'app_cad.js', 'app_review.js', 'app_lod.js', 'app_more.js', 'app_stream.js', 'app_globe.js', 'app_veg.js', 'app_tiles.js', 'app_pano.js', 'app_ortho.js', 'app_lodedit.js'])
+ext = '\n'.join(read('src', f) for f in ['app_ext.js', 'app_cad.js', 'app_review.js', 'app_lod.js', 'app_more.js', 'app_stream.js', 'app_globe.js', 'app_veg.js', 'app_tiles.js', 'app_pano.js', 'app_ortho.js', 'app_lodedit.js', 'app_cadout.js'])
 marker = '// ---------- boot ----------'
 assert marker in app
 app = app.replace(marker, ext + '\n' + marker)
 # handles used by the browser tests
 hook = "window.__sb = { S,"
 assert hook in app
-app = app.replace(hook, "poolReady(); window.__sb = { S, PANO, ORTHO, LP, edTargetD, edUndo, edSave, edCount, lassoSetClass, applyLasso: (a) => applyLasso(a), groundClassify: () => groundClassify(), noiseFilter: () => noiseFilter(), classifyTerrain: (L) => classifyTerrain(L), transformLayer: (...a) => transformLayer(...a), lodExport: (...a) => lodExport(...a), lodReadBox: (...a) => lodReadBox(...a), importPanos, panoOpen, panoClose, loadFiles: (f) => loadFiles(f), fitAll, POOL, parC2C, buildCad, buildTopo, buildCoords, convertAll, fitAtPoint, cadSelect, cadTransform, cadDelete, cadUndo, fit2Pair, buildReview, buildLOD, LODS, addAnnotation, addBookmark, lineOfSight, viewshed, slopeAspect, stockpileVolume, planeDip, dsmChange, saveProject, loadProjectObj, loadWeirSample, wireClearance, exportSHP, parseDXF, addOverlay, importDataset, openDataset, updateCamera, curCam, setView, LP, lodOpenStore, lodOpenUrl, lodDatasets, lodExport, lodReadBox, lodSaveProject, lodProjectJSON, lodAddModel, lodPlaceModel, boxFromWorld, boxWorld, boxDrawMode, LHttpStore, LFileStore, LDirStore, openConverter, buildLodPanel, lodClose, lodCloseProject, lodSaveAll, setActive, exportDataset, extractToLayer, readBox, compareToCad, classifyByCad, classifyTerrain, findPeople, removePeople, playPath, batchScanToCad, addGroup, applyVisibility, extractTyped, goView, DS, STR, GLB, globeFly, globeGeo,")
-for name, src in [('gtf', gtf), ('ffl', ffl), ('conv', conv), ('laz', laz), ('io', io), ('al', al), ('cad', cad), ('topo', topo), ('crs', crs), ('app', app), ('dl', dl)]:
+app = app.replace(hook, "poolReady(); window.__sb = { S, CADO, cadFeatures, cadExport, cadTemplate, runTopo: (L) => runTopo(L), PANO, ORTHO, LP, edTargetD, edUndo, edSave, edCount, lassoSetClass, applyLasso: (a) => applyLasso(a), groundClassify: () => groundClassify(), noiseFilter: () => noiseFilter(), classifyTerrain: (L) => classifyTerrain(L), transformLayer: (...a) => transformLayer(...a), lodExport: (...a) => lodExport(...a), lodReadBox: (...a) => lodReadBox(...a), importPanos, panoOpen, panoClose, loadFiles: (f) => loadFiles(f), fitAll, POOL, parC2C, buildCad, buildTopo, buildCoords, convertAll, fitAtPoint, cadSelect, cadTransform, cadDelete, cadUndo, fit2Pair, buildReview, buildLOD, LODS, addAnnotation, addBookmark, lineOfSight, viewshed, slopeAspect, stockpileVolume, planeDip, dsmChange, saveProject, loadProjectObj, loadWeirSample, wireClearance, exportSHP, parseDXF, addOverlay, importDataset, openDataset, updateCamera, curCam, setView, LP, lodOpenStore, lodOpenUrl, lodDatasets, lodExport, lodReadBox, lodSaveProject, lodProjectJSON, lodAddModel, lodPlaceModel, boxFromWorld, boxWorld, boxDrawMode, LHttpStore, LFileStore, LDirStore, openConverter, buildLodPanel, lodClose, lodCloseProject, lodSaveAll, setActive, exportDataset, extractToLayer, readBox, compareToCad, classifyByCad, classifyTerrain, findPeople, removePeople, playPath, batchScanToCad, addGroup, applyVisibility, extractTyped, goView, DS, STR, GLB, globeFly, globeGeo,")
+for name, src in [('cadstd', cadstd), ('gtf', gtf), ('ffl', ffl), ('conv', conv), ('laz', laz), ('io', io), ('al', al), ('cad', cad), ('topo', topo), ('crs', crs), ('app', app), ('dl', dl)]:
     assert '</script' not in src.lower(), name
 
 def page(three_src, binary_samples):
@@ -42,6 +44,7 @@ def page(three_src, binary_samples):
     out += '<script id="src-fflate">\n' + ffl + '\n</script>\n'
     out += '<script>\n' + conv + '\n</script>\n'
     out += '<script>\n' + gtf + '\n</script>\n'
+    out += '<script>\n' + cadstd + '\n</script>\n'
     for src in [dl, al, cad, topo, crs]: out += '<script data-lib>\n' + src + '\n</script>\n'
     out += '<script>\n' + app + '\n</script>\n'
     return out
