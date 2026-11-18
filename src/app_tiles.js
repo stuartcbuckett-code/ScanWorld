@@ -2,7 +2,7 @@
 // A project folder holds project.json (datasets, annotations, measurements, views, boxes, STL models)
 // and one or more datasets (dataset.json + hierarchy.bin + octree.bin). Only the tiles in view are
 // fetched, at the detail their size on screen needs, inside a fixed point budget.
-const LP = { projects: [], project: null, store: null, active: null, workers: [], wseq: 0, waits: new Map(), conc: 6, detail: 90, adaptive: true, freshCap: 1200000, cacheX: 2.5, dirtyProject: false, box: { shown: false, edit: true }, key: '', force: true, hide: new Array(32).fill(0) };
+const LP = { projects: [], project: null, store: null, active: null, workers: [], wseq: 0, waits: new Map(), conc: 6, detail: 90, adaptive: true, freshCap: 1200000, cacheX: 2.5, dirtyProject: false, box: { shown: false, edit: true }, key: '', force: true, hide: new Array(96).fill(0) };
 
 // ---------- stores: a local folder, a list of files, or a web address ----------
 class LDirStore {
@@ -103,18 +103,21 @@ function lodPage(D, N) {
 const LOD_VS = `
 attribute vec3 color; attribute float aCls;
 uniform float uSize; uniform float uPR; uniform int uClip; uniform vec3 uMin; uniform vec3 uMax;
-uniform float uSpacing; uniform float uAdapt; uniform float uHalfH; uniform float uOrtho; uniform float uHide[32];
+uniform float uSpacing; uniform float uAdapt; uniform float uHalfH; uniform float uOrtho; uniform float uHide[96];
 varying vec3 vC;
 void main(){
   vC = color; vec4 wp = modelMatrix * vec4(position, 1.0);
   if (uClip == 1 && (any(lessThan(wp.xyz, uMin)) || any(greaterThan(wp.xyz, uMax)))) { gl_Position = vec4(2.0,2.0,2.0,1.0); gl_PointSize = 0.0; return; }
-  int ci = int(aCls + 0.5); if (ci < 32 && uHide[ci] > 0.5) { gl_Position = vec4(2.0,2.0,2.0,1.0); gl_PointSize = 0.0; return; }
+  int ci = int(aCls + 0.5); if (ci < 96 && uHide[ci] > 0.5) { gl_Position = vec4(2.0,2.0,2.0,1.0); gl_PointSize = 0.0; return; }
   vec4 mv = viewMatrix * wp; gl_Position = projectionMatrix * mv;
   float px = projectionMatrix[1][1] * uHalfH; if (uOrtho < 0.5) px /= max(1e-6, -mv.z);
   float s = uSize * uPR; if (uAdapt > 0.5) s = max(s, min(uSpacing * px, 10.0 * uPR));
   gl_PointSize = s; }`;
 const lodU = { uAdapt: { value: 1 }, uHalfH: { value: 400 }, uOrtho: { value: 0 }, uHide: { value: LP.hide } };
-function lodMat(spacing) { return new THREE.ShaderMaterial({ vertexShader: LOD_VS, fragmentShader: PT_FS, uniforms: { uSize: ptUniforms.uSize, uPR: ptUniforms.uPR, uClip: ptUniforms.uClip, uMin: ptUniforms.uMin, uMax: ptUniforms.uMax, uAdapt: lodU.uAdapt, uHalfH: lodU.uHalfH, uOrtho: lodU.uOrtho, uHide: lodU.uHide, uSpacing: { value: spacing } } }); }
+function lodMat(spacing, D) { return new THREE.ShaderMaterial({ vertexShader: LOD_VS, fragmentShader: PT_FS, uniforms: { uSize: ptUniforms.uSize, uPR: ptUniforms.uPR, uClip: ptUniforms.uClip, uMin: ptUniforms.uMin, uMax: ptUniforms.uMax, uAdapt: lodU.uAdapt, uHalfH: lodU.uHalfH, uOrtho: lodU.uOrtho, uHide: D ? lodHideU(D) : lodU.uHide, uSpacing: { value: spacing } } }); }
+// classes hidden for one dataset: its own ticks (Layers panel) plus the shared filter (LOD panel)
+function lodHideU(D) { if (!D.uHide) { D.uHide = { value: new Array(96).fill(0) }; D.hiddenCls = D.hiddenCls || new Set(); } return D.uHide; }
+function lodHideSync() { for (const D of lodDatasets()) { const u = lodHideU(D).value; for (let k = 0; k < 96; k++) u[k] = (LP.hide[k] || D.hiddenCls.has(k)) ? 1 : 0; } }
 const SRC_PAL = [[230, 159, 0], [86, 180, 233], [0, 158, 115], [240, 228, 66], [0, 114, 178], [213, 94, 0], [204, 121, 167], [200, 200, 200]];
 function lodColor(D, N) {
   const c = N.col || (N.col = new Uint8Array(N.n * 3)), mode = D.colorMode, z0 = D.box.min.z, z1 = D.box.max.z, tmp = [0, 0, 0], iM = D.iMax || 65535;
@@ -139,7 +142,7 @@ function lodMakeObj(D, node, r) {
   const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(N.pos, 3)); g.setAttribute('color', new THREE.BufferAttribute(N.col, 3, true));
   if (N.classification) g.setAttribute('aCls', new THREE.BufferAttribute(N.classification, 1)); else g.setAttribute('aCls', new THREE.BufferAttribute(new Uint8Array(N.n), 1));
   g.boundingBox = node.box.clone(); g.boundingSphere = new THREE.Sphere(node.centre.clone(), node.radius);
-  N.obj = new THREE.Points(g, lodMat(node.spacing)); N.obj.frustumCulled = false; N.obj.visible = false; N.obj.renderOrder = 0; D.root.add(N.obj); D.loaded.set(node.name, N); D.cachedPts += N.n;
+  N.obj = new THREE.Points(g, lodMat(node.spacing, D)); N.obj.frustumCulled = false; N.obj.visible = false; N.obj.renderOrder = 0; D.root.add(N.obj); D.loaded.set(node.name, N); D.cachedPts += N.n;
 }
 function lodDrop(D, name) { const N = D.loaded.get(name); if (!N) return; D.root.remove(N.obj); N.obj.geometry.dispose(); N.obj.material.dispose(); D.loaded.delete(name); D.cachedPts -= N.n; }
 async function lodLoad(D, node) {
@@ -187,7 +190,7 @@ function lodUpdateInner() {
   if (st) st.textContent = 'Shown ' + fmtN(shown + (LODS.shown || 0) + (STR.shown || 0)) + ' of ' + fmtN(total + S.layers.filter(L => L.visible && L.kind === 'cloud').reduce((a, L) => a + L.n, 0)) + (busy || pages.length ? ' · loading…' : '');
   if (want.length || pages.length || more) setTimeout(() => { LP.force = true; S.dirty = true; }, more ? 16 : 60);
 }
-const _drawLOD = draw; draw = function () { try { lodUpdate(); } catch (e) { console.warn(e); } try { boxHelpersSync(); } catch (e) { } _drawLOD(); };
+const _drawLOD = draw; draw = function () { try { lodHideSync(); lodUpdate(); } catch (e) { console.warn(e); } try { boxHelpersSync(); } catch (e) { } _drawLOD(); };
 
 // ---------- opening and closing ----------
 function crsIdFromMeta(c) { if (!c) return null; if (c.id && X_.byId(c.id)) return c.id; const code = c.epsg; if (code) { const s = X_.SYSTEMS.find(x => x.epsg === code); if (s) return s.id; } return null; }

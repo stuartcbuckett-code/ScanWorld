@@ -34,19 +34,46 @@ refreshLayers = function () {
       const c2 = el('input', { type: 'checkbox', 'aria-label': 'Show ' + L.name }); c2.checked = L.selfVisible; c2.addEventListener('click', e => e.stopPropagation()); c2.addEventListener('change', () => { L.selfVisible = c2.checked; applyVisibility(); });
       box.append(el('div', { class: 'layer' + (S.sel === L ? ' sel' : ''), tabindex: '0', style: 'margin-left:' + (depth * 14 + 14) + 'px' + (grpOn(g.id) ? '' : ';opacity:.5'), onclick: () => selectLayer(L), onkeydown: e => { if (e.key === 'Enter') selectLayer(L); } },
         c2, el('span', { class: 'sw', style: 'background:' + L.solid }), el('span', { class: 'nm', title: L.name }, L.name), el('span', { class: 'ct' }, L.kind === 'cloud' ? fmtN(L.n) : (L.tris.length / 9 | 0) + ' tri'),
-        S.groups.length > 1 ? moveSel(L.group, v => { L.group = v; applyVisibility(); refreshLayers(); }) : null));
+        L.kind === 'cloud' ? clsBtn(L) : null, S.groups.length > 1 ? moveSel(L.group, v => { L.group = v; applyVisibility(); refreshLayers(); }) : null));
+      if (L.clsOpen && L.kind === 'cloud') box.append(clsPanel(L, depth * 14 + 30));
     }
     for (const D of (S.streams || []).filter(x => x.group === g.id)) {
       const c2 = el('input', { type: 'checkbox', 'aria-label': 'Show ' + D.meta.name }); c2.checked = D.selfVisible !== false; c2.addEventListener('change', () => { D.selfVisible = c2.checked; applyVisibility(); });
       box.append(el('div', { class: 'layer' + (S.selStream === D ? ' sel' : ''), style: 'margin-left:' + (depth * 14 + 14) + 'px' + (grpOn(g.id) ? '' : ';opacity:.5'), onclick: () => { S.selStream = D; refreshLayers(); buildDatasets(); } },
         c2, el('span', { class: 'sw', style: 'background:#e39545;border-radius:2px' }), el('span', { class: 'nm', title: D.meta.name }, D.meta.name + ' (dataset)'), el('span', { class: 'ct' }, fmtN(D.meta.points)),
-        S.groups.length > 1 ? moveSel(D.group, v => { D.group = v; applyVisibility(); refreshLayers(); }) : null));
+        D.kind === 'lod' ? clsBtn(D) : null, S.groups.length > 1 ? moveSel(D.group, v => { D.group = v; applyVisibility(); refreshLayers(); }) : null));
+      if (D.clsOpen && D.kind === 'lod') box.append(clsPanel(D, depth * 14 + 30));
     }
     for (const c of S.groups.filter(x => x.parent === g.id)) drawGroup(c, depth + 1);
   };
   drawGroup(S.groups[0], 0);
   updateStatus();
 };
+
+// ===== classes on and off, per cloud layer or streamed dataset (Layers panel) =====
+function clsCounts(o) {
+  const c = {};
+  if (o.kind === 'cloud') { if (!o.cls) return c; for (let i = 0; i < o.n; i++) c[o.cls[i]] = (c[o.cls[i]] || 0) + 1; return c; }
+  for (const [, N] of o.loaded) { const a = N.classification; if (!a) continue; for (let i = 0; i < a.length; i++) c[a[i]] = (c[a[i]] || 0) + 1; }   // streamed: what has loaded so far
+  return c;
+}
+function clsBtn(o) { const hid = o.kind === 'cloud' ? (o.hiddenCls ? o.hiddenCls.size : 0) : (o.hiddenCls ? o.hiddenCls.size : 0);
+  return el('button', { class: 'btn small icon' + (o.clsOpen ? ' on' : ''), title: 'Classes: turn them on and off' + (hid ? ' (' + hid + ' hidden)' : ''), 'aria-label': 'Classes of ' + (o.name || o.meta.name), style: 'font-size:11px;padding:1px 5px' + (hid ? ';color:var(--accent);font-weight:700' : ''), onclick: e => { e.stopPropagation(); o.clsOpen = !o.clsOpen; refreshLayers(); } }, 'Cls' + (hid ? '•' : '')); }
+function clsPanel(o, indent) {
+  const cl = o.kind === 'cloud'; const counts = clsCounts(o); const keys = Object.keys(counts).map(Number).sort((a, b) => a - b); if (!o.hiddenCls) o.hiddenCls = new Set(); for (const k of o.hiddenCls) if (!keys.includes(k)) keys.push(k); keys.sort((a, b) => a - b);
+  const apply = () => { if (cl) applyClassHide(o); S.dirty = true; refreshLayers(); };
+  const wrap = el('div', { style: 'margin:0 0 6px ' + indent + 'px;padding:6px 8px;border-left:2px solid var(--line);display:flex;flex-direction:column;gap:3px;font-size:12px' });
+  if (!keys.length) { wrap.append(el('div', { class: 'hint' }, cl ? 'This layer has no classes yet. Classify it (Edit tab) to use this.' : 'No classes in the tiles loaded so far. Classify it (Edit tab), or zoom in and press ↻.')); if (!cl) wrap.append(el('button', { class: 'btn small', style: 'align-self:flex-start', onclick: () => refreshLayers() }, '↻')); return wrap; }
+  const tot = Object.values(counts).reduce((a, b) => a + b, 0) || 1;
+  for (const k of keys) { const q = CLASS_COL[k] || [200, 200, 200]; const cb = el('input', { type: 'checkbox', 'aria-label': 'Show ' + (CLASS_NAME[k] || 'class ' + k) }); cb.checked = !o.hiddenCls.has(k);
+    cb.addEventListener('change', () => { cb.checked ? o.hiddenCls.delete(k) : o.hiddenCls.add(k); apply(); });
+    wrap.append(el('label', { class: 'row', style: 'gap:6px;flex-wrap:nowrap' }, cb, el('span', { style: 'width:10px;height:10px;border-radius:2px;flex:none;background:rgb(' + q.join(',') + ')' }), el('span', { style: 'flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap' }, k + ' ' + (CLASS_NAME[k] || (typeof EXTRA_CLASSES !== 'undefined' && EXTRA_CLASSES[k]) || 'Class ' + k)), el('span', { class: 'mono hint' }, counts[k] ? (cl ? fmtN(counts[k]) : (counts[k] / tot * 100).toFixed(counts[k] / tot < 0.01 ? 2 : 1) + '%') : '–'))); }
+  wrap.append(...[el('div', { class: 'row', style: 'gap:4px;margin-top:2px' }, el('button', { class: 'btn small', onclick: () => { o.hiddenCls.clear(); apply(); } }, 'All on'), el('button', { class: 'btn small', onclick: () => { for (const k of keys) o.hiddenCls.add(k); apply(); } }, 'All off'),
+    el('button', { class: 'btn small', title: 'Show only ground', onclick: () => { o.hiddenCls.clear(); for (const k of keys) if (k !== 2) o.hiddenCls.add(k); apply(); } }, 'Ground only'), cl ? null : el('button', { class: 'btn small icon', title: 'Recount from the tiles loaded now', onclick: () => refreshLayers() }, '↻')),
+    cl ? null : el('div', { class: 'hint' }, 'Shares are from the tiles loaded so far.'), cl && (!o.colorMode || o.colorMode !== 'class') ? el('button', { class: 'btn small', style: 'align-self:flex-start', onclick: () => { o.colorMode = 'class'; colorize(o); refreshProps(); } }, 'Colour by class') : null,
+    !cl && o.colorMode !== 'class' ? el('button', { class: 'btn small', style: 'align-self:flex-start', onclick: () => { o.colorMode = 'class'; lodRecolor(o); buildLodPanel(); } }, 'Colour by class') : null].filter(Boolean));
+  return wrap;
+}
 
 // ===== tag library and saved view clips =====
 S.tagLib = [];

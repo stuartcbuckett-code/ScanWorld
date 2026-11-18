@@ -71,11 +71,11 @@ async function edLoad(D) {
   try { const j = JSON.parse(await D.store.text(D.dir + 'edits.json')); if (j.format !== 'scanbench-edits') return; const E = edState(D); E.index = j; E.log = j.log || []; if (j.classes) D.edCls = true; if (j.tiles) toast(D.meta.name + ': ' + j.tiles + ' edited tile' + (j.tiles > 1 ? 's' : '') + ' applied (from edits.json).'); } catch (e) { }
 }
 const _lodOpenDatasetE = lodOpenDataset;
-lodOpenDataset = async function (store, entry, P) { const D = await _lodOpenDatasetE(store, entry, P); await edLoad(D); if (entry.shift) edShiftApply(D, entry.shift, true); return D; };
+lodOpenDataset = async function (store, entry, P) { const D = await _lodOpenDatasetE(store, entry, P); await edLoad(D); if (entry.shift) edShiftApply(D, entry.shift, true); if (Array.isArray(entry.hiddenClasses)) { lodHideU(D); for (const k of entry.hiddenClasses) D.hiddenCls.add(+k); } return D; };
 const _lodSaveProjectE = lodSaveProject;
 lodSaveProject = async function (P) { P = P || LP.active; for (const D of lodDatasets().filter(D => !P || D.P === P)) { try { await edSave(D); } catch (e) { toast('Could not save the edits of ' + D.meta.name + ': ' + e.message, true); } } return _lodSaveProjectE(P); };
 const _lodProjectJSONE = lodProjectJSON;
-lodProjectJSON = function (P) { const out = _lodProjectJSONE(P); const Ds = lodDatasets(); for (const e of out.datasets) { const D = Ds.find(D => (D.entry.id || D.id) === e.id); if (D && D.shift && D.shift.some(v => v)) e.shift = D.shift; } return out; };
+lodProjectJSON = function (P) { const out = _lodProjectJSONE(P); const Ds = lodDatasets(); for (const e of out.datasets) { const D = Ds.find(D => (D.entry.id || D.id) === e.id); if (D && D.shift && D.shift.some(v => v)) e.shift = D.shift; if (D && D.hiddenCls && D.hiddenCls.size) e.hiddenClasses = [...D.hiddenCls].sort((a, b) => a - b); } return out; };
 
 // ----- moving a whole dataset (shift only: rotating or scaling would need re-converting) -----
 function edShiftApply(D, d, quiet) {
