@@ -154,7 +154,7 @@ loadFiles = async function (files) {
   for (const f of arr) {
     if (f === metaF || f === binF) continue;
     if (/\.zip$/i.test(f.name)) { try { const z = readStoredZip(new Uint8Array(await f.arrayBuffer())); if (z['metadata.json'] && z['octree.bin']) loadOctree(JSON.parse(new TextDecoder().decode(z['metadata.json'])), z['octree.bin']); else toast(f.name + ' is not a ScanBench octree zip.', true); } catch (e) { toast(e.message, true); } continue; }
-    if (/scanbench-project.*\.json$/i.test(f.name) || (/\.json$/i.test(f.name) && !/metadata/i.test(f.name))) { try { loadProjectObj(JSON.parse(await f.text())); } catch (e) { toast('Could not read ' + f.name + ': ' + e.message, true); } continue; }
+    if (/scanbench-project.*\.json$/i.test(f.name) || (/\.json$/i.test(f.name) && !/metadata/i.test(f.name))) { try { const j = JSON.parse(await f.text()); if (j && (j.format === 'scanbench-project' || j.format === 'scanbench-lod' || j.format === 'scanbench-edits')) lodAskFolder(f.name); else loadProjectObj(j); } catch (e) { toast('Could not read ' + f.name + ': ' + e.message, true); } continue; }
     rest.push(f);
   }
   if (rest.length) return _loadFilesL(rest);

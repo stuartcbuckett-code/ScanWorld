@@ -246,8 +246,33 @@ async function lodOpenStore(store) {
   const b = new THREE.Box3(); for (const D of lodDatasets()) b.union(D.box); if (!b.isEmpty()) fitBox(b);
   buildLodPanel(); toast('Opened ' + P.name + ': ' + lodDatasets().filter(D => D.P === P).length + ' dataset(s), ' + fmtN(lodDatasets().filter(D => D.P === P).reduce((a, D) => a + D.meta.points, 0)) + ' points' + (LP.projects.length > 1 ? ' (' + LP.projects.length + ' projects open)' : '') + '. Tiles load as you move.');
 }
+async function lodOpenDir(h) {   // a project folder: project.json or dataset.json in it (or one level down)
+  const has = async (d, n) => { try { await d.getFileHandle(n); return true; } catch (e) { return false; } };
+  if (await has(h, 'project.json') || await has(h, 'dataset.json')) return lodOpenStore(new LDirStore(h));
+  for await (const [nm, e] of h.entries()) if (e.kind === 'directory' && (await has(e, 'project.json') || await has(e, 'dataset.json'))) return lodOpenStore(new LDirStore(e));
+  throw new Error('"' + h.name + '" has no project.json or dataset.json in it. Choose the project folder the converter made');
+}
+// a project.json or dataset.json opened on its own: the tiles beside it can only be read through the folder, so ask for that
+function lodAskFolder(fileName) {
+  const card = el('div', { role: 'dialog', 'aria-label': 'Open the project folder', style: 'position:fixed;inset:0;z-index:150;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.35);padding:16px' });
+  const go = el('button', { class: 'btn primary', style: 'font-size:15px;padding:9px 16px' }, 'Choose the project folder…'), no = el('button', { class: 'btn' }, 'Cancel');
+  card.append(el('div', { style: 'background:var(--panel,#fff);color:var(--ink,#111);border-radius:14px;padding:22px 24px;max-width:480px;width:100%;box-shadow:0 12px 40px rgba(0,0,0,.3);display:flex;flex-direction:column;gap:10px' },
+    el('div', { style: 'font-size:18px;font-weight:600' }, 'Open the folder, not the file'), el('div', { class: 'note' }, fileName + ' is part of an LOD project. ScanBench streams the project from its folder (the tiles in octree.bin beside it), so it needs the folder: choose the folder that holds ' + fileName + '. You can also drag that folder from File Explorer onto ScanBench.'), el('div', { class: 'row' }, go, no)));
+  document.body.append(card); go.focus(); no.addEventListener('click', () => card.remove()); go.addEventListener('click', async () => { card.remove(); await lodOpenFolder(); });
+}
+// folders dragged in from File Explorer (local or network) open as projects
+document.addEventListener('drop', e => {
+  const items = [...(e.dataTransfer && e.dataTransfer.items || [])].filter(i => i.kind === 'file' && i.getAsFileSystemHandle); if (!items.length) return;
+  const ps = items.map(i => i.getAsFileSystemHandle());   // must be asked for during the drop event
+  const files = [...(e.dataTransfer.files || [])]; const anyDirName = files.some(f => !f.type && !/\.[a-z0-9]{2,5}$/i.test(f.name));
+  if (!anyDirName && !files.some(f => /^(project|dataset)\.json$/i.test(f.name))) return;
+  e.stopImmediatePropagation(); e.preventDefault();
+  Promise.all(ps).then(async hs => { let opened = false; for (const h of hs) { if (h && h.kind === 'directory') { try { await lodOpenDir(h); opened = true; } catch (err) { toast(err.message, true); } } }
+    if (!opened) { const j = files.find(f => /^(project|dataset)\.json$/i.test(f.name)); if (j) lodAskFolder(j.name); } });
+}, true);
 async function lodOpenFolder() {
-  if (window.showDirectoryPicker) { try { const h = await window.showDirectoryPicker({ mode: 'readwrite' }); await lodOpenStore(new LDirStore(h)); } catch (e) { if (e.name !== 'AbortError') toast('Could not open that folder: ' + e.message, true); } return; }
+  // read access is enough to open (network shares and read-only folders included); ScanBench asks for write access the first time you save
+  if (window.showDirectoryPicker) { try { const h = await window.showDirectoryPicker({ mode: 'read', id: 'lodproj' }); await lodOpenDir(h); } catch (e) { if (e.name !== 'AbortError') toast('Could not open that folder (' + e.name + '): ' + e.message + '. If it is on a network share, try mapping the share to a drive letter, or drag the folder onto ScanBench.', true); } return; }
   const inp = el('input', { type: 'file', webkitdirectory: true, hidden: true }); inp.addEventListener('change', async () => { if (!inp.files.length) return; try { await lodOpenStore(new LFileStore([...inp.files])); } catch (e) { toast('Could not open that folder: ' + e.message, true); } }); document.body.append(inp); inp.click(); setTimeout(() => inp.remove(), 60000);
 }
 async function lodOpenUrl(u) {
@@ -529,10 +554,10 @@ async function homeProject(home) {
   const act = async () => {
     if (busyOpen) return; busyOpen = true;
     try {
-      let h = saved; if (h) { let p = 'denied'; try { p = await h.requestPermission({ mode: 'readwrite' }); } catch (e) { } if (p !== 'granted') h = null; }
-      if (!h) { h = await window.showDirectoryPicker({ mode: 'readwrite', id: 'sbhome' }); }
+      let h = saved; if (h) { let p = 'denied'; try { p = await h.requestPermission({ mode: 'readwrite' }); } catch (e) { } if (p !== 'granted') { try { p = await h.requestPermission({ mode: 'read' }); } catch (e) { } } if (p !== 'granted') h = null; }
+      if (!h) { h = await window.showDirectoryPicker({ mode: 'read', id: 'sbhome' }); }
       let ok = false; try { await h.getFileHandle('dataset.json'); ok = true; } catch (e) { try { await h.getFileHandle('project.json'); ok = true; } catch (e2) { } }
-      if (!ok) { msg.textContent = 'That folder has no project in it. Choose the folder this page (ScanBench.html) is in.'; return; }
+      if (!ok) { msg.textContent = 'That folder has no project in it. Choose the folder this page (ScanBench.html) is in.'; busyOpen = false; return; }
       card.remove(); document.removeEventListener('pointerdown', any, true); document.removeEventListener('keydown', any, true); await go(h);
     } catch (e) { if (e.name !== 'AbortError') msg.textContent = 'Could not open it: ' + e.message; }
     busyOpen = false;
