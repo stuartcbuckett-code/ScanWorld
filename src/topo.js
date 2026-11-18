@@ -41,7 +41,7 @@ function bilinear(R, x, y) {
 
 // ---------- progressive morphological filter (Zhang et al. 2003) ----------
 function pmfGround(P, n, opts = {}) {
-  const cell = opts.cell || 0.5, slope = opts.slope ?? 0.3, dh0 = opts.dh0 ?? 0.15, dhMax = opts.dhMax ?? 2.5, maxW = opts.maxWindow || 20;
+  const cell = opts.cell || 0.5, slope = opts.slope ?? 0.3, dh0 = opts.dh0 ?? 0.15, dhMax = opts.dhMax ?? 2.5, maxW = opts.maxWindow || 40;   // wider than most buildings and tanks
   const g = gridOf(P, n, cell); const raw = minGrid(P, n, g);
   const has = new Uint8Array(raw.length); for (let k = 0; k < raw.length; k++) has[k] = isNaN(raw[k]) ? 0 : 1;
   let surf = fillNaN(raw, g.nx, g.ny);
@@ -57,7 +57,9 @@ function pmfGround(P, n, opts = {}) {
   const gz = new Float32Array(raw.length).fill(NaN); for (let k = 0; k < raw.length; k++) if (has[k] && !flag[k]) gz[k] = raw[k];
   const R = Object.assign({ z: fillNaN(gz, g.nx, g.ny, 200), has }, g);
   const tol = opts.groundTol ?? 0.15; const ground = new Uint8Array(n);
-  for (let i = 0; i < n; i++) ground[i] = P[i * 3 + 2] - bilinear(R, P[i * 3], P[i * 3 + 1]) <= tol ? 1 : 0;
+  // on a slope the surface from cell minima sits below the points in a cell by up to slope × cell, so the tolerance grows with the local slope
+  const sl = opts.slopeTol === false ? null : (x, y) => { const d = cell, a = bilinear(R, x + d, y), b = bilinear(R, x - d, y), c = bilinear(R, x, y + d), e = bilinear(R, x, y - d); const gx = (a - b) / (2 * d), gy = (c - e) / (2 * d); const v = Math.hypot(gx, gy); return isFinite(v) ? Math.min(v, 1.5) : 0; };
+  for (let i = 0; i < n; i++) { const x = P[i * 3], y = P[i * 3 + 1]; ground[i] = P[i * 3 + 2] - bilinear(R, x, y) <= tol + (sl ? sl(x, y) * cell : 0) ? 1 : 0; }
   return { ground, R };
 }
 

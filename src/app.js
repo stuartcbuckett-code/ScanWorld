@@ -926,9 +926,10 @@ function buildEdit() {
   const nr = numIn('noiseR', S.noiseR || 0.05), nn = numIn('noiseN', S.noiseN || 4, '1');
   const noiseS = el('div', { class: 'sec' }, el('h3', {}, 'Noise filter'), el('div', { class: 'note' }, 'Removes isolated points: a point is kept when it has at least the given number of neighbours inside the radius. Good for mixed pixels, people and dust.'),
     fieldRow('Radius (m)', nr), fieldRow('Min neighbours', nn), el('div', { class: 'row' }, el('button', { class: 'btn small', disabled: !L, onclick: () => { S.noiseR = +nr.value; S.noiseN = +nn.value; noiseFilter(); } }, 'Filter → new layer')));
-  const gc = numIn('gCell', S.gCell || 1), gh = numIn('gH', S.gH || 0.15);
-  const groundS = el('div', { class: 'sec' }, el('h3', {}, 'Ground classification'), el('div', { class: 'note' }, 'Lowest-surface filter: points within the height tolerance of the local ground surface become class 2 (ground), the rest class 1. Use a cell larger than cars or bushes.'),
-    fieldRow('Cell size (m)', gc), fieldRow('Height tolerance (m)', gh), el('div', { class: 'row' }, el('button', { class: 'btn small', disabled: !L, onclick: () => { S.gCell = +gc.value; S.gH = +gh.value; groundClassify(); } }, 'Classify')));
+  const gc = numIn('gCell', S.gCell || 1), gh = numIn('gH', S.gH || 0.25), gw = numIn('gMaxW', S.gMaxW || 40);
+  const gs = el('select', { id: 'gSlope', 'aria-label': 'Terrain' }, ...[['0.15', 'Flat or urban'], ['0.3', 'Rolling'], ['0.7', 'Steep or hilly']].map(([v, t]) => el('option', { value: v, selected: String(S.gSlope || 0.3) === v }, t)));
+  const groundS = el('div', { class: 'sec' }, el('h3', {}, 'Ground classification'), el('div', { class: 'note' }, 'Progressive morphological filter: anything that stands up from the ground and is smaller than the largest structure size (buildings, tanks, cars, trees) is lifted off; the rest becomes class 2 (ground), everything else class 1. Set the size larger than your biggest roof or tank.'),
+    fieldRow('Cell size (m)', gc), fieldRow('Height tolerance (m)', gh), fieldRow('Largest structure (m)', gw), fieldRow('Terrain', gs), el('div', { class: 'row' }, el('button', { class: 'btn small', disabled: !L, onclick: () => { S.gCell = +gc.value; S.gH = +gh.value; S.gMaxW = +gw.value; S.gSlope = +gs.value; groundClassify(); } }, 'Classify')));
   const tx = numIn('trX', 0), ty = numIn('trY', 0), tz = numIn('trZ', 0), rz = numIn('trRz', 0), scl = numIn('trS', 1);
   const trS = el('div', { class: 'sec' }, el('h3', {}, 'Transform layer'), el('div', { class: 'note' }, 'Shift, rotate about a vertical axis through the layer centre, and scale (scale is applied about the centre too). Works on clouds and meshes.'),
     el('div', { style: 'display:grid;grid-template-columns:repeat(3,1fr);gap:6px' }, labeled('ΔE', tx), labeled('ΔN', ty), labeled('ΔZ', tz)),
@@ -983,9 +984,12 @@ async function noiseFilter() {
   const idx = []; for (let i = 0; i < L.n; i++) if (keep[i]) idx.push(i);
   subsetCloud(L, Uint32Array.from(idx), L.name + ' (filtered)'); toast('Removed ' + (L.n - idx.length).toLocaleString() + ' isolated points. The original layer is hidden.'); L.visible = false; L.obj.visible = false; refreshLayers();
 }
+function groundMask(pos, n) {   // the ground filter both for layers and for streamed datasets
+  return T_.pmfGround(pos, n, { cell: Math.max(0.1, S.gCell || 1), slope: S.gSlope || 0.3, maxWindow: Math.max(2, S.gMaxW || 40), groundTol: S.gH || 0.25 }).ground;
+}
 async function groundClassify() {
   const L = needCloud(); if (!L) return;
-  const g = await busy('Classifying ground…', async () => AL.groundFilter(L.pos, L.n, S.gCell, S.gH)); if (!g) return;
+  const g = await busy('Classifying ground…', async () => groundMask(L.pos, L.n)); if (!g) return;
   if (!L.cls) L.cls = new Uint8Array(L.n); let c = 0; for (let i = 0; i < L.n; i++) { L.cls[i] = g[i] ? 2 : 1; c += g[i]; }
   L.colorMode = 'class'; colorize(L); refreshProps(); toast(c.toLocaleString() + ' ground points (' + (c / L.n * 100).toFixed(1) + '%).');
 }

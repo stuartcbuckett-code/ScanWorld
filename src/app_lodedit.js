@@ -134,7 +134,7 @@ async function edRun(D, what, job) {
   if (!edAsk(D, what)) return; edBegin(D, what); let res; ED.pause = true; try { res = await busy(what + ' on ' + D.meta.name + ' (' + edRegionText() + ')…', job); } finally { ED.pause = false; edEnd(D, res && res.summary); S.dirty = true; }
   if (res && res.summary) toast(res.summary + ' Save the project to keep the edits (the converted files are not changed).');
 }
-const edGround = D => edRun(D, 'Ground classification', async onP => { const r = await edBlocks(D, 'ground', edRegion(), Math.max(10, S.gCell * 6), async T => { const g = await AL.groundFilter(T.pos, T.n, S.gCell, S.gH); const cls = new Uint8Array(T.n); for (let i = 0; i < T.n; i++) cls[i] = g[i] ? 2 : 1; return { cls }; }, onP); return { summary: 'Ground classified (' + r.tiles + ' tiles changed).' }; });
+const edGround = D => edRun(D, 'Ground classification', async onP => { const r = await edBlocks(D, 'ground', edRegion(), Math.max(10, (S.gMaxW || 40) * 0.75, S.gCell * 6), async T => { const g = groundMask(T.pos, T.n); const cls = new Uint8Array(T.n); for (let i = 0; i < T.n; i++) cls[i] = g[i] ? 2 : 1; return { cls }; }, onP); return { summary: 'Ground classified (' + r.tiles + ' tiles changed).' }; });
 const edNoise = D => edRun(D, 'Noise filter', async onP => { const r = await edBlocks(D, 'noise', edRegion(), Math.max(1, S.noiseR * 4), async (T, p) => { const keep = await AL.radiusOutliers(T.pos, T.n, S.noiseR, S.noiseN, p); const del = new Uint8Array(T.n); for (let i = 0; i < T.n; i++) del[i] = keep[i] ? 0 : 1; return { del }; }, onP); return { summary: 'Removed ' + r.points.toLocaleString() + ' isolated points.' }; });
 const edTerrain = D => edRun(D, 'Terrain classification', async onP => { const r = await edBlocks(D, 'terrain', edRegion(), 12, async (T, p) => { const res = await terrainClasses(T, {}, p); const cls = res.cls; for (let i = 0; i < T.n; i++) { const c = T.cls[i]; if (c === 9 || (c >= 13 && c <= 17) || c >= 64) cls[i] = c; } return { cls }; }, onP); return { summary: 'Classified ground, vegetation, buildings and roads (' + r.tiles + ' tiles changed).' }; });
 async function edCad(D) {
@@ -256,3 +256,16 @@ buildEdit = function () {
 
 // while a tool runs over a dataset, the 3D view waits (drawing every frame would slow the job down)
 const _drawEd = draw; draw = function () { if (ED.pause) { S.dirty = true; return; } return _drawEd(); };
+
+// ----- one colour switch for everything in view: RGB, classification, elevation or intensity (toolbar) -----
+function colourAll(mode) {
+  let skipped = [];
+  for (const L of S.layers) { if (L.kind !== 'cloud') continue; const ok = mode === 'elevation' || (mode === 'rgb' && L.rgb) || (mode === 'class' && L.cls) || (mode === 'intensity' && L.intensity); if (ok) { L.colorMode = mode; colorize(L); } else skipped.push(L.name); }
+  for (const D of lodDatasets()) { const at = D.meta.attributes.map(a => a.name); const ok = mode === 'elevation' || (mode === 'rgb' && at.includes('rgb')) || (mode === 'class' && (at.includes('classification') || D.edCls)) || (mode === 'intensity' && at.includes('intensity')); if (ok) { D.colorMode = mode; lodRecolor(D); } else skipped.push(D.meta.name); }
+  try { refreshProps(); buildLodPanel(); } catch (e) { } S.dirty = true;
+  if (skipped.length) toast(skipped.join(', ') + ' ' + (skipped.length > 1 ? 'have' : 'has') + ' no ' + ({ rgb: 'RGB colour', class: 'classes', intensity: 'intensity' }[mode] || mode) + ', so ' + (skipped.length > 1 ? 'they keep' : 'it keeps') + ' its colours.');
+}
+function colourAllSync() { const sel = $('#colAll'); if (!sel || document.activeElement === sel) return; const modes = new Set([...S.layers.filter(L => L.kind === 'cloud').map(L => L.colorMode), ...lodDatasets().map(D => D.colorMode)]); sel.value = modes.size === 1 && ['rgb', 'class', 'elevation', 'intensity'].includes([...modes][0]) ? [...modes][0] : ''; }
+{ const sel = $('#colAll'); if (sel) sel.addEventListener('change', () => { if (sel.value) colourAll(sel.value); }); }
+{ const _rp = refreshProps; refreshProps = function () { const r = _rp.apply(this, arguments); try { colourAllSync(); } catch (e) { } return r; }; }
+{ const _bl = buildLodPanel; buildLodPanel = function () { const r = _bl.apply(this, arguments); try { colourAllSync(); } catch (e) { } return r; }; }

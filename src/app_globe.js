@@ -87,9 +87,11 @@ function imgTileMesh(t) {   // a 8×8 grid in the project grid, so the tile foll
   const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); g.setIndex(idx);
   const m = new THREE.Mesh(g, new THREE.MeshBasicMaterial({ map: t.tex, depthTest: false, depthWrite: false, side: THREE.DoubleSide, transparent: true, opacity: 1 })); m.renderOrder = 10 + t.z; m.frustumCulled = false; return m;
 }
+// Esri answers 'Map data not yet available' (a plain grey tile with text) where it has no imagery that fine: treat it as missing and stay a level coarser
+function imgPlaceholder(im) { try { const c = document.createElement('canvas'); c.width = c.height = 16; const g = c.getContext('2d', { willReadFrequently: true }); g.drawImage(im, 0, 0, 16, 16); const d = g.getImageData(0, 0, 16, 16).data; let grey = 0; for (let i = 0; i < d.length; i += 4) { const mx = Math.max(d[i], d[i + 1], d[i + 2]), mn = Math.min(d[i], d[i + 1], d[i + 2]); if (mx - mn < 8 && mn > 185) grey++; } return grey > 230; } catch (e) { return false; } }
 function imgLoad(t) {
   IMG.loading++; const im = new Image(); im.crossOrigin = 'anonymous';
-  im.onload = () => { IMG.loading--; if (t.dead) return; const tx = new THREE.Texture(im); tx.needsUpdate = true; tx.minFilter = THREE.LinearMipmapLinearFilter; tx.anisotropy = 8; t.tex = tx; try { t.mesh = imgTileMesh(t); IMG.group.add(t.mesh); } catch (e) { } t.ok = true; IMG.errs = 0; S.dirty = true; };
+  im.onload = () => { IMG.loading--; if (t.dead) return; if (t.z >= 15 && imgPlaceholder(im)) { t.failed = true; IMG.maxZ = Math.min(IMG.maxZ || 23, t.z - 1); IMG.camKey = ''; S.dirty = true; return; } const tx = new THREE.Texture(im); tx.needsUpdate = true; tx.minFilter = THREE.LinearMipmapLinearFilter; tx.anisotropy = 8; t.tex = tx; try { t.mesh = imgTileMesh(t); IMG.group.add(t.mesh); } catch (e) { } t.ok = true; IMG.errs = 0; S.dirty = true; };
   im.onerror = () => { IMG.loading--; t.failed = true; IMG.errs++; };
   im.src = IMG.url(t.z, t.x, t.y);
 }
@@ -110,7 +112,7 @@ function imgUpdate(cam, geo) {
   const tw = [S.cam.target.x + S.origin[0], S.cam.target.y + S.origin[1], S.cam.target.z + S.origin[2]]; let g;
   try { g = X_.convertPoint(tw[0], tw[1], tw[2], S.crs, C.datum); } catch (e) { return; } if (!isFinite(g[0]) || !isFinite(g[1])) return;
   const lat = g[1], cosl = Math.cos(lat * Math.PI / 180), mpp = d * 2 * Math.tan(cam.fov * Math.PI / 360) / Math.max(1, H());   // metres per screen pixel at the target
-  const zf = Math.max(3, Math.min(19, Math.round(Math.log2(156543.03 * cosl / Math.max(mpp, 0.05)))));
+  const zf = Math.max(3, Math.min(IMG.maxZ || 19, 19, Math.round(Math.log2(156543.03 * cosl / Math.max(mpp, 0.05)))));
   // ground the view covers: more towards the horizon when tilted
   const tilt = Math.max(0.25, Math.sin(Math.abs(S.cam.pitch))); const reach = Math.min(3e5, d * Math.tan(cam.fov * Math.PI / 360) * Math.max(1, cam.aspect) * 1.6 / tilt);
   const want = new Set();
