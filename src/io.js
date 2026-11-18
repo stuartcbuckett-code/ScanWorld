@@ -239,7 +239,7 @@ class StreamDecoder {
     }
   }
   done() { return this.idx >= this.count; }
-  put(v) { const i = this.idx++; if (i % this.stride === 0) { const j = i / this.stride; if (j < this.out.length) this.out[j] = v; } }
+  put(v) { const i = this.idx++; if (i % this.stride === 0) { const j = i / this.stride - (this.ob || 0); if (j >= 0 && j < this.out.length) this.out[j] = v; } }
   feed(data) {
     if (this.done()) return;
     if (this.kind === 'int' && this.bits === 0) { // constant field: no bytes
@@ -254,7 +254,7 @@ class StreamDecoder {
     if (this.kind !== 'int') {
       const B = this.bytes, n = Math.floor(buf.length / B);
       const dv = new DataView(buf.buffer, buf.byteOffset, buf.length);
-      for (let k = k0; k < n && base + k < cnt; k += st) { const j = (base + k) / st; if (j < out.length) out[j] = B === 4 ? dv.getFloat32(k * B, true) : dv.getFloat64(k * B, true); }
+      const ob = this.ob || 0; for (let k = k0; k < n && base + k < cnt; k += st) { const j = (base + k) / st - ob; if (j >= 0 && j < out.length) out[j] = B === 4 ? dv.getFloat32(k * B, true) : dv.getFloat64(k * B, true); }
       this.idx = Math.min(cnt, base + n);
       this.pending = buf.slice(n * B);
       return;
@@ -262,12 +262,13 @@ class StreamDecoder {
     const b = this.bits, totalBits = buf.length * 8 - this.bitPos;
     const n = Math.floor(totalBits / b);
     const mod = Math.pow(2, b), min = this.min, sc = this.scale, of = this.offset, bp = this.bitPos;
+    const ob = this.ob || 0;   // window offset when a scan is streamed in batches
     for (let k = k0; k < n && base + k < cnt; k += st) {
       const o = bp + k * b, byteI = o >> 3, sh = o & 7, nb = (sh + b + 7) >> 3;
       let raw;
       if (b <= 45) { let acc = 0, m = 1; for (let j = 0; j < nb; j++) { acc += buf[byteI + j] * m; m *= 256; } raw = Math.floor(acc / (1 << sh)) % mod; }
       else { let acc = 0n; for (let j = nb - 1; j >= 0; j--) acc = (acc << 8n) | BigInt(buf[byteI + j]); raw = Number((acc >> BigInt(sh)) & ((1n << BigInt(b)) - 1n)); }
-      const j = (base + k) / st; if (j < out.length) out[j] = (raw + min) * sc + of;
+      const j = (base + k) / st - ob; if (j >= 0 && j < out.length) out[j] = (raw + min) * sc + of;
     }
     this.idx = Math.min(cnt, base + n);
     const used = bp + n * b;

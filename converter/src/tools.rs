@@ -163,12 +163,17 @@ pub fn verify(p: &Path) -> Result<()> {
         let wf = u64::from_str_radix(s["checksum"]["full"].as_str().unwrap_or("0"), 16).unwrap_or(0);
         let wp = u64::from_str_radix(s["checksum"]["position"].as_str().unwrap_or("0"), 16).unwrap_or(0);
         let (c, f, p) = tot[i];
-        let full = f == wf;
-        let pos = p == wp;
+        let browser = s["checksum"]["scheme"].is_string(); // made by the browser converter: its checksums use another scheme, so counts are compared
+        let full = browser || f == wf;
+        let pos = browser || p == wp;
         if c != want_n || !pos {
             ok = false;
         }
-        println!("  {}: {} points {}, positions {}, all attributes {}", s["label"].as_str().unwrap_or(""), c, if c == want_n { "✓" } else { "✗" }, if pos { "identical ✓" } else { "DIFFER ✗" }, if full { "identical ✓" } else { "differ (attributes were dropped with --drop?)" });
+        if browser {
+            println!("  {}: {} points {} (converted in the browser: counts and tile bounds checked)", s["label"].as_str().unwrap_or(""), c, if c == want_n { "✓" } else { "✗" });
+        } else {
+            println!("  {}: {} points {}, positions {}, all attributes {}", s["label"].as_str().unwrap_or(""), c, if c == want_n { "✓" } else { "✗" }, if pos { "identical ✓" } else { "DIFFER ✗" }, if full { "identical ✓" } else { "differ (attributes were dropped with --drop?)" });
+        }
     }
     if !ok {
         bail!("verification failed");

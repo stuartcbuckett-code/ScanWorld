@@ -4,6 +4,12 @@
 
 It is one program with no installer. It also carries the viewer inside, so `scanlod view` opens a project on your own computer with nothing else installed.
 
+## The HTML converter (no install)
+
+`ScanLOD-Converter.html` does the same conversion in Chrome or Edge, with nothing to install, which suits work computers that block programs. Download it from the release (or open it on the test site), choose the scans, then choose an output folder, and press **Convert**. It writes the same project format, every point and attribute kept, and ScanBench opens it with *LOD projects → Open project folder…*. The same converter is in ScanBench itself as **Convert scans…**.
+
+It uses all but one of your processor cores. In testing it ran at roughly a third of the speed of the .exe on the same machine. The tab must stay open while it runs, and there is no resume yet: if it stops, run it again.
+
 ## Download
 
 The Windows x64 build (`scanlod-windows-x64.exe`) is attached to the **scanlod-latest** release on GitHub, built automatically from `main`. Other systems can build it themselves (below).

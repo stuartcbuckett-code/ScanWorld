@@ -8,7 +8,7 @@ This repository holds the source, a build script and a GitHub Pages workflow tha
 
 ## Two parts
 
-1. **`scanlod`**, the LOD converter (in [`converter/`](converter/README.md)). It turns E57, LAS and LAZ scans of any size, up to hundreds of GB, into a tiled octree with a JSON project file, then views it locally with `scanlod view`. The Windows x64 build is on the **scanlod-latest** release.
+1. **The converter.** It turns E57, LAS and LAZ scans of any size into a tiled octree with a JSON project file. Use it as **`ScanLOD-Converter.html`** (one file, runs in Chrome or Edge, nothing to install; also built into ScanBench as *Convert scans…*), or as the Windows program `scanlod-windows-x64.exe` (faster, with resume and LAZ export). Both are on the **scanlod-latest** release, and the HTML is also at `/ScanLOD-Converter.html` on the test site.
 2. **The ScanBench viewer** (this site). It opens those projects from a folder, a web address (S3, Azure, any host with range requests) or `scanlod view`, and streams only what is in view. All the tools work on it: measure, annotate, saved views, 3D box export at full resolution, STL models, and pulling a region into a working layer for Scan to CAD, topo and the rest.
 
 The project format is documented in [docs/lod-format.md](docs/lod-format.md).

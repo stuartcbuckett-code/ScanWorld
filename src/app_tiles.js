@@ -426,9 +426,9 @@ function buildLodPanel() {
   const ds = $('#dsSec'); if (ds && host.nextSibling !== ds) ds.before(host);
   host.textContent = ''; const p = LP.project, Ds = lodDatasets();
   host.append(el('h3', {}, 'LOD projects'), el('div', { class: 'note' }, 'Open a folder made by the scanlod converter (project.json or dataset.json). Scans of any size stream in: only what is in view loads, at the detail it needs.'),
-    el('div', { class: 'row' }, el('button', { class: 'btn small primary', onclick: lodOpenFolder }, 'Open project folder…'), el('button', { class: 'btn small', onclick: () => { const i = $('#lodUrl'); i.hidden = !i.hidden; if (!i.hidden) i.focus(); } }, 'Open from web address…')),
+    el('div', { class: 'row' }, el('button', { class: 'btn small primary', onclick: lodOpenFolder }, 'Open project folder…'), el('button', { class: 'btn small', onclick: () => { const i = $('#lodUrl'); i.hidden = !i.hidden; if (!i.hidden) i.focus(); } }, 'Open from web address…'), el('button', { class: 'btn small', title: 'Make a LOD project from E57, LAS or LAZ files of any size, on this computer', onclick: openConverter }, 'Convert scans…')),
     el('input', { type: 'url', id: 'lodUrl', hidden: true, placeholder: 'https://…/project.json, then Enter', 'aria-label': 'Project web address', onkeydown: e => { if (e.key === 'Enter') lodOpenUrl(e.target.value); } }));
-  if (!p) { host.append(el('div', { class: 'row' }, el('button', { class: 'btn small', title: 'Mundaring Weir converted by scanlod, streamed from this site', onclick: async () => { try { await new LHttpStore('lod/weir/project.json').text('project.json'); lodOpenUrl('lod/weir/project.json'); } catch (e) { lodOpenUrl('https://stuartcbuckett-code.github.io/ScanWorld/lod/weir/project.json'); } } }, 'Open the streaming demo')), el('div', { class: 'hint' }, 'Make your own with: scanlod convert scan.e57 -o MyProject  ·  open it on your computer with: scanlod view MyProject')); return; }
+  if (!p) { host.append(el('div', { class: 'row' }, el('button', { class: 'btn small', title: 'Mundaring Weir converted by scanlod, streamed from this site', onclick: async () => { try { await new LHttpStore('lod/weir/project.json').text('project.json'); lodOpenUrl('lod/weir/project.json'); } catch (e) { lodOpenUrl('https://stuartcbuckett-code.github.io/ScanWorld/lod/weir/project.json'); } } }, 'Open the streaming demo')), el('div', { class: 'hint' }, 'Make your own with Convert scans… (Chrome or Edge), then open the folder it writes.')); return; }
   const budgetSel = el('select', { 'aria-label': 'Points on screen', style: 'width:auto', onchange: e => { LODS.budget = +e.target.value; LP.force = true; S.dirty = true; } }, ...[[1e6, '1 M'], [2e6, '2 M'], [3e6, '3 M'], [5e6, '5 M'], [8e6, '8 M'], [12e6, '12 M'], [20e6, '20 M']].map(([v, t]) => el('option', { value: v, selected: Math.abs(LODS.budget - v) < 1 }, t)));
   const detailSel = el('select', { 'aria-label': 'Detail', style: 'width:auto', onchange: e => { LP.detail = +e.target.value; LP.force = true; S.dirty = true; } }, ...[[200, 'Low'], [130, 'Medium'], [90, 'High'], [55, 'Very high']].map(([v, t]) => el('option', { value: v, selected: LP.detail === v }, t)));
   const ad = el('input', { type: 'checkbox' }); ad.checked = LP.adaptive; ad.addEventListener('change', () => { LP.adaptive = ad.checked; S.dirty = true; });
@@ -482,4 +482,20 @@ setTimeout(() => {
 // changes that belong in project.json mark the project unsaved
 for (const [get, set] of [[() => addAnnotation, f => { addAnnotation = f; }], [() => pushMeasure, f => { pushMeasure = f; }], [() => addBookmark, f => { addBookmark = f; }], [() => removeAnnotation, f => { removeAnnotation = f; }]]) {
   const orig = get(); set(function () { const r = orig.apply(this, arguments); if (LP.project && !LP.applying) { LP.dirtyProject = true; clearTimeout(LP.rp); LP.rp = setTimeout(buildLodPanel, 80); } return r; });
+}
+
+// ---------- the converter, in a dialog ----------
+function openConverter() {
+  if (!$('#convCss')) document.head.append(el('style', { id: 'convCss' }, `
+.conv-ov{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;display:flex;align-items:flex-start;justify-content:center;overflow:auto;padding:24px 12px}
+.conv-pan{background:var(--panel,#fff);color:var(--ink,#111);border:1px solid var(--line,#ccc);border-radius:12px;max-width:720px;width:100%;padding:16px 18px;box-shadow:0 10px 40px rgba(0,0,0,.3)}
+.conv-pan h2{margin:0 0 4px;font-size:18px}.conv-step{padding:10px 0;border-bottom:1px solid var(--line,#ddd)}.conv-step b{display:block;margin-bottom:6px}
+.conv-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0}.conv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}.conv-grid label{display:flex;flex-direction:column;gap:4px;font-size:12.5px;opacity:.8}
+.conv-files{font-size:12.5px;opacity:.85;word-break:break-all}.conv-note{font-size:12px;opacity:.75}.conv-bar{height:8px;background:var(--line,#ddd);border-radius:6px;overflow:hidden;margin:12px 0 6px}.conv-bar-in{height:100%;width:0;background:var(--accent,#1f6feb);transition:width .3s}
+.conv-stage{font-size:13px}.conv-done{margin-top:10px;display:flex;flex-direction:column;gap:8px;align-items:flex-start}.conv-log{max-height:200px;overflow:auto;font:11.5px/1.45 ui-monospace,Consolas,monospace;white-space:pre-wrap;opacity:.85;margin-top:8px}`));
+  const host = el('div'); const ov = el('div', { class: 'conv-ov', role: 'dialog', 'aria-label': 'Convert scans' }, el('div', { class: 'conv-pan' },
+    el('div', { class: 'row', style: 'justify-content:space-between' }, el('h2', {}, 'Convert scans to a LOD project'), el('button', { class: 'btn small icon', 'aria-label': 'Close', onclick: () => { if (host.querySelector('.conv-stage') && /%/.test(host.querySelector('.conv-stage').textContent) && !confirm('A conversion is running. Close anyway? It will stop.')) return; ov.remove(); } }, '×')),
+    el('div', { class: 'note' }, 'Runs on this computer in Chrome or Edge; nothing is uploaded. Every point and attribute is kept, with all source metadata.'), host));
+  document.body.append(ov);
+  convUI(host, { onDone: async h => { ov.remove(); try { await lodOpenStore(new LDirStore(h)); } catch (e) { toast('Could not open the new project: ' + e.message, true); } } });
 }

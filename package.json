@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "delaunator": "^5.0.1",
+    "fflate": "^0.8.2",
     "laz-perf": "^0.0.7",
     "three": "^0.155.0"
   }
